@@ -1,0 +1,3937 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Đồ Họa 3D Quy Hoạch Lăng Mộ Đá Xanh Ninh Bình (7.35m × 11.00m) - Master Edition</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,600&family=Cinzel:wght@700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- THREE.JS, ORBIT CONTROLS & TWEEN VIA CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/18.6.4/tween.umd.js"></script>
+
+  <style>
+    :root {
+      --bg-dark: #020710;
+      --bg-panel: rgba(8, 15, 28, 0.92);
+      --bg-panel-header: rgba(12, 22, 40, 0.96);
+      --border-cyan: rgba(34, 211, 238, 0.35);
+      --border-gold: rgba(251, 191, 36, 0.45);
+      --accent-cyan: #22d3ee;
+      --accent-gold: #fbbf24;
+      --accent-emerald: #10b981;
+      --accent-rose: #f43f5e;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --font-sans: 'Be Vietnam Pro', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', Consolas, monospace;
+      --glass-shadow: 0 12px 36px rgba(0, 0, 0, 0.7), 0 0 20px rgba(34, 211, 238, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      position: relative;
+    }
+
+    #webgl-canvas-container {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 1;
+    }
+
+    /* HEADER TOOLBAR */
+    header.hud-header {
+      position: absolute;
+      top: 14px;
+      left: 16px;
+      right: 16px;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 8px 16px;
+      background: var(--bg-panel);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border-cyan);
+      border-radius: 14px;
+      box-shadow: var(--glass-shadow);
+      pointer-events: auto;
+    }
+
+    .brand-section {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-badge {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #134e4a, #065f46);
+      border: 1px solid #34d399;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      box-shadow: 0 0 16px rgba(16, 185, 129, 0.4);
+    }
+
+    .brand-text h1 {
+      font-size: 13.5px;
+      font-weight: 800;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand-text h1 span.highlight {
+      color: var(--accent-gold);
+      font-family: 'Cinzel', serif;
+    }
+
+    .brand-text p {
+      font-size: 10.5px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .badge-spec {
+      background: rgba(34, 211, 238, 0.15);
+      color: var(--accent-cyan);
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      font-size: 9.5px;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      appearance: none;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(15, 23, 42, 0.75);
+      color: var(--text-main);
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 11.5px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .btn:hover {
+      background: rgba(30, 41, 59, 0.95);
+      border-color: var(--accent-cyan);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(34, 211, 238, 0.2);
+    }
+
+    .btn.active {
+      background: linear-gradient(135deg, rgba(14, 165, 233, 0.25), rgba(6, 182, 212, 0.35));
+      border-color: var(--accent-cyan);
+      color: #38bdf8;
+      box-shadow: 0 0 14px rgba(34, 211, 238, 0.35);
+    }
+
+    .btn-gold {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.22), rgba(217, 119, 6, 0.32));
+      border-color: rgba(251, 191, 36, 0.55);
+      color: #fde047;
+    }
+
+    .btn-gold:hover {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.4), rgba(217, 119, 6, 0.5));
+      border-color: #fde047;
+      box-shadow: 0 0 16px rgba(251, 191, 36, 0.4);
+    }
+
+    .btn-cad-return {
+      background: linear-gradient(135deg, #0284c7, #2563eb);
+      color: #ffffff;
+      border-color: #38bdf8;
+      font-weight: 700;
+    }
+
+    .divider-v {
+      width: 1px;
+      height: 24px;
+      background: rgba(255, 255, 255, 0.12);
+      margin: 0 3px;
+    }
+
+    /* SIDEBAR PANELS */
+    .sidebar-panel {
+      position: absolute;
+      top: 76px;
+      bottom: 24px;
+      width: 320px;
+      z-index: 90;
+      background: var(--bg-panel);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid var(--border-cyan);
+      border-radius: 16px;
+      box-shadow: var(--glass-shadow);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s;
+      pointer-events: auto;
+    }
+
+    .sidebar-left { left: 16px; }
+    .sidebar-left.collapsed { transform: translateX(-350px); opacity: 0; pointer-events: none; }
+    .sidebar-right { right: 16px; }
+    .sidebar-right.collapsed { transform: translateX(350px); opacity: 0; pointer-events: none; }
+
+    .panel-header {
+      padding: 12px 16px;
+      background: var(--bg-panel-header);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .panel-header h2 {
+      font-size: 12.5px;
+      font-weight: 800;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .panel-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .panel-content::-webkit-scrollbar { width: 4px; }
+    .panel-content::-webkit-scrollbar-thumb {
+      background: rgba(34, 211, 238, 0.3);
+      border-radius: 4px;
+    }
+
+    .section-title {
+      font-size: 10px;
+      font-weight: 800;
+      color: var(--accent-cyan);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .layer-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      background: rgba(15, 23, 42, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 12px;
+      padding: 10px 12px;
+    }
+
+    .layer-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11.5px;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 4px 0;
+    }
+
+    .layer-item:hover { color: var(--accent-cyan); }
+    .layer-item-left { display: flex; align-items: center; gap: 8px; }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 36px;
+      height: 20px;
+    }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: rgba(255, 255, 255, 0.15);
+      transition: .25s;
+      border-radius: 20px;
+    }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 14px;
+      width: 14px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .25s;
+      border-radius: 50%;
+    }
+    input:checked + .slider {
+      background-color: #0284c7;
+      box-shadow: 0 0 10px rgba(2, 132, 199, 0.5);
+    }
+    input:checked + .slider:before { transform: translateX(16px); }
+
+    .cam-grid, .env-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+
+    .cam-btn, .env-btn {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: var(--text-main);
+      padding: 7px 8px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .cam-btn:hover, .env-btn:hover {
+      background: rgba(30, 41, 59, 0.9);
+      border-color: var(--accent-cyan);
+      color: var(--accent-cyan);
+    }
+    .cam-btn.active, .env-btn.active {
+      border-color: var(--accent-gold);
+      background: rgba(245, 158, 11, 0.18);
+      color: var(--accent-gold);
+    }
+
+    /* INSPECTOR DETAILS */
+    .inspect-card {
+      background: rgba(15, 23, 42, 0.65);
+      border: 1px solid rgba(34, 211, 238, 0.25);
+      border-radius: 12px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .inspect-title {
+      font-size: 13.5px;
+      font-weight: 800;
+      color: var(--accent-gold);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .inspect-badge {
+      font-size: 10px;
+      font-family: var(--font-mono);
+      padding: 2px 8px;
+      border-radius: 6px;
+      background: rgba(245, 158, 11, 0.18);
+      color: var(--accent-gold);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+    }
+
+    .prop-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11.5px;
+      padding: 3px 0;
+      border-bottom: 1px dashed rgba(255, 255, 255, 0.06);
+    }
+    .prop-row:last-child { border-bottom: none; }
+    .prop-label { color: var(--text-muted); }
+    .prop-value {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      color: #f1f5f9;
+    }
+    .prop-value.good-fengshui {
+      color: #f43f5e;
+      background: rgba(244, 63, 94, 0.12);
+      padding: 1px 6px;
+      border-radius: 4px;
+      border: 1px solid rgba(244, 63, 94, 0.3);
+    }
+
+    .clearance-compass {
+      display: grid;
+      grid-template-areas:
+        ". top ."
+        "left center right"
+        ". bottom .";
+      gap: 6px;
+      background: rgba(2, 6, 23, 0.6);
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      text-align: center;
+    }
+    .compass-cell {
+      padding: 4px 6px;
+      border-radius: 6px;
+      font-size: 10px;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .cell-top { grid-area: top; color: #38bdf8; }
+    .cell-bottom { grid-area: bottom; color: #38bdf8; }
+    .cell-left { grid-area: left; color: #38bdf8; }
+    .cell-right { grid-area: right; color: #38bdf8; }
+    .cell-center {
+      grid-area: center;
+      background: rgba(245, 158, 11, 0.15);
+      border-color: rgba(245, 158, 11, 0.3);
+      color: var(--accent-gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+    }
+
+    .hud-bottom-bar {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      background: var(--bg-panel);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border-cyan);
+      border-radius: 40px;
+      box-shadow: var(--glass-shadow);
+      pointer-events: auto;
+    }
+
+    .edge-toggle-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 95;
+      width: 26px;
+      height: 60px;
+      background: var(--bg-panel);
+      border: 1px solid var(--border-cyan);
+      color: var(--accent-cyan);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border-radius: 8px;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+      transition: all 0.2s;
+    }
+    .edge-left { left: 8px; border-radius: 0 8px 8px 0; }
+    .edge-right { right: 8px; border-radius: 8px 0 0 8px; }
+
+    .walk-hud {
+      position: absolute;
+      top: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid var(--accent-gold);
+      color: #fff;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 11.5px;
+      font-weight: 700;
+      display: none;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 0 20px rgba(245, 158, 11, 0.3);
+      pointer-events: auto;
+    }
+    .key-badge {
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 4px;
+      padding: 1px 5px;
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      color: var(--accent-gold);
+    }
+
+    #mobile-joystick-zone {
+      position: absolute;
+      bottom: 24px;
+      left: 24px;
+      width: 120px;
+      height: 120px;
+      z-index: 105;
+      display: none;
+      pointer-events: auto;
+    }
+    .joystick-base {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: rgba(15, 23, 42, 0.6);
+      border: 2px solid var(--border-cyan);
+      position: relative;
+      touch-action: none;
+    }
+    .joystick-thumb {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #0284c7, #38bdf8);
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.6);
+      pointer-events: none;
+    }
+
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(2, 6, 23, 0.75);
+      backdrop-filter: blur(10px);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-box {
+      width: 100%;
+      max-width: 680px;
+      max-height: 85vh;
+      background: var(--bg-panel);
+      border: 1px solid var(--border-cyan);
+      border-radius: 20px;
+      box-shadow: var(--glass-shadow);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .modal-header {
+      padding: 16px 20px;
+      background: var(--bg-panel-header);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .modal-header h3 {
+      font-size: 15px;
+      font-weight: 800;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .modal-body { padding: 20px; overflow-y: auto; flex: 1; }
+
+    .table-data {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11.5px;
+    }
+    .table-data th, .table-data td {
+      padding: 8px 10px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      text-align: left;
+    }
+    .table-data th {
+      background: rgba(15, 23, 42, 0.8);
+      color: var(--accent-cyan);
+      font-weight: 700;
+    }
+    .table-data tr:hover { background: rgba(34, 211, 238, 0.05); }
+
+    .toast-notify {
+      position: absolute;
+      top: 80px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-20px);
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid var(--accent-cyan);
+      color: #fff;
+      padding: 8px 18px;
+      border-radius: 30px;
+      font-size: 12px;
+      font-weight: 700;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5), 0 0 15px rgba(34, 211, 238, 0.3);
+      z-index: 1200;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .toast-notify.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    #measure-reticle {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 24px; height: 24px;
+      pointer-events: none;
+      display: none;
+      z-index: 80;
+    }
+
+    @media (max-width: 900px) {
+      .sidebar-panel { width: 280px; }
+      .brand-text p { display: none; }
+    }
+    @media (max-width: 680px) {
+      header.hud-header { top: 8px; left: 8px; right: 8px; padding: 6px 10px; }
+      .sidebar-panel { top: 60px; bottom: 70px; width: 88vw; max-width: 320px; }
+      .hud-bottom-bar { bottom: 12px; padding: 4px 10px; }
+      .hud-bottom-bar span.btn-label { display: none; }
+    }
+  
+    /* SOLAR / LUNAR SHADOW CONTROLLER HUD */
+    .solar-hud-card {
+      position: absolute;
+      top: 68px;
+      right: 18px;
+      width: 290px;
+      background: rgba(8, 18, 30, 0.88);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(56, 189, 248, 0.28);
+      border-radius: 12px;
+      padding: 12px 14px;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.65), 0 0 20px rgba(56, 189, 248, 0.12);
+      z-index: 95;
+      font-size: 11px;
+      color: #e2e8f0;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .solar-hud-card.minimized {
+      width: auto;
+      padding: 6px 10px;
+      background: rgba(8, 18, 30, 0.92);
+    }
+    .solar-hud-card.minimized .solar-body {
+      display: none;
+    }
+    .solar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      user-select: none;
+    }
+    .solar-header-title {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      color: #fde047;
+      text-transform: uppercase;
+      font-size: 11px;
+    }
+    .solar-header-title .solar-icon-spin {
+      font-size: 14px;
+      display: inline-block;
+      animation: solarPulse 3s ease-in-out infinite;
+    }
+    @keyframes solarPulse {
+      0%, 100% { transform: scale(1) rotate(0deg); filter: drop-shadow(0 0 4px #fbbf24); }
+      50% { transform: scale(1.15) rotate(15deg); filter: drop-shadow(0 0 10px #f59e0b); }
+    }
+    .solar-toggle-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #94a3b8;
+      border-radius: 4px;
+      padding: 1px 6px;
+      font-size: 10px;
+      cursor: pointer;
+    }
+    .solar-toggle-btn:hover { background: rgba(56, 189, 248, 0.2); color: #fff; }
+    .solar-body {
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+    .solar-mode-tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      background: rgba(0, 0, 0, 0.35);
+      padding: 3px;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .solar-tab-btn {
+      background: transparent;
+      border: none;
+      color: #94a3b8;
+      padding: 5px 8px;
+      border-radius: 5px;
+      font-size: 10.5px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      transition: all 0.2s;
+    }
+    .solar-tab-btn.active {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.3), rgba(234, 88, 12, 0.4));
+      color: #fef08a;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(251, 191, 36, 0.5);
+    }
+    .solar-tab-btn.active.night {
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.25), rgba(99, 102, 241, 0.35));
+      color: #bae6fd;
+      border: 1px solid rgba(56, 189, 248, 0.5);
+    }
+    .solar-quick-times {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 4px;
+    }
+    .time-chip-btn {
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: #cbd5e1;
+      padding: 4px 2px;
+      border-radius: 4px;
+      font-size: 9.5px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.15s;
+    }
+    .time-chip-btn:hover {
+      background: rgba(56, 189, 248, 0.18);
+      border-color: #38bdf8;
+      color: #fff;
+    }
+    .time-chip-btn.active {
+      background: rgba(245, 158, 11, 0.25);
+      border-color: #f59e0b;
+      color: #fef08a;
+      font-weight: 800;
+    }
+    .solar-slider-row {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .solar-slider-header {
+      display: flex;
+      justify-content: space-between;
+      color: #94a3b8;
+      font-size: 10px;
+    }
+    .solar-slider-val {
+      color: #38bdf8;
+      font-weight: 700;
+      font-family: monospace;
+    }
+    .solar-range-input {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 5px;
+      border-radius: 3px;
+      background: #1e293b;
+      outline: none;
+      transition: background 0.2s;
+    }
+    .solar-range-input::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 13px;
+      height: 13px;
+      border-radius: 50%;
+      background: #f59e0b;
+      cursor: pointer;
+      box-shadow: 0 0 6px #f59e0b;
+      transition: transform 0.1s;
+    }
+    .solar-range-input::-webkit-slider-thumb:hover {
+      transform: scale(1.25);
+    }
+    .solar-tip-drag {
+      background: rgba(56, 189, 248, 0.08);
+      border: 1px dashed rgba(56, 189, 248, 0.3);
+      border-radius: 5px;
+      padding: 5px 8px;
+      font-size: 9.5px;
+      color: #7dd3fc;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      line-height: 1.35;
+    }
+
+  
+    /* =====================================================================
+       TỐI ƯU HÓA ĐẶC BIỆT CHO IPHONE VÀ MÀN HÌNH DỌC (PORTRAIT MOBILE)
+       ===================================================================== */
+    :root {
+      --sat: env(safe-area-inset-top, 0px);
+      --sab: env(safe-area-inset-bottom, 0px);
+      --sal: env(safe-area-inset-left, 0px);
+      --sar: env(safe-area-inset-right, 0px);
+    }
+
+    /* KHÓA CUỘN NẢY TRANG SAFARI IOS KHI THAO TÁC 3D */
+    html, body {
+      overscroll-behavior: none;
+      -webkit-touch-callout: none;
+      touch-action: none;
+    }
+
+    #webgl-canvas-container canvas {
+      touch-action: none !important;
+    }
+
+    /* NÚT TAM GIÁC MỞ PANEL Ở 2 CẠNH MÀN HÌNH (CHUẨN TOUCH TARGET IPHONE) */
+    .edge-toggle-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 99;
+      width: 32px;
+      height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 800;
+      background: rgba(8, 18, 32, 0.94);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.75);
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    .edge-left {
+      left: 0;
+      border-radius: 0 12px 12px 0;
+      border: 1.5px solid rgba(56, 189, 248, 0.45);
+      border-left: none;
+      color: #38bdf8;
+      box-shadow: 4px 0 16px rgba(56, 189, 248, 0.25);
+    }
+    .edge-left:hover, .edge-left:active {
+      width: 38px;
+      background: rgba(14, 165, 233, 0.25);
+      color: #fff;
+    }
+    .edge-right {
+      right: 0;
+      border-radius: 12px 0 0 12px;
+      border: 1.5px solid rgba(251, 191, 36, 0.45);
+      border-right: none;
+      color: #fbbf24;
+      box-shadow: -4px 0 16px rgba(251, 191, 36, 0.25);
+    }
+    .edge-right:hover, .edge-right:active {
+      width: 38px;
+      background: rgba(245, 158, 11, 0.25);
+      color: #fff;
+    }
+
+    /* HIỆU ỨNG NHÁY SÁNG NÚT TAM GIÁC KHI CHỌN MỘ */
+    .edge-toggle-btn.pulse-notify {
+      animation: edgePulse 0.5s ease-in-out 3;
+    }
+    @keyframes edgePulse {
+      0%, 100% { transform: translateY(-50%) scale(1); filter: brightness(1); }
+      50% { transform: translateY(-50%) scale(1.22); filter: brightness(1.7); box-shadow: 0 0 24px #fbbf24; }
+    }
+
+    .mobile-header-toggle {
+      display: none;
+    }
+
+    /* RESPONSIVE CHO MÀN HÌNH DỌC / ĐIỆN THOẠI IPHONE (WIDTH <= 768px) */
+    @media (max-width: 768px) {
+      /* HEADER THU GỌN GỌN GÀNG TRÊN MÀN HÌNH DỌC */
+      header.hud-header {
+        top: max(8px, env(safe-area-inset-top));
+        left: 8px;
+        right: 8px;
+        height: auto;
+        min-height: 38px;
+        padding: 4px 10px;
+        border-radius: 12px;
+        gap: 6px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 92;
+      }
+
+      /* TRẠNG THÁI THU GỌN MẶC ĐỊNH */
+      header.hud-header.mobile-collapsed {
+        height: 38px;
+        overflow: hidden;
+        background: rgba(6, 14, 26, 0.90);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.7);
+      }
+
+      header.hud-header.mobile-collapsed .header-actions {
+        display: none !important;
+      }
+
+      .mobile-header-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(56, 189, 248, 0.15);
+        border: 1px solid rgba(56, 189, 248, 0.4);
+        color: #38bdf8;
+        border-radius: 6px;
+        width: 28px;
+        height: 28px;
+        font-size: 13px;
+        cursor: pointer;
+        flex-shrink: 0;
+      }
+
+      .brand-section {
+        gap: 6px;
+      }
+      .brand-badge {
+        width: 26px;
+        height: 26px;
+        font-size: 14px;
+      }
+      .brand-text h1 {
+        font-size: 11px;
+        letter-spacing: 0.3px;
+        white-space: nowrap;
+      }
+      .brand-text p {
+        display: none !important;
+      }
+
+      /* KHI BẤM BUNG HEADER */
+      header.hud-header:not(.mobile-collapsed) {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 8px 10px;
+        background: rgba(6, 14, 26, 0.96);
+      }
+      header.hud-header:not(.mobile-collapsed) .header-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+        margin-top: 6px;
+        padding-top: 6px;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+      }
+      header.hud-header:not(.mobile-collapsed) .header-actions .btn {
+        padding: 5px 8px;
+        font-size: 10.5px;
+        flex: 1 1 calc(50% - 5px);
+        justify-content: center;
+      }
+
+      /* BẢNG SOLAR HUD THU NHỎ TRÊN MOBILE */
+      .solar-hud-card {
+        top: max(50px, calc(env(safe-area-inset-top) + 44px));
+        right: 8px;
+        max-width: calc(100vw - 16px);
+      }
+      .solar-hud-card.minimized {
+        top: max(50px, calc(env(safe-area-inset-top) + 44px));
+        right: 8px;
+        padding: 5px 10px;
+        border-radius: 20px;
+        background: rgba(8, 18, 30, 0.94);
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.65);
+      }
+
+      /* HAI SIDEBAR BÊN TRÁI VÀ PHẢI */
+      .sidebar-panel {
+        top: max(50px, calc(env(safe-area-inset-top) + 44px));
+        bottom: max(68px, calc(env(safe-area-inset-bottom) + 60px));
+        width: calc(100vw - 24px);
+        max-width: 340px;
+        border-radius: 14px;
+        z-index: 98;
+      }
+      .sidebar-left {
+        left: 12px;
+      }
+      .sidebar-right {
+        right: 12px;
+      }
+      .sidebar-left.collapsed {
+        transform: translateX(-120%);
+      }
+      .sidebar-right.collapsed {
+        transform: translateX(120%);
+      }
+
+      /* THANH BOTTOM BAR DƯỚI ĐÁY */
+      .hud-bottom-bar {
+        bottom: max(10px, env(safe-area-inset-bottom));
+        padding: 4px 8px;
+        gap: 5px;
+        border-radius: 30px;
+        background: rgba(6, 14, 26, 0.92);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(56, 189, 248, 0.35);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.75);
+      }
+      .hud-bottom-bar .btn {
+        padding: 6px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+      }
+      .hud-bottom-bar span.btn-label {
+        display: none !important;
+      }
+    }
+
+  </style>
+</head>
+<body>
+
+  <div id="webgl-canvas-container"></div>
+
+  <svg id="measure-reticle" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="2">
+    <circle cx="12" cy="12" r="5" stroke-dasharray="2 2"/>
+    <line x1="12" y1="2" x2="12" y2="7"/>
+    <line x1="12" y1="17" x2="12" y2="22"/>
+    <line x1="2" y1="12" x2="7" y2="12"/>
+    <line x1="17" y1="12" x2="22" y2="12"/>
+  </svg>
+
+  <!-- HEADER HUD -->
+  
+  <!-- WIDGET ĐIỀU KHIỂN MẶT TRỜI / MẶT TRĂNG & TỰ DO KÉO ĐỔ BÓNG 3D -->
+  <div class="solar-hud-card minimized" id="solarHudPanel">
+    <div class="solar-header" onclick="toggleSolarHudMinimize()">
+      <div class="solar-header-title">
+        <span class="solar-icon-spin" id="solarIconHeader">☀️</span>
+        <span id="solarTitleHeader">MẶT TRỜI & ĐỔ BÓNG 3D</span>
+      </div>
+      <button class="solar-toggle-btn" id="btnMinMaxSolar">_</button>
+    </div>
+
+    <div class="solar-body">
+      <!-- CHUYỂN CHẾ ĐỘ NGÀY / ĐÊM -->
+      <div class="solar-mode-tabs">
+        <button class="solar-tab-btn active" id="btnTabDay" onclick="setCelestialMode('day')">
+          <span>☀️</span> Ban Ngày
+        </button>
+        <button class="solar-tab-btn" id="btnTabNight" onclick="setCelestialMode('night')">
+          <span>🌙</span> Ban Đêm
+        </button>
+      </div>
+
+      <!-- CHỌN NHANH GIỜ TRONG NGÀY -->
+      <div class="solar-quick-times">
+        <button class="time-chip-btn" onclick="applyPresetTime(6, 12, '06:00')">🌅 6h Bình Minh</button>
+        <button class="time-chip-btn active" onclick="applyPresetTime(45, 52, '09:00')">☀️ 9h Sáng</button>
+        <button class="time-chip-btn" onclick="applyPresetTime(180, 80, '12:00')">☀️ 12h Trưa</button>
+        <button class="time-chip-btn" onclick="applyPresetTime(225, 45, '15:30')">🌇 15h Chiều</button>
+        <button class="time-chip-btn" onclick="applyPresetTime(265, 10, '17:30')">🌆 17h Hoàng Hôn</button>
+        <button class="time-chip-btn" onclick="applyPresetTime(45, 60, '21:00')">🌙 21h Đêm Trăng</button>
+      </div>
+
+      <!-- THANH TRƯỢT GÓC PHƯƠNG VỊ (HƯỚNG NẮNG) -->
+      <div class="solar-slider-row">
+        <div class="solar-slider-header">
+          <span>🧭 Hướng Nắng (Phương Vị)</span>
+          <span class="solar-slider-val" id="valAzimuth">45° (Đông Bắc)</span>
+        </div>
+        <input type="range" class="solar-range-input" id="sliderAzimuth" min="0" max="360" value="45" oninput="onSolarSliderInput()">
+      </div>
+
+      <!-- THANH TRƯỢT ĐỘ CAO (BÓNG NGẮN/DÀI) -->
+      <div class="solar-slider-row">
+        <div class="solar-slider-header">
+          <span>📐 Độ Cao Chiếu Nắng</span>
+          <span class="solar-slider-val" id="valElevation">52° (Bóng Vừa)</span>
+        </div>
+        <input type="range" class="solar-range-input" id="sliderElevation" min="6" max="85" value="52" oninput="onSolarSliderInput()">
+      </div>
+
+      <!-- HƯỚNG DẪN KÉO TRỰC TIẾP TRÊN TRỜI -->
+      <div class="solar-tip-drag">
+        <span>👆</span>
+        <span><b>Mẹo tương tác:</b> Nhấp chuột trực tiếp lên quả cầu Mặt Trời/Mặt Trăng trên trời và kéo rê để đổi hướng bóng đổ tức thì!</span>
+      </div>
+    </div>
+  </div>
+
+  <header class="hud-header mobile-collapsed" id="mainHudHeader">
+    <div class="brand-section">
+      <div class="brand-badge">🏛️</div>
+      <div class="brand-text">
+        <h1>LĂNG MỘ ĐÁ <span class="highlight">3D</span></h1>
+        <p>
+          Khuôn viên: <span class="badge-spec">7.35m × 11.00m</span>
+          Chất liệu: <span class="badge-spec" style="color:#34d399;">Đá Xanh Ninh Bình</span>
+          Hiện trạng: <span class="badge-spec" style="color:#fbbf24;">3 Mộ Đã Xây • 26 Mộ Quy Hoạch</span>
+        </p>
+      </div>
+    </div>
+
+    <!-- NÚT THU PHÓNG HEADER TRÊN ĐIỆN THOẠI IPHONE -->
+    <button class="mobile-header-toggle" id="btnToggleMobileHeader" onclick="toggleMobileHeaderCompact()" title="Thu nhỏ / Mở rộng thanh điều khiển trên cùng">☰</button>
+
+    <div class="header-actions">
+      <!-- QUAY VỀ BẢN VẼ 2D CAD -->
+      <a href="QUY HOẠCH LĂNG MỘ.html" class="btn btn-cad-return" title="Quay về Bản Vẽ CAD 2D Đầy Đủ">
+        <span>📐</span> Bản Vẽ CAD 2D
+      </a>
+
+      <div class="divider-v"></div>
+
+      <!-- NÚT BẬT / TẮT TOÀN BỘ NHÃN MỘ (1-CLICK TOGGLE ALL LABELS) -->
+      <button class="btn active" id="btnToggleAllLabels" onclick="toggleAllLabelsGlobal()" title="Bật / Tắt hiển thị toàn bộ Nhãn Tên Mộ Bay 3D để tập trung ngắm phối cảnh đá như thật (Phím tắt: L)">
+        <span id="iconLabelsBtn">🏷️</span> <span id="labelLabelsBtn" class="btn-label">Nhãn Mộ: BẬT</span>
+      </button>
+
+      <!-- NÚT LỌC MỘ: CHỈ XEM 3 MỘ ĐÃ XÂY / XEM TOÀN BỘ 29 MỘ -->
+      <button class="btn btn-gold" id="btnToggleOnlyCompleted" onclick="toggleOnlyCompletedMode()" title="Chuyển chế độ hiển thị: Chỉ xem 3 Mộ đã hoàn thiện (Mộ Ông, Mộ Bà, Mộ 07) hoặc xem trọn bộ 29 Mộ quy hoạch">
+        <span id="iconCompletedMode">🌟</span> <span id="labelCompletedMode" class="btn-label">3 Mộ Đã Xây (Hiện Trạng)</span>
+      </button>
+
+      <!-- CHẾ ĐỘ X-RAY MÓNG THI CÔNG -->
+      <button class="btn" id="btnToggleXRay" onclick="toggleXRayFoundation()" title="Bật/Tắt chế độ X-Ray: Làm mờ thân đá để nhìn rõ toàn bộ cốt móng bê tông âm đất">
+        <span>🏗️</span> <span class="btn-label">X-Ray Móng BTCT</span>
+      </button>
+
+      <!-- THƯỚC ĐO 3D TƯƠNG TÁC -->
+      <button class="btn" id="btnTapeMeasure" onclick="toggleMeasureTool()" title="Bật Thước Đo 3D: Nhấp chọn 2 điểm trong không gian để đo khoảng cách thực">
+        <span>📏</span> <span class="btn-label">Thước Đo 3D</span>
+      </button>
+
+      <!-- BẢNG THỐNG KÊ KHỐI LƯỢNG -->
+      <button class="btn" onclick="openQuantitiesModal()" title="Xem Thống Kê Chi Tiết Khối Lượng Đá & Bê Tông">
+        <span>📊</span> <span class="btn-label">Khối Lượng</span>
+      </button>
+
+      <!-- CHỤP ẢNH 3D SIÊU NÉT -->
+      <button class="btn" onclick="capture3DScreenshot()" title="Chụp ảnh 3D phân giải cao">
+        <span>📷</span> Chụp 3D
+      </button>
+
+      <div class="divider-v"></div>
+
+      <!-- BẬT/TẮT 2 BẢNG CÔNG CỤ -->
+      <button class="btn" onclick="toggleSidebar('left')" title="Hiện/Ẩn Bảng Lớp & Cài Đặt">⚙️ Lớp</button>
+      <button class="btn" onclick="toggleSidebar('right')" title="Hiện/Ẩn Bảng Thông Số 3D">🎯 Chi Tiết</button>
+    </div>
+  </header>
+
+  <!-- TOGGLE SIDEBAR NỔI HAI BÊN (NÚT TAM GIÁC CHUẨN TOUCH IPHONE) -->
+  <div class="edge-toggle-btn edge-left" id="btnEdgeLeft" onclick="toggleSidebar('left')" title="Mở Bảng Lớp Trái (Nhấn nút tam giác)">▶</div>
+  <div class="edge-toggle-btn edge-right" id="btnEdgeRight" onclick="toggleSidebar('right')" title="Mở Bảng Thông Số Phải (Nhấn nút tam giác)">◀</div>
+
+  <!-- WALKTHROUGH MODE HUD -->
+  <div class="walk-hud" id="walkHudNotice">
+    <span>🚶 CHẾ ĐỘ ĐI DẠO THỰC TẾ ẢO:</span>
+    <span>Dùng phím <span class="key-badge">W</span> <span class="key-badge">A</span> <span class="key-badge">S</span> <span class="key-badge">D</span> hoặc Mũi Tên để đi • Kéo chuột để nhìn</span>
+    <button class="btn btn-gold" style="padding:2px 8px; font-size:10px;" onclick="setNavigationMode('orbit')">Thoát (ESC)</button>
+  </div>
+
+  <div id="mobile-joystick-zone">
+    <div class="joystick-base" id="joystickBase">
+      <div class="joystick-thumb" id="joystickThumb"></div>
+    </div>
+  </div>
+
+  <!-- SIDEBAR TRÁI: QUẢN LÝ LỚP & ĐIỀU HƯỚNG MÔI TRƯỜNG -->
+  <aside class="sidebar-panel sidebar-left collapsed" id="sidebarLeft">
+    <div class="panel-header">
+      <h2><span class="icon">🎛️</span> LỚP & ĐIỀU HÀNH 3D</h2>
+      <button class="btn" style="padding:2px 6px; font-size:10px;" onclick="toggleSidebar('left')">✕</button>
+    </div>
+
+    <div class="panel-content">
+      <!-- BỘ MẪU THIẾT KẾ -->
+      <div>
+        <div class="section-title"><span>📐 MẪU QUY HOẠCH</span></div>
+        <select id="select3DPreset" class="btn" style="width:100%; font-size:11px;" onchange="switchPreset(this.value)">
+          <option value="preset2026_pdf" selected>★ Chuẩn PDF: 29 Mộ (Thần Đạo 61.5cm - Khe 10cm)</option>
+          <option value="preset735">★ Mẫu Chuẩn: 29 Mộ (Khe giữa 20cm)</option>
+        </select>
+      </div>
+
+      <!-- QUẢN LÝ BẬT TẮT CÁC LỚP 3D -->
+      <div>
+        <div class="section-title">
+          <span>🗂️ QUẢN LÝ LỚP THÔNG SỐ (LAYERS)</span>
+          <span style="font-size:9px; color:var(--text-muted);">Bật/Tắt tức thì</span>
+        </div>
+
+        <div class="layer-group">
+          <div class="layer-item">
+            <div class="layer-item-left"><span class="icon">🪦</span><span>3 Mộ Đã Hoàn Thiện</span></div>
+            <label class="switch">
+              <input type="checkbox" id="layerToggleCompletedGraves" checked onchange="toggleLayer('completedGraves', this.checked)">
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="layer-item">
+            <div class="layer-item-left"><span class="icon">📐</span><span>26 Vị Trí Mộ Quy Hoạch</span></div>
+            <label class="switch">
+              <input type="checkbox" id="layerTogglePlannedGraves" checked onchange="toggleLayer('plannedGraves', this.checked)">
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="layer-item">
+            <div class="layer-item-left"><span class="icon">🏗️</span><span>Hệ Móng Bê Tông Cốt Thép</span></div>
+            <label class="switch">
+              <input type="checkbox" id="layerToggleFoundation" checked onchange="toggleLayer('foundation', this.checked)">
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="layer-item">
+            <div class="layer-item-left"><span class="icon">🏛️</span><span>Lăng Thờ 3 Mái & Cuốn Thư</span></div>
+            <label class="switch">
+              <input type="checkbox" id="layerToggleSanctuary" checked onchange="toggleLayer('sanctuary', this.checked)">
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="layer-item">
+            <div class="layer-item-left"><span class="icon">🧱</span><span>Tường Rào Đá & Cổng Tứ Trụ</span></div>
+            <label class="switch">
+              <input type="checkbox" id="layerToggleWalls" checked onchange="toggleLayer('walls', this.checked)">
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="layer-item">
+            <div class="layer-item-left"><span class="icon">🏷️</span><span>Nhãn Tên Mộ Bay 3D</span></div>
+            <label class="switch">
+              <input type="checkbox" id="layerToggleLabels" checked onchange="toggleLabelsFromSwitch(this.checked)">
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="layer-item">
+            <div class="layer-item-left"><span class="icon">📏</span><span>Khoảng Cách 3D Liền Kề</span></div>
+            <label class="switch">
+              <input type="checkbox" id="layerToggleDimensions" checked onchange="toggleLayer('dimensions', this.checked)">
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="layer-item">
+            <div class="layer-item-left"><span class="icon">⛩️</span><span>2 Trục Thần Đạo & Sân Lễ</span></div>
+            <label class="switch">
+              <input type="checkbox" id="layerToggleSacred" checked onchange="toggleLayer('sacred', this.checked)">
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- BỘ 12 GÓC NHÌN PHỐI CẢNH NGHỆ THUẬT & KỸ THUẬT (BENTO GRID) -->
+      <div>
+        <div class="section-title"><span>🎥 12 GÓC NHÌN PHỐI CẢNH (CAMERA)</span></div>
+        <div class="cam-grid">
+          <button class="cam-btn active" id="btnCamOverview" onclick="setCameraPreset('overview')">
+            <span>🦅</span> Toàn Cảnh 45°
+          </button>
+          <button class="cam-btn" id="btnCamTop" onclick="setCameraPreset('top')">
+            <span>📐</span> Mặt Bằng Đỉnh
+          </button>
+          <button class="cam-btn" id="btnCamFrontElevation" onclick="setCameraPreset('frontElevation')">
+            <span>🏛️</span> Mặt Đứng Chính
+          </button>
+          <button class="cam-btn" id="btnCamGate" onclick="setCameraPreset('gate')">
+            <span>⛩️</span> Cổng Tứ Trụ
+          </button>
+          <button class="cam-btn" id="btnCamAltar" onclick="setCameraPreset('altar')">
+            <span>🏛️</span> Lăng Thờ 3 Mái
+          </button>
+          <button class="cam-btn" id="btnCamGrandparents" onclick="setCameraPreset('grandparents')">
+            <span>🪦</span> Mộ Ông & Bà
+          </button>
+          <button class="cam-btn" id="btnCamGrave07" onclick="setCameraPreset('grave07')">
+            <span>🪦</span> Mộ 07 (Đã Xây)
+          </button>
+          <button class="cam-btn" id="btnCamScreen" onclick="setCameraPreset('screen')">
+            <span>📜</span> Cuốn Thư Phúc
+          </button>
+          <button class="cam-btn" id="btnCamLeftAxis" onclick="setCameraPreset('leftAxis')">
+            <span>🚶</span> Thần Đạo Tả
+          </button>
+          <button class="cam-btn" id="btnCamRightAxis" onclick="setCameraPreset('rightAxis')">
+            <span>🚶</span> Thần Đạo Hữu
+          </button>
+          <button class="cam-btn" id="btnCamCinematic" onclick="setCameraPreset('cinematic')">
+            <span>🎬</span> Điện Ảnh 30°
+          </button>
+          <button class="cam-btn" id="btnCamSunsetGlow" onclick="setCameraPreset('sunsetGlow')">
+            <span>🌅</span> Hoàng Hôn Đỏ
+          </button>
+        </div>
+      </div>
+
+      <!-- MÔI TRƯỜNG ÁNH SÁNG -->
+      <div>
+        <div class="section-title"><span>☀️ MÔI TRƯỜNG & ÁNH SÁNG</span></div>
+        <div class="env-grid">
+          <button class="env-btn active" id="btnEnvDay" onclick="setLightingMode('day')">
+            <span>☀️</span> Ban Ngày Hoàng Gia
+          </button>
+          <button class="env-btn" id="btnEnvSunset" onclick="setLightingMode('sunset')">
+            <span>🌅</span> Chiều Hoàng Hôn
+          </button>
+          <button class="env-btn" id="btnEnvNight" onclick="setLightingMode('night')">
+            <span>🌙</span> Đêm Soi Đèn Đá
+          </button>
+          <button class="env-btn" id="btnEnvCad" onclick="setLightingMode('cad')">
+            <span>📐</span> Kỹ Thuật CAD Xanh
+          </button>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- SIDEBAR PHẢI: BẢNG TRA CỨU THÔNG SỐ 3D CHI TIẾT (INSPECTOR) -->
+  <aside class="sidebar-panel sidebar-right collapsed" id="sidebarRight">
+    <div class="panel-header">
+      <h2><span class="icon">🔬</span> THÔNG SỐ CẤU KIỆN 3D</h2>
+      <button class="btn" style="padding:2px 6px; font-size:10px;" onclick="toggleSidebar('right')">✕</button>
+    </div>
+
+    <div class="panel-content" id="inspectorContent">
+      <div class="inspect-card" id="cardGeneralSite">
+        <div class="inspect-title">
+          <span>KHUÔN VIÊN TỔNG THỂ</span>
+          <span class="inspect-badge">7.35m × 11.00m</span>
+        </div>
+        <div class="prop-row">
+          <span class="prop-label">Chất liệu chính:</span>
+          <span class="prop-value" style="color:#34d399;">Đá Xanh Rêu Ninh Bình</span>
+        </div>
+        <div class="prop-row">
+          <span class="prop-label">Mộ đã hoàn thiện (3):</span>
+          <span class="prop-value" style="color:var(--accent-gold);">Mộ Ông, Mộ Bà, Mộ 07</span>
+        </div>
+        <div class="prop-row">
+          <span class="prop-label">Mộ quy hoạch (26):</span>
+          <span class="prop-value" style="color:var(--accent-cyan);">Định vị đá + Móng BTCT</span>
+        </div>
+        <div class="prop-row">
+          <span class="prop-label">Lăng Thờ Đá Chính:</span>
+          <span class="prop-value">3 Mái Đao Cong (5.2m)</span>
+        </div>
+        <div class="prop-row">
+          <span class="prop-label">Cổng Chính Vào:</span>
+          <span class="prop-value good-fengshui">110.0 cm (Đăng Khoa)</span>
+        </div>
+        <div class="prop-row">
+          <span class="prop-label">Sân lễ bái trước lăng:</span>
+          <span class="prop-value" style="color:var(--accent-gold)">80.0 cm</span>
+        </div>
+        <div style="font-size:11px; color:var(--text-muted); line-height:1.4; margin-top:4px;">
+          💡 <em>Nhấp chuột trực tiếp vào bất kỳ ngôi mộ hoặc cấu kiện: Hệ thống sẽ tự động vẽ thước đo 3D gióng cự ly 4 hướng thực tế ngay trên bản vẽ!</em>
+        </div>
+      </div>
+
+      <div class="inspect-card" id="cardSelectedObject" style="display:none;">
+        <div class="inspect-title">
+          <span id="inspectObjName">MỘ ÔNG</span>
+          <span class="inspect-badge" id="inspectObjType">ÔNG BÀ</span>
+        </div>
+
+        <div class="prop-row">
+          <span class="prop-label">Trạng thái thi công:</span>
+          <span class="prop-value" id="inspectObjStatus">★ ĐÃ HOÀN THIỆN</span>
+        </div>
+
+        <div class="prop-row">
+          <span class="prop-label">Tọa độ CAD (X, Y):</span>
+          <span class="prop-value" id="inspectObjCoords">X=372.5, Y=192.0 cm</span>
+        </div>
+
+        <div class="prop-row">
+          <span class="prop-label">Kích thước Đá (D×R×C):</span>
+          <span class="prop-value" id="inspectStoneSize">147 × 89 × 92 cm</span>
+        </div>
+
+        <div class="prop-row">
+          <span class="prop-label">Móng Bê Tông (D×R×S):</span>
+          <span class="prop-value" id="inspectFoundationSize">167 × 109 × 50 cm</span>
+        </div>
+
+        <div class="prop-row">
+          <span class="prop-label">Thước Lỗ Ban 38.8cm:</span>
+          <span class="prop-value good-fengshui" id="inspectFengShui">Thêm Đinh - Lục Hợp</span>
+        </div>
+
+        <div class="prop-row">
+          <span class="prop-label">Khối lượng đá ước tính:</span>
+          <span class="prop-value" id="inspectStoneWeight">~1.85 Tấn</span>
+        </div>
+
+        <div style="margin-top:4px;">
+          <div class="section-title">
+            <span>📐 CỰ LY 4 HƯỚNG THỜI GIAN THỰC</span>
+            <span style="font-size:9px; color:#34d399;">(Đang gióng trên 3D)</span>
+          </div>
+          <div class="clearance-compass">
+            <div class="compass-cell cell-top" id="clearanceTop">↑ Sân Lễ 80cm</div>
+            <div class="compass-cell cell-left" id="clearanceLeft">← Khe 10cm</div>
+            <div class="compass-cell cell-center" id="clearanceCenter">TÂM ĐIỂM</div>
+            <div class="compass-cell cell-right" id="clearanceRight">Thần Đạo 61.5cm →</div>
+            <div class="compass-cell cell-bottom" id="clearanceBottom">↓ Hàng 2: 30cm</div>
+          </div>
+        </div>
+
+        <div style="display:flex; gap:6px; margin-top:8px;">
+          <button class="btn btn-gold" style="flex:1; justify-content:center;" onclick="focusCameraOnSelected()">
+            <span>🎯</span> Bay Tới Đối Tượng
+          </button>
+          <button class="btn" style="padding:6px 10px;" onclick="deselectCurrentObject()">
+            Bỏ Chọn
+          </button>
+        </div>
+      </div>
+
+      <!-- DANH MỤC 29 NGÔI MỘ PHÂN TÁCH HOÀN THIỆN & QUY HOẠCH -->
+      <div>
+        <div class="section-title">
+          <span>📋 DANH MỤC 29 NGÔI MỘ</span>
+          <span style="font-size:9px; color:var(--text-muted);">Bấm để chọn</span>
+        </div>
+        <div id="graveQuickList" style="display:flex; flex-direction:column; gap:4px; max-height:260px; overflow-y:auto; padding-right:4px;"></div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- HUD ĐIỀU HÀNH DƯỚI CÙNG -->
+  <div class="hud-bottom-bar">
+    <button class="btn active" id="btnNavOrbit" onclick="setNavigationMode('orbit')" title="Xoay chuột tự do 360 độ quanh khuôn viên">
+      <span>🛰️</span> <span class="btn-label">Xoay Toàn Cảnh</span>
+    </button>
+    <button class="btn" id="btnNavWalk" onclick="setNavigationMode('walk')" title="Đi dạo thực tế ảo góc nhìn người thật">
+      <span>🚶</span> <span class="btn-label">Đi Dạo Thực Tế</span>
+    </button>
+    <div class="divider-v"></div>
+    <button class="btn" id="btnAutoRotate" onclick="toggleAutoRotate()" title="Bật/Tắt tự động xoay 360 độ">
+      <span>🔄</span> <span class="btn-label">Tự Xoay 360°</span>
+    </button>
+    <button class="btn" onclick="resetDefaultView()" title="Đặt lại góc nhìn mặc định">
+      <span>🎯</span> <span class="btn-label">Về Gốc</span>
+    </button>
+  </div>
+
+  <!-- MODAL THỐNG KÊ KHỐI LƯỢNG -->
+  <div class="modal-overlay" id="quantitiesModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3><span>📊</span> BẢNG THỐNG KÊ KHỐI LƯỢNG CÔNG TRÌNH (7.35m × 11.00m)</h3>
+        <button class="btn" onclick="closeQuantitiesModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <table class="table-data">
+          <thead>
+            <tr>
+              <th>Hạng Mục Cấu Kiện</th>
+              <th>Trạng Thái</th>
+              <th>Kích Thước Đá (cm)</th>
+              <th>Khối Lượng Đá (m³)</th>
+              <th>Bê Tông Móng (m³)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="background:rgba(245, 158, 11, 0.12);">
+              <td><strong>Mộ Ông & Mộ Bà</strong></td>
+              <td><span style="color:#fbbf24; font-weight:700;">★ Đã hoàn thiện</span></td>
+              <td>89 × 147 × 92</td>
+              <td>~2.40 m³</td>
+              <td>~1.82 m³</td>
+            </tr>
+            <tr style="background:rgba(245, 158, 11, 0.12);">
+              <td><strong>Mộ Thứ 7 (Mộ 07)</strong></td>
+              <td><span style="color:#fbbf24; font-weight:700;">★ Đã hoàn thiện</span></td>
+              <td>81 × 127 × 78</td>
+              <td>~0.80 m³</td>
+              <td>~0.74 m³</td>
+            </tr>
+            <tr>
+              <td><strong>26 Mộ Quy Hoạch (Chờ xây)</strong></td>
+              <td><span style="color:#38bdf8;">📐 Định vị móng & đá</span></td>
+              <td>81×127, 61×107, 50×80</td>
+              <td>Quy hoạch</td>
+              <td>~14.50 m³ (BTCT sẵn)</td>
+            </tr>
+            <tr>
+              <td><strong>Lăng Thờ Đá (3 Mái Đao Cong)</strong></td>
+              <td><span style="color:#34d399; font-weight:700;">Đá Xanh Ninh Bình</span></td>
+              <td>520 × 107 × 340</td>
+              <td>~8.50 m³</td>
+              <td>~1.07 m³</td>
+            </tr>
+            <tr>
+              <td><strong>Cuốn Thư Đá (Chữ Phúc)</strong></td>
+              <td><span style="color:#34d399; font-weight:700;">Đá Xanh Ninh Bình</span></td>
+              <td>147 × 20 × 125</td>
+              <td>~0.37 m³</td>
+              <td>~0.33 m³</td>
+            </tr>
+            <tr>
+              <td><strong>Cổng Tứ Trụ & Tường Rào Đá</strong></td>
+              <td><span style="color:#34d399; font-weight:700;">Đá Xanh Khối</span></td>
+              <td>Chu vi ~34m, Cao 85cm</td>
+              <td>~7.60 m³</td>
+              <td>~5.96 m³</td>
+            </tr>
+            <tr style="background:rgba(16, 185, 129, 0.15); font-weight:800; color:#34d399;">
+              <td>TỔNG CỘNG CÔNG TRÌNH</td>
+              <td colspan="2">Khuôn viên 80.85m² chuẩn phong thủy</td>
+              <td>~33.16 m³ Đá Xanh</td>
+              <td>~24.72 m³ BTCT</td>
+            </tr>
+          </tbody>
+        </table>
+        <div style="margin-top:16px; display:flex; justify-content:flex-end;">
+          <button class="btn btn-gold" onclick="closeQuantitiesModal()">Đóng Bảng</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-notify" id="toastNotify">Thông báo</div>
+
+  <!-- JAVASCRIPT THREE.JS ENGINE -->
+  <script>
+    // =====================================================================
+    // 1. DATA PRESETS (TỌA ĐỘ CHUẨN XÁC CAD 100%)
+    // =====================================================================
+    const PRESET_735_1100_PDF2026 = [
+      { id: 'm1_01', name: 'MỘ 01', row: 1, type: 'con', x: 40.0, y: 212.0, width: 81, height: 127, depth: 76, fengshui: 'Tiến Bảo' },
+      { id: 'm1_02', name: 'MỘ 02', row: 1, type: 'con', x: 131.0, y: 212.0, width: 81, height: 127, depth: 76, fengshui: 'Đăng Khoa' },
+      { id: 'm1_03', name: 'MỘ BÀ', row: 1, type: 'ongba', x: 273.5, y: 192.0, width: 89, height: 147, depth: 92, fengshui: 'Lục Hợp (Đại Cát)' },
+      { id: 'm1_04', name: 'MỘ ÔNG', row: 1, type: 'ongba', x: 372.5, y: 192.0, width: 89, height: 147, depth: 92, fengshui: 'Thêm Đinh (Vượng Tài)' },
+      { id: 'm1_05', name: 'MỘ 05', row: 1, type: 'con', x: 523.0, y: 212.0, width: 81, height: 127, depth: 76, fengshui: 'Tiến Bảo' },
+      { id: 'm1_06', name: 'MỘ 06', row: 1, type: 'con', x: 614.0, y: 212.0, width: 81, height: 127, depth: 76, fengshui: 'Đăng Khoa' },
+
+      { id: 'm2_07', name: 'MỘ 07', row: 2, type: 'con', x: 40.0, y: 369.0, width: 81, height: 127, depth: 76, fengshui: 'Tiến Bảo' },
+      { id: 'm2_08', name: 'MỘ 08', row: 2, type: 'con', x: 131.0, y: 369.0, width: 81, height: 127, depth: 76, fengshui: 'Đăng Khoa' },
+      { id: 'm2_09', name: 'MỘ 09', row: 2, type: 'con', x: 281.5, y: 369.0, width: 81, height: 127, depth: 76, fengshui: 'Tài Vượng' },
+      { id: 'm2_10', name: 'MỘ 10', row: 2, type: 'con', x: 372.5, y: 369.0, width: 81, height: 127, depth: 76, fengshui: 'Tài Vượng' },
+      { id: 'm2_11', name: 'MỘ 11', row: 2, type: 'chau', x: 543.0, y: 389.0, width: 61, height: 107, depth: 65, fengshui: 'Quý Tử' },
+      { id: 'm2_12', name: 'MỘ 12', row: 2, type: 'chau', x: 614.0, y: 389.0, width: 61, height: 107, depth: 65, fengshui: 'Quan Lộc' },
+
+      { id: 'm3_13', name: 'MỘ 13', row: 3, type: 'chau', x: 60.0, y: 526.0, width: 61, height: 107, depth: 65, fengshui: 'Quý Tử' },
+      { id: 'm3_14', name: 'MỘ 14', row: 3, type: 'chau', x: 131.0, y: 526.0, width: 61, height: 107, depth: 65, fengshui: 'Quan Lộc' },
+      { id: 'm3_15', name: 'MỘ 15', row: 3, type: 'chau', x: 301.5, y: 526.0, width: 61, height: 107, depth: 65, fengshui: 'Quý Tử' },
+      { id: 'm3_16', name: 'MỘ 16', row: 3, type: 'chau', x: 372.5, y: 526.0, width: 61, height: 107, depth: 65, fengshui: 'Quan Lộc' },
+      { id: 'm3_17', name: 'MỘ 17', row: 3, type: 'chau', x: 543.0, y: 526.0, width: 61, height: 107, depth: 65, fengshui: 'Quý Tử' },
+      { id: 'm3_18', name: 'MỘ 18', row: 3, type: 'chau', x: 614.0, y: 526.0, width: 61, height: 107, depth: 65, fengshui: 'Quan Lộc' },
+
+      { id: 'm4_19', name: 'MỘ 19', row: 4, type: 'chau', x: 60.0, y: 663.0, width: 61, height: 107, depth: 65, fengshui: 'Quý Tử' },
+      { id: 'm4_20', name: 'MỘ 20', row: 4, type: 'chau', x: 131.0, y: 663.0, width: 61, height: 107, depth: 65, fengshui: 'Quan Lộc' },
+      { id: 'm4_21', name: 'MỘ 21', row: 4, type: 'chau', x: 301.5, y: 663.0, width: 61, height: 107, depth: 65, fengshui: 'Quý Tử' },
+      { id: 'm4_22', name: 'MỘ 22', row: 4, type: 'chau', x: 372.5, y: 663.0, width: 61, height: 107, depth: 65, fengshui: 'Quan Lộc' },
+      { id: 'm4_23', name: 'MỘ 23', row: 4, type: 'chau', x: 543.0, y: 663.0, width: 61, height: 107, depth: 65, fengshui: 'Quý Tử' },
+      { id: 'm4_24', name: 'MỘ 24', row: 4, type: 'chau', x: 614.0, y: 663.0, width: 61, height: 107, depth: 65, fengshui: 'Quan Lộc' },
+
+      { id: 'm5_25', name: 'MỘ 25', row: 5, type: 'chau', x: 60.0, y: 800.0, width: 61, height: 107, depth: 65, fengshui: 'Quý Tử' },
+      { id: 'm5_26', name: 'MỘ 26', row: 5, type: 'chau', x: 131.0, y: 800.0, width: 61, height: 107, depth: 65, fengshui: 'Quan Lộc' },
+      { id: 'm5_27', name: 'MỘ 27', row: 5, type: 'chau', x: 543.0, y: 800.0, width: 61, height: 107, depth: 65, fengshui: 'Quý Tử' },
+      { id: 'm5_28', name: 'MỘ 28', row: 5, type: 'chau', x: 614.0, y: 800.0, width: 61, height: 107, depth: 65, fengshui: 'Quan Lộc' },
+
+      { id: 'm_nho_goc', name: 'MỘ BÉ', row: 6, type: 'monho', x: 40.0, y: 980.0, width: 50, height: 80, depth: 52, fengshui: 'Đăng Khoa' }
+    ];
+
+    const PRESET_735_1100 = [
+      { id: 'm1_01', name: 'MỘ 01', row: 1, type: 'con', x: 39.0, y: 207.0, width: 81, height: 127, depth: 76, fengshui: 'Tiến Bảo' },
+      { id: 'm1_02', name: 'MỘ 02', row: 1, type: 'con', x: 139.0, y: 207.0, width: 81, height: 127, depth: 76, fengshui: 'Đăng Khoa' },
+      { id: 'm1_03', name: 'MỘ BÀ', row: 1, type: 'ongba', x: 268.5, y: 187.0, width: 89, height: 147, depth: 92, fengshui: 'Lục Hợp' },
+      { id: 'm1_04', name: 'MỘ ÔNG', row: 1, type: 'ongba', x: 377.5, y: 187.0, width: 89, height: 147, depth: 92, fengshui: 'Thêm Đinh' },
+      { id: 'm1_05', name: 'MỘ 05', row: 1, type: 'con', x: 515.0, y: 207.0, width: 81, height: 127, depth: 76, fengshui: 'Tiến Bảo' },
+      { id: 'm1_06', name: 'MỘ 06', row: 1, type: 'con', x: 615.0, y: 207.0, width: 81, height: 127, depth: 76, fengshui: 'Đăng Khoa' },
+
+      { id: 'm2_07', name: 'MỘ 07', row: 2, type: 'con', x: 41.5, y: 364.0, width: 81, height: 127, depth: 76, fengshui: 'Tiến Bảo' },
+      { id: 'm2_08', name: 'MỘ 08', row: 2, type: 'con', x: 144.0, y: 364.0, width: 81, height: 127, depth: 76, fengshui: 'Đăng Khoa' },
+      { id: 'm2_09', name: 'MỘ 09', row: 2, type: 'con', x: 276.5, y: 364.0, width: 81, height: 127, depth: 76, fengshui: 'Tài Vượng' },
+      { id: 'm2_10', name: 'MỘ 10', row: 2, type: 'con', x: 377.5, y: 364.0, width: 81, height: 127, depth: 76, fengshui: 'Tài Vượng' },
+      { id: 'm2_11', name: 'MỘ 11', row: 2, type: 'chau', x: 510.0, y: 364.0, width: 61, height: 107, depth: 65, fengshui: 'Quý Tử' },
+      { id: 'm2_12', name: 'MỘ 12', row: 2, type: 'chau', x: 612.5, y: 364.0, width: 61, height: 107, depth: 65, fengshui: 'Quan Lộc' },
+
+      { id: 'm3_13', name: 'MỘ 13', row: 3, type: 'chau', x: 61.5, y: 521.0, width: 61, height: 107, depth: 65, fengshui: 'Quý Tử' },
+      { id: 'm3_14', name: 'MỘ 14', row: 3, type: 'chau', x: 164.0, y: 521.0, width: 61, height: 107, depth: 65, fengshui: 'Quan Lộc' },
+      { id: 'm3_15', name: 'MỘ 15', row: 3, type: 'chau', x: 296.5, y: 521.0, width: 61, height: 107, depth: 65, fengshui: 'Quý Tử' },
+      { id: 'm3_16', name: 'MỘ 16', row: 3, type: 'chau', x: 377.5, y: 521.0, width: 61, height: 107, depth: 65, fengshui: 'Quan Lộc' },
+      { id: 'm3_17', name: 'MỘ 17', row: 3, type: 'chau', x: 510.0, y: 521.0, width: 61, height: 107, depth: 65, fengshui: 'Quý Tử' },
+      { id: 'm3_18', name: 'MỘ 18', row: 3, type: 'chau', x: 612.5, y: 521.0, width: 61, height: 107, depth: 65, fengshui: 'Quan Lộc' },
+
+      { id: 'm4_19', name: 'MỘ 19', row: 4, type: 'chau', x: 61.5, y: 658.0, width: 61, height: 107, depth: 65, fengshui: 'Quý Tử' },
+      { id: 'm4_20', name: 'MỘ 20', row: 4, type: 'chau', x: 164.0, y: 658.0, width: 61, height: 107, depth: 65, fengshui: 'Quan Lộc' },
+      { id: 'm4_21', name: 'MỘ 21', row: 4, type: 'chau', x: 296.5, y: 658.0, width: 61, height: 107, depth: 65, fengshui: 'Quý Tử' },
+      { id: 'm4_22', name: 'MỘ 22', row: 4, type: 'chau', x: 377.5, y: 658.0, width: 61, height: 107, depth: 65, fengshui: 'Quan Lộc' },
+      { id: 'm4_23', name: 'MỘ 23', row: 4, type: 'chau', x: 510.0, y: 658.0, width: 61, height: 107, depth: 65, fengshui: 'Quý Tử' },
+      { id: 'm4_24', name: 'MỘ 24', row: 4, type: 'chau', x: 612.5, y: 658.0, width: 61, height: 107, depth: 65, fengshui: 'Quan Lộc' },
+
+      { id: 'm5_25', name: 'MỘ 25', row: 5, type: 'chau', x: 61.5, y: 795.0, width: 61, height: 107, depth: 65, fengshui: 'Quý Tử' },
+      { id: 'm5_26', name: 'MỘ 26', row: 5, type: 'chau', x: 164.0, y: 795.0, width: 61, height: 107, depth: 65, fengshui: 'Quan Lộc' },
+      { id: 'm5_27', name: 'MỘ 27', row: 5, type: 'chau', x: 510.0, y: 795.0, width: 61, height: 107, depth: 65, fengshui: 'Quý Tử' },
+      { id: 'm5_28', name: 'MỘ 28', row: 5, type: 'chau', x: 612.5, y: 795.0, width: 61, height: 107, depth: 65, fengshui: 'Quan Lộc' },
+
+      { id: 'm_nho_goc', name: 'MỘ BÉ', row: 6, type: 'monho', x: 30.0, y: 990.0, width: 50, height: 80, depth: 52, fengshui: 'Đăng Khoa' }
+    ];
+
+    const COMPLETED_GRAVE_IDS = ['m1_03', 'm1_04', 'm2_07'];
+    function isCompletedGrave(id) {
+      return COMPLETED_GRAVE_IDS.includes(id);
+    }
+
+    let currentGraves = JSON.parse(JSON.stringify(PRESET_735_1100_PDF2026));
+    let selectedObject3D = null;
+    let isXRayMode = false;
+    let isOnlyCompletedMode = false;
+    let isAllLabelsVisible = true;
+    let isAutoRotating = false;
+    let isMeasureActive = false;
+    let measurePoints = [];
+    let currentNavMode = 'orbit';
+
+    // =====================================================================
+    // 2. THREE.JS INITIALIZATION & QUANG HỌC THỊ GIÁC ĐỈNH CAO
+    // =====================================================================
+    const container = document.getElementById('webgl-canvas-container');
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x020710);
+    scene.fog = new THREE.FogExp2(0x020710, 0.015);
+
+    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 150);
+    camera.position.set(0, 10.2, 14.2);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance', preserveDrawingBuffer: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.35;
+    container.appendChild(renderer.domElement);
+
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+    controls.maxPolarAngle = Math.PI / 2 - 0.02;
+    controls.minDistance = 1.5;
+    controls.maxDistance = 35.0;
+    controls.target.set(0, 0.6, 0);
+
+    const walkState = {
+      moveForward: false, moveBackward: false, moveLeft: false, moveRight: false,
+      speed: 3.2, eyeHeight: 1.65, isMouseDown: false, prevMouse: { x: 0, y: 0 },
+      yaw: Math.PI, pitch: 0
+    };
+
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+
+    const layerGroups = {
+      siteGround: new THREE.Group(),
+      completedGraves: new THREE.Group(),
+      plannedGraves: new THREE.Group(),
+      foundation: new THREE.Group(),
+      sanctuary: new THREE.Group(),
+      walls: new THREE.Group(),
+      labels: new THREE.Group(),
+      dimensions: new THREE.Group(),
+      sacred: new THREE.Group(),
+      landscape: new THREE.Group(),
+      interactiveHighlight: new THREE.Group(),
+      interactiveDimensions: new THREE.Group() // LỚP THƯỚC ĐO 3D LIỀN KỀ THỜI GIAN THỰC
+    };
+    Object.values(layerGroups).forEach(group => scene.add(group));
+
+    // =====================================================================
+    // 3. HỆ THỐNG ÁNH SÁNG & PHẢN CHIẾU VÒM TRỜI (ENVIRONMENT LIGHTING)
+    // =====================================================================
+    const lights = {
+      ambient: new THREE.AmbientLight(0xdff4ff, 0.65),
+      sun: new THREE.DirectionalLight(0xfff7e6, 1.65),
+      fillLight: new THREE.DirectionalLight(0x38bdf8, 0.45),
+      rimLight: new THREE.DirectionalLight(0xfef08a, 0.75),
+      hemi: new THREE.HemisphereLight(0xdff4ff, 0x1e2e33, 0.50),
+      spotSanctuary: new THREE.PointLight(0xfef08a, 1.8, 10),
+      lanterns: []
+    };
+    scene.add(lights.ambient);
+    scene.add(lights.hemi);
+
+    lights.sun.position.set(14, 22, 16);
+    lights.sun.castShadow = true;
+    lights.sun.shadow.mapSize.width = 2048;
+    lights.sun.shadow.mapSize.height = 2048;
+    lights.sun.shadow.camera.near = 0.5;
+    lights.sun.shadow.camera.far = 50;
+    lights.sun.shadow.camera.left = -11;
+    lights.sun.shadow.camera.right = 11;
+    lights.sun.shadow.camera.top = 11;
+    lights.sun.shadow.camera.bottom = -11;
+    lights.sun.shadow.bias = -0.0002;
+    lights.sun.shadow.radius = 2.5;
+    scene.add(lights.sun);
+
+    // Fill light tạo ánh sáng phụ mềm mại
+    lights.fillLight.position.set(-14, 15, -12);
+    scene.add(lights.fillLight);
+
+    // Rim light từ phía sau tôn nổi viền đao cong mái lăng
+    lights.rimLight.position.set(0, 12, -18);
+    scene.add(lights.rimLight);
+
+    lights.spotSanctuary.position.set(0, 2.8, -5.1);
+    lights.spotSanctuary.castShadow = true;
+    scene.add(lights.spotSanctuary);
+
+    // TẠO ENVIRONMENT REFLECTION MAP CHO ĐÁ XANH PHẢN CHIẾU BÓNG BẨY
+    function createProceduralSkyEnvMap() {
+      const canvas = document.createElement('canvas');
+      canvas.width = 512; canvas.height = 256;
+      const ctx = canvas.getContext('2d');
+      const grad = ctx.createLinearGradient(0, 0, 0, 256);
+      grad.addColorStop(0, '#0c2333');
+      grad.addColorStop(0.4, '#183b4e');
+      grad.addColorStop(0.7, '#244850');
+      grad.addColorStop(1, '#081318');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, 512, 256);
+      const tex = new THREE.CanvasTexture(canvas);
+      tex.mapping = THREE.EquirectangularReflectionMapping;
+      return tex;
+    }
+    
+    // =====================================================================
+    // 3.1 HỆ THỐNG MẶT TRỜI / MẶT TRĂNG 3D & KÉO THẢ ĐỔ BÓNG TỰ DO
+    // =====================================================================
+    const celestialState = {
+      mode: 'day', // 'day' | 'night'
+      azimuth: 45, // 0 - 360 độ
+      elevation: 52, // 6 - 85 độ
+      radius: 25, // Bán kính thiên cầu
+      isDragging: false,
+      isHovered: false
+    };
+
+    const celestialGroup = new THREE.Group();
+    scene.add(celestialGroup);
+
+    // QUẢ CẦU MẶT TRỜI / MẶT TRĂNG PHÁT QUANG
+    const sunGeo = new THREE.SphereGeometry(1.0, 24, 24);
+    const sunMat = new THREE.MeshBasicMaterial({ color: 0xfff08a });
+    const sunMesh = new THREE.Mesh(sunGeo, sunMat);
+    sunMesh.userData = { isCelestialBody: true };
+    celestialGroup.add(sunMesh);
+
+    // VÀNH HÀO QUANG PHÁT QUANG (CORONA GLOW RING)
+    const ringGeo = new THREE.RingGeometry(1.15, 1.65, 32);
+    const ringMat = new THREE.MeshBasicMaterial({
+      color: 0xf59e0b,
+      side: THREE.DoubleSide,
+      transparent: true,
+      opacity: 0.55
+    });
+    const ringMesh = new THREE.Mesh(ringGeo, ringMat);
+    celestialGroup.add(ringMesh);
+
+    // QUỸ ĐẠO THIÊN VĂN NÉT ĐỨT TRÊN BẦU TRỜI
+    const orbitPoints = [];
+    for (let deg = 0; deg <= 360; deg += 5) {
+      const rad = (deg * Math.PI) / 180;
+      orbitPoints.push(new THREE.Vector3(
+        celestialState.radius * Math.sin(rad),
+        Math.sin(rad * 0.5 + 0.3) * 14 + 4,
+        celestialState.radius * Math.cos(rad)
+      ));
+    }
+    const orbitGeo = new THREE.BufferGeometry().setFromPoints(orbitPoints);
+    const orbitMat = new THREE.LineDashedMaterial({
+      color: 0x38bdf8,
+      dashSize: 0.8,
+      gapSize: 0.5,
+      transparent: true,
+      opacity: 0.35
+    });
+    const orbitLine = new THREE.Line(orbitGeo, orbitMat);
+    orbitLine.computeLineDistances();
+    scene.add(orbitLine);
+
+    // HÀM CẬP NHẬT VỊ TRÍ VÀ HƯỚNG CHIẾU ĐỔ BÓNG THỜI GIAN THỰC
+    function updateCelestialPosition() {
+      const radAz = (celestialState.azimuth * Math.PI) / 180;
+      const radEl = (celestialState.elevation * Math.PI) / 180;
+      const r = celestialState.radius;
+
+      const x = r * Math.cos(radEl) * Math.sin(radAz);
+      const y = Math.max(1.8, r * Math.sin(radEl));
+      const z = r * Math.cos(radEl) * Math.cos(radAz);
+
+      celestialGroup.position.set(x, y, z);
+      ringMesh.lookAt(camera.position);
+
+      lights.sun.position.set(x, y, z);
+      lights.sun.target.position.set(0, 0, 0);
+      lights.sun.target.updateMatrixWorld();
+
+      // Cập nhật màu sắc và cường độ ánh sáng
+      if (celestialState.mode === 'day') {
+        sunMat.color.setHex(0xfef08a);
+        ringMat.color.setHex(0xf59e0b);
+        ringMat.opacity = 0.55;
+
+        if (celestialState.elevation < 18) {
+          // Bình minh / Hoàng hôn
+          lights.sun.color.setHex(0xf97316);
+          lights.sun.intensity = 1.35;
+          lights.ambient.color.setHex(0xfeb272);
+          lights.ambient.intensity = 0.45;
+          scene.background.setHex(0x180b08);
+          scene.fog.color.setHex(0x180b08);
+        } else if (celestialState.elevation < 42) {
+          // Nắng sớm / Nắng chiều
+          lights.sun.color.setHex(0xfde047);
+          lights.sun.intensity = 1.65;
+          lights.ambient.color.setHex(0xdff4ff);
+          lights.ambient.intensity = 0.60;
+          scene.background.setHex(0x061426);
+          scene.fog.color.setHex(0x061426);
+        } else {
+          // Nắng chính ngọ
+          lights.sun.color.setHex(0xfffbeb);
+          lights.sun.intensity = 1.85;
+          lights.ambient.color.setHex(0xdff4ff);
+          lights.ambient.intensity = 0.70;
+          scene.background.setHex(0x020710);
+          scene.fog.color.setHex(0x020710);
+        }
+      } else {
+        // Ban đêm: Ánh trăng xanh bạc
+        sunMat.color.setHex(0xe2e8f0);
+        ringMat.color.setHex(0x38bdf8);
+        ringMat.opacity = 0.35;
+
+        lights.sun.color.setHex(0x93c5fd);
+        lights.sun.intensity = 0.30;
+        lights.ambient.color.setHex(0x1e293b);
+        lights.ambient.intensity = 0.28;
+        scene.background.setHex(0x010206);
+        scene.fog.color.setHex(0x010206);
+      }
+
+      // Cập nhật các giá trị hiển thị trên UI HUD
+      syncSolarHUD();
+    }
+
+    function syncSolarHUD() {
+      const sliderAz = document.getElementById('sliderAzimuth');
+      const sliderEl = document.getElementById('sliderElevation');
+      const valAz = document.getElementById('valAzimuth');
+      const valEl = document.getElementById('valElevation');
+
+      if (sliderAz) sliderAz.value = Math.round(celestialState.azimuth);
+      if (sliderEl) sliderEl.value = Math.round(celestialState.elevation);
+
+      // Tính tên phương vị la bàn
+      const az = celestialState.azimuth;
+      let dirName = 'Bắc';
+      if (az >= 22.5 && az < 67.5) dirName = 'Đông Bắc';
+      else if (az >= 67.5 && az < 112.5) dirName = 'Đông';
+      else if (az >= 112.5 && az < 157.5) dirName = 'Đông Nam';
+      else if (az >= 157.5 && az < 202.5) dirName = 'Nam';
+      else if (az >= 202.5 && az < 247.5) dirName = 'Tây Nam';
+      else if (az >= 247.5 && az < 292.5) dirName = 'Tây';
+      else if (az >= 292.5 && az < 337.5) dirName = 'Tây Bắc';
+
+      if (valAz) valAz.textContent = `${Math.round(az)}° (${dirName})`;
+
+      const el = celestialState.elevation;
+      let shadowDesc = 'Bóng Vừa';
+      if (el < 18) shadowDesc = 'Bóng Cực Dài';
+      else if (el < 35) shadowDesc = 'Bóng Dài';
+      else if (el > 70) shadowDesc = 'Gần Đứng Bóng';
+      if (valEl) valEl.textContent = `${Math.round(el)}° (${shadowDesc})`;
+    }
+
+    function setCelestialMode(mode) {
+      celestialState.mode = mode;
+      const btnDay = document.getElementById('btnTabDay');
+      const btnNight = document.getElementById('btnTabNight');
+      const iconHeader = document.getElementById('solarIconHeader');
+      const titleHeader = document.getElementById('solarTitleHeader');
+
+      if (mode === 'day') {
+        if (btnDay) btnDay.classList.add('active');
+        if (btnNight) btnNight.classList.remove('active', 'night');
+        if (iconHeader) iconHeader.textContent = '☀️';
+        if (titleHeader) titleHeader.textContent = 'MẶT TRỜI & ĐỔ BÓNG 3D';
+        showToast('☀️ Chế độ Mặt Trời: Tự do kéo bóng đổ ban ngày');
+      } else {
+        if (btnNight) { btnNight.classList.add('active', 'night'); }
+        if (btnDay) btnDay.classList.remove('active');
+        if (iconHeader) iconHeader.textContent = '🌙';
+        if (titleHeader) titleHeader.textContent = 'MẶT TRĂNG & ÁNH ĐÊM 3D';
+        showToast('🌙 Chế độ Mặt Trăng: Trăng bạc soi bóng đêm huyền ảo');
+      }
+      updateCelestialPosition();
+    }
+
+    function applyPresetTime(az, el, timeStr) {
+      celestialState.azimuth = az;
+      celestialState.elevation = el;
+      if (timeStr === '21:00') setCelestialMode('night');
+      else setCelestialMode('day');
+
+      document.querySelectorAll('.time-chip-btn').forEach(b => b.classList.remove('active'));
+      const foundBtn = Array.from(document.querySelectorAll('.time-chip-btn')).find(b => b.textContent.includes(timeStr.slice(0, 2)));
+      if (foundBtn) foundBtn.classList.add('active');
+
+      updateCelestialPosition();
+      showToast(`🕒 Đã chuyển sang thời điểm ${timeStr}`);
+    }
+
+    function onSolarSliderInput() {
+      const sAz = document.getElementById('sliderAzimuth');
+      const sEl = document.getElementById('sliderElevation');
+      if (sAz) celestialState.azimuth = parseFloat(sAz.value);
+      if (sEl) celestialState.elevation = parseFloat(sEl.value);
+      updateCelestialPosition();
+    }
+
+    function toggleSolarHudMinimize() {
+      const card = document.getElementById('solarHudPanel');
+      const btn = document.getElementById('btnMinMaxSolar');
+      if (card) {
+        card.classList.toggle('minimized');
+        if (btn) btn.textContent = card.classList.contains('minimized') ? '□' : '_';
+      }
+    }
+
+    const envTexture = createProceduralSkyEnvMap();
+    scene.environment = envTexture;
+
+    // =====================================================================
+    // 4. VẬT LIỆU ĐÁ XANH NINH BÌNH (NORMAL MAP & MỊN ĐẸP NỔI KHỐI)
+    // =====================================================================
+    function createProceduralStoneNormalAndColorMaps() {
+      const w = 512, h = 512;
+      const colorCanvas = document.createElement('canvas');
+      colorCanvas.width = w; colorCanvas.height = h;
+      const cCtx = colorCanvas.getContext('2d');
+
+      const grad = cCtx.createLinearGradient(0, 0, w, h);
+      grad.addColorStop(0, '#1c2d30');
+      grad.addColorStop(0.35, '#22383c');
+      grad.addColorStop(0.7, '#284146');
+      grad.addColorStop(1, '#1e3337');
+      cCtx.fillStyle = grad;
+      cCtx.fillRect(0, 0, w, h);
+
+      // Thớ đá trầm tích tự nhiên
+      for (let i = 0; i < 90; i++) {
+        cCtx.fillStyle = Math.random() > 0.5 ? 'rgba(56, 92, 98, 0.15)' : 'rgba(14, 24, 27, 0.22)';
+        cCtx.beginPath();
+        cCtx.ellipse(Math.random() * w, Math.random() * h, Math.random() * 60 + 20, Math.random() * 10 + 2, Math.random() * Math.PI, 0, Math.PI * 2);
+        cCtx.fill();
+      }
+
+      // Hạt khoáng mịn
+      const imgData = cCtx.getImageData(0, 0, w, h);
+      const data = imgData.data;
+      const heightArr = new Float32Array(w * h);
+
+      for (let i = 0; i < data.length; i += 4) {
+        const noise = (Math.random() - 0.5) * 18;
+        data[i] = Math.min(255, Math.max(0, data[i] + noise));
+        data[i+1] = Math.min(255, Math.max(0, data[i+1] + noise * 1.25));
+        data[i+2] = Math.min(255, Math.max(0, data[i+2] + noise * 1.15));
+        heightArr[i / 4] = (data[i] + data[i+1] + data[i+2]) / (3 * 255.0);
+      }
+      cCtx.putImageData(imgData, 0, 0);
+
+      // TẠO NORMAL MAP BẰNG THUẬT TOÁN SOBEL FILTER NỔI KHỐI QUANG HỌC
+      const normalCanvas = document.createElement('canvas');
+      normalCanvas.width = w; normalCanvas.height = h;
+      const nCtx = normalCanvas.getContext('2d');
+      const nImgData = nCtx.createImageData(w, h);
+      const nData = nImgData.data;
+      const strength = 3.2;
+
+      for (let y = 0; y < h; y++) {
+        for (let x = 0; x < w; x++) {
+          const xL = (x - 1 + w) % w;
+          const xR = (x + 1) % w;
+          const yT = (y - 1 + h) % h;
+          const yB = (y + 1) % h;
+
+          const dx = (heightArr[y * w + xR] - heightArr[y * w + xL]) * strength;
+          const dy = (heightArr[yB * w + x] - heightArr[yT * w + x]) * strength;
+
+          let nx = -dx;
+          let ny = -dy;
+          let nz = 1.0;
+          const len = Math.sqrt(nx * nx + ny * ny + nz * nz);
+          nx /= len; ny /= len; nz /= len;
+
+          const idx = (y * w + x) * 4;
+          nData[idx] = Math.floor((nx * 0.5 + 0.5) * 255);
+          nData[idx + 1] = Math.floor((ny * 0.5 + 0.5) * 255);
+          nData[idx + 2] = Math.floor((nz * 0.5 + 0.5) * 255);
+          nData[idx + 3] = 255;
+        }
+      }
+      nCtx.putImageData(nImgData, 0, 0);
+
+      const colorTex = new THREE.CanvasTexture(colorCanvas);
+      colorTex.wrapS = THREE.RepeatWrapping; colorTex.wrapT = THREE.RepeatWrapping;
+      const normalTex = new THREE.CanvasTexture(normalCanvas);
+      normalTex.wrapS = THREE.RepeatWrapping; normalTex.wrapT = THREE.RepeatWrapping;
+
+      return { colorTex, normalTex };
+    }
+
+    const { colorTex: blueStoneColorTex, normalTex: blueStoneNormalTex } = createProceduralStoneNormalAndColorMaps();
+
+    function createPavingTexture() {
+      const canvas = document.createElement('canvas');
+      canvas.width = 512; canvas.height = 512;
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#202b38';
+      ctx.fillRect(0, 0, 512, 512);
+      ctx.strokeStyle = '#121a22';
+      ctx.lineWidth = 4;
+      const step = 64;
+      for (let x = 0; x <= 512; x += step) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, 512); ctx.stroke(); }
+      for (let y = 0; y <= 512; y += step) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(512, y); ctx.stroke(); }
+      const texture = new THREE.CanvasTexture(canvas);
+      texture.wrapS = THREE.RepeatWrapping; texture.wrapT = THREE.RepeatWrapping;
+      texture.repeat.set(8, 12);
+      return texture;
+    }
+
+    const materials = {
+      // 1. ĐÁ XANH MÀI BÓNG LOÁNG (Dành cho 3 mộ hoàn thiện, lăng thờ & cuốn thư)
+      stonePolished: new THREE.MeshStandardMaterial({
+        color: 0x273e42,
+        roughness: 0.18,
+        metalness: 0.16,
+        map: blueStoneColorTex,
+        normalMap: blueStoneNormalTex,
+        normalScale: new THREE.Vector2(0.8, 0.8),
+        envMap: envTexture,
+        envMapIntensity: 0.85
+      }),
+      // 2. ĐÁ XANH SATIN (Dành cho tường rào, trụ cột, tam cấp)
+      stoneSatin: new THREE.MeshStandardMaterial({
+        color: 0x2b4449,
+        roughness: 0.32,
+        metalness: 0.10,
+        map: blueStoneColorTex,
+        normalMap: blueStoneNormalTex,
+        normalScale: new THREE.Vector2(1.2, 1.2),
+        envMap: envTexture,
+        envMapIntensity: 0.5
+      }),
+      // 3. ĐÁ QUY HOẠCH ĐỊNH VỊ (26 mộ chờ xây)
+      stonePlanned: new THREE.MeshStandardMaterial({
+        color: 0x30484d,
+        roughness: 0.45,
+        metalness: 0.08,
+        normalMap: blueStoneNormalTex,
+        normalScale: new THREE.Vector2(0.6, 0.6)
+      }),
+      // 4. NGÓI ĐAO CONG ĐÁ XANH CỔ TRUYỀN (Mái lăng thờ, mái cổng)
+      roofTile: new THREE.MeshStandardMaterial({
+        color: 0x1b2c30,
+        roughness: 0.22,
+        metalness: 0.18,
+        map: blueStoneColorTex,
+        normalMap: blueStoneNormalTex,
+        normalScale: new THREE.Vector2(1.5, 1.5),
+        envMap: envTexture,
+        envMapIntensity: 1.1
+      }),
+      // 5. VÀNG KIM 24K HOÀNG GIA (Chữ Hán, câu đối, mặt nguyệt, chữ Phúc)
+      goldTrim: new THREE.MeshStandardMaterial({
+        color: 0xf59e0b,
+        roughness: 0.15,
+        metalness: 0.92,
+        envMap: envTexture,
+        envMapIntensity: 1.5
+      }),
+      // 6. BÊ TÔNG MÓNG MÁC 250
+      concreteFoundation: new THREE.MeshStandardMaterial({
+        color: 0x94a3b8,
+        roughness: 0.88,
+        metalness: 0.02,
+        transparent: true,
+        opacity: 0.92
+      }),
+      concreteXRay: new THREE.MeshStandardMaterial({
+        color: 0x38bdf8,
+        roughness: 0.35,
+        metalness: 0.2,
+        transparent: true,
+        opacity: 0.85
+      }),
+      pavingGround: new THREE.MeshStandardMaterial({
+        color: 0x64748b,
+        roughness: 0.60,
+        metalness: 0.08,
+        map: createPavingTexture()
+      }),
+      grass: new THREE.MeshStandardMaterial({
+        color: 0x14532d,
+        roughness: 0.85,
+        metalness: 0.02
+      }),
+      sacredAxis: new THREE.MeshBasicMaterial({
+        color: 0xfbbf24,
+        transparent: true,
+        opacity: 0.35,
+        side: THREE.DoubleSide
+      }),
+      ceremonialCourtyard: new THREE.MeshBasicMaterial({
+        color: 0x38bdf8,
+        transparent: true,
+        opacity: 0.28,
+        side: THREE.DoubleSide
+      })
+    };
+
+    function cadToWorld(xCm, yCm) {
+      return { x: (xCm - 735 / 2) / 100, z: (yCm - 1100 / 2) / 100 };
+    }
+
+    // =====================================================================
+    // 5. XÂY DỰNG TOÀN BỘ KHÔNG GIAN 3D
+    // =====================================================================
+    function buildComplete3DScene() {
+      Object.values(layerGroups).forEach(group => {
+        while(group.children.length > 0) {
+          const obj = group.children[0];
+          group.remove(obj);
+          if (obj.geometry) obj.geometry.dispose();
+        }
+      });
+
+      buildGroundAndLandscape();
+      buildFoundationGrid();
+      buildPerimeterWallsAndGate();
+      buildStoneSanctuaryAndScreen();
+      buildAllGraves();
+      buildSacredAxesAndCourtyard();
+      buildStatic3DDimensions();
+      populateGraveQuickList();
+    }
+
+    // 5.1 NỀN VÀ CẢNH QUAN
+    function buildGroundAndLandscape() {
+      const groundGeo = new THREE.BoxGeometry(7.35, 0.15, 11.00);
+      const groundMesh = new THREE.Mesh(groundGeo, materials.pavingGround);
+      groundMesh.position.set(0, -0.075, 0);
+      groundMesh.receiveShadow = true;
+      layerGroups.siteGround.add(groundMesh);
+
+      const grassGeo = new THREE.PlaneGeometry(35, 40);
+      const grassMesh = new THREE.Mesh(grassGeo, materials.grass);
+      grassMesh.rotation.x = -Math.PI / 2;
+      grassMesh.position.set(0, -0.155, 0);
+      grassMesh.receiveShadow = true;
+      layerGroups.landscape.add(grassMesh);
+
+      const step1 = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.08, 0.6), materials.stoneSatin);
+      step1.position.set(0, -0.04, 5.5 + 0.3);
+      step1.receiveShadow = true;
+      layerGroups.landscape.add(step1);
+
+      const step2 = new THREE.Mesh(new THREE.BoxGeometry(2.8, 0.08, 0.6), materials.stoneSatin);
+      step2.position.set(0, -0.11, 5.5 + 0.6);
+      step2.receiveShadow = true;
+      layerGroups.landscape.add(step2);
+    }
+
+    // 5.2 HỆ MÓNG BÊ TÔNG CỐT THÉP
+    function buildFoundationGrid() {
+      const mMat = isXRayMode ? materials.concreteXRay : materials.concreteFoundation;
+
+      // 1. Dãy móng sau (40cm)
+      const mBack = new THREE.Mesh(new THREE.BoxGeometry(7.35, 0.50, 0.40), mMat);
+      mBack.position.set(0, -0.40, -5.30);
+      mBack.userData = { type: 'foundation', name: 'MÓNG GIẰNG SAU (40cm)' };
+      layerGroups.foundation.add(mBack);
+
+      // 2. Móng giằng 2 bên (25cm)
+      const mSideGeo = new THREE.BoxGeometry(0.25, 0.50, 11.00);
+      const mSideL = new THREE.Mesh(mSideGeo, mMat);
+      mSideL.position.set(-3.675 + 0.125, -0.40, 0);
+      layerGroups.foundation.add(mSideL);
+
+      const mSideR = new THREE.Mesh(mSideGeo, mMat);
+      mSideR.position.set(3.675 - 0.125, -0.40, 0);
+      layerGroups.foundation.add(mSideR);
+
+      // 3. Móng mặt tiền (30cm)
+      const mFront = new THREE.Mesh(new THREE.BoxGeometry(7.35, 0.50, 0.30), mMat);
+      mFront.position.set(0, -0.40, 5.35);
+      layerGroups.foundation.add(mFront);
+
+      // 4. Móng phần lồi lăng (165 x 130cm)
+      const mLang = new THREE.Mesh(new THREE.BoxGeometry(1.65, 0.60, 1.30), mMat);
+      mLang.position.set(0, -0.45, -4.85);
+      layerGroups.foundation.add(mLang);
+
+      // 5. Móng cuốn thư (167 x 40cm)
+      const mCtPos = cadToWorld(367.5, 995);
+      const mCuonThu = new THREE.Mesh(new THREE.BoxGeometry(1.67, 0.50, 0.40), mMat);
+      mCuonThu.position.set(mCtPos.x, -0.40, mCtPos.z);
+      layerGroups.foundation.add(mCuonThu);
+
+      // 6. 29 Hố móng mộ (+16cm)
+      currentGraves.forEach(g => {
+        const mW = (g.width + 16) / 100;
+        const mD = (g.height + 16) / 100;
+        const mGrave = new THREE.Mesh(new THREE.BoxGeometry(mW, 0.45, mD), mMat);
+        const pos = cadToWorld(g.x + g.width / 2, g.y + g.height / 2);
+        mGrave.position.set(pos.x, -0.375, pos.z);
+        mGrave.userData = {
+          type: 'graveFoundation',
+          name: `MÓNG ${g.name} (${Math.round(mW*100)}×${Math.round(mD*100)}cm)`,
+          graveId: g.id
+        };
+        layerGroups.foundation.add(mGrave);
+      });
+    }
+
+    // 5.3 HỆ THỐNG LAN CAN TƯỜNG RÀO ĐÁ MỸ NGHỆ (CHIA KHOANG BƯNG CHẠM HOA VĂN & CỘT TRỤ ĐẦU BÚP SEN)
+    function buildPerimeterWallsAndGate() {
+      // HÀM XÂY DỰNG MỘT ĐOẠN LAN CAN ĐÁ CHIA KHOANG CHUẨN MỰC
+      function createStoneBalustrade(startX, startZ, endX, endZ, numBays, sectionName) {
+        const balGroup = new THREE.Group();
+        balGroup.userData = { type: 'wall', name: sectionName || 'LAN CAN ĐÁ MỸ NGHỆ', detail: 'Đá xanh nguyên khối chạm khoang bưng sen, cột trụ búp sen' };
+
+        const dx = endX - startX;
+        const dz = endZ - startZ;
+        const totalLen = Math.hypot(dx, dz);
+        const rotY = Math.atan2(dx, dz);
+
+        const postW = 0.18; // Tiết diện cột trụ 18x18cm
+        const postH = 0.88; // Chiều cao cột trụ
+        const baseH = 0.15; // Dầm dạ đá ở chân
+        const baseW = 0.22; // Bề rộng dầm dạ đá
+        const railH = 0.08; // Tay vịn bo trên cùng
+        const bayLen = (totalLen - (numBays + 1) * postW) / numBays;
+
+        const subGroup = new THREE.Group();
+        subGroup.position.set(startX, 0, startZ);
+        subGroup.rotation.y = rotY;
+
+        // 1. DẦM DẠ ĐÁ CHẠY SUỐT Ở CHÂN
+        const baseBeam = new THREE.Mesh(new THREE.BoxGeometry(baseW, baseH, totalLen), materials.stoneSatin);
+        baseBeam.position.set(0, baseH / 2, totalLen / 2);
+        baseBeam.castShadow = true;
+        baseBeam.receiveShadow = true;
+        subGroup.add(baseBeam);
+
+        // 2. CÁC CỘT TRỤ DÓNG DỐC ĐẦU BÚP SEN ĐÁ
+        for (let i = 0; i <= numBays; i++) {
+          const pZ = i * (bayLen + postW) + postW / 2;
+          const postGroup = new THREE.Group();
+          postGroup.position.set(0, 0, pZ);
+
+          // Thân cột trụ đá chạm rãnh chỉ âm
+          const shaft = new THREE.Mesh(new THREE.BoxGeometry(postW, postH, postW), materials.stonePolished);
+          shaft.position.y = postH / 2;
+          shaft.castShadow = true;
+          postGroup.add(shaft);
+
+          // Đấu mũ cột trụ
+          const cap = new THREE.Mesh(new THREE.BoxGeometry(postW * 1.15, 0.05, postW * 1.15), materials.stoneSatin);
+          cap.position.y = postH + 0.025;
+          postGroup.add(cap);
+
+          // Đỉnh cột trụ: BÚP SEN ĐÁ NỞ THANH KHIẾT (Cổ truyền Ninh Bình)
+          const lotusBase = new THREE.Mesh(new THREE.CylinderGeometry(0.055, 0.07, 0.04, 12), materials.stonePolished);
+          lotusBase.position.y = postH + 0.05 + 0.02;
+          postGroup.add(lotusBase);
+
+          const lotusBud = new THREE.Mesh(new THREE.SphereGeometry(0.07, 12, 12), materials.stonePolished);
+          lotusBud.scale.set(0.9, 1.5, 0.9);
+          lotusBud.position.y = postH + 0.05 + 0.04 + 0.08;
+          lotusBud.castShadow = true;
+          postGroup.add(lotusBud);
+
+          subGroup.add(postGroup);
+        }
+
+        // 3. CÁC KHOANG BƯNG ĐÁ (PANELS) VÀ TAY VỊN
+        const panelH = postH - baseH - railH;
+        for (let b = 0; b < numBays; b++) {
+          const bayCenterZ = b * (bayLen + postW) + postW + bayLen / 2;
+
+          // Thân bưng đá (khuông đá thụt 2cm so với mặt cột trụ tạo khối âm dương)
+          const panelThick = 0.14;
+          const panel = new THREE.Mesh(new THREE.BoxGeometry(panelThick, panelH, bayLen * 0.98), materials.stoneSatin);
+          panel.position.set(0, baseH + panelH / 2, bayCenterZ);
+          panel.castShadow = true;
+          panel.receiveShadow = true;
+          subGroup.add(panel);
+
+          // Lòng bưng đục chìm chạm hoa văn Sen / Chữ Thọ tròn nổi khối
+          const reliefThick = 0.152;
+          const reliefW = Math.min(0.35, bayLen * 0.55);
+          const relief = new THREE.Mesh(new THREE.CylinderGeometry(reliefW / 2, reliefW / 2, reliefThick, 16), materials.stonePolished);
+          relief.rotation.z = Math.PI / 2;
+          relief.position.set(0, baseH + panelH / 2, bayCenterZ);
+          subGroup.add(relief);
+
+          // Tâm hoa sen / Chữ Thọ vàng kim tế nhị
+          const centerDot = new THREE.Mesh(new THREE.SphereGeometry(0.04, 8, 8), materials.goldTrim);
+          centerDot.position.set(0, baseH + panelH / 2, bayCenterZ);
+          subGroup.add(centerDot);
+
+          // Tay vịn bo trên cùng (vát dốc thoát nước hình yên ngựa)
+          const handrail = new THREE.Mesh(new THREE.BoxGeometry(0.16, railH, bayLen * 0.99), materials.stonePolished);
+          handrail.position.set(0, baseH + panelH + railH / 2, bayCenterZ);
+          handrail.castShadow = true;
+          subGroup.add(handrail);
+        }
+
+        balGroup.add(subGroup);
+        return balGroup;
+      }
+
+      const halfW = 7.35 / 2; // 3.675m
+      const halfL = 11.00 / 2; // 5.50m
+      const wallInset = 0.10;
+
+      // TƯỜNG TẢ (BÊN TRÁI): 9 KHOANG BƯNG ĐÁ ĐỒNG BỘ
+      layerGroups.walls.add(createStoneBalustrade(-halfW + wallInset, -halfL + wallInset, -halfW + wallInset, halfL - wallInset, 9, 'TƯỜNG LAN CAN TẢ (9 KHOANG BƯNG SEN)'));
+
+      // TƯỜNG HỮU (BÊN PHẢI): 9 KHOANG BƯNG ĐÁ ĐỒNG BỘ
+      layerGroups.walls.add(createStoneBalustrade(halfW - wallInset, -halfL + wallInset, halfW - wallInset, halfL - wallInset, 9, 'TƯỜNG LAN CAN HỮU (9 KHOANG BƯNG SEN)'));
+
+      // HÀM TẠO 1 KHOANG BƯNG ĐÁ KẾT NỐI KHÍT GIỮA 2 CỘT CÓ SẴN (CỘT CHÍNH & CỘT PHỤ)
+      function createConnectingBalustradeBay(xStart, xEnd, zPos, bayName) {
+        const bayGroup = new THREE.Group();
+        bayGroup.userData = { type: 'wall', name: bayName || 'BƯNG ĐÁ TIẾP GIÁP CỔNG PHỤ (KÍN)', detail: 'Bưng đá xanh nguyên khối chạm hoa sen, bịt kín cổng phụ chỉ mở 1 lối giữa' };
+
+        const len = Math.abs(xEnd - xStart);
+        const midX = (xStart + xEnd) / 2;
+        const postH = 0.88;
+        const baseH = 0.15;
+        const railH = 0.08;
+        const panelH = postH - baseH - railH;
+
+        // 1. Dầm dạ đá ở chân
+        const baseBeam = new THREE.Mesh(new THREE.BoxGeometry(len, baseH, 0.22), materials.stoneSatin);
+        baseBeam.position.set(midX, baseH / 2, zPos);
+        baseBeam.castShadow = true;
+        baseBeam.receiveShadow = true;
+        bayGroup.add(baseBeam);
+
+        // 2. Thân bưng đá (khuông đá chạm âm dương)
+        const panel = new THREE.Mesh(new THREE.BoxGeometry(len * 0.99, panelH, 0.14), materials.stoneSatin);
+        panel.position.set(midX, baseH + panelH / 2, zPos);
+        panel.castShadow = true;
+        panel.receiveShadow = true;
+        bayGroup.add(panel);
+
+        // 3. Phù điêu hoa sen chạm chìm nổi khối
+        const relief = new THREE.Mesh(new THREE.CylinderGeometry(Math.min(0.18, len * 0.35), Math.min(0.18, len * 0.35), 0.152, 16), materials.stonePolished);
+        relief.rotation.x = Math.PI / 2;
+        relief.position.set(midX, baseH + panelH / 2, zPos);
+        bayGroup.add(relief);
+
+        const centerDot = new THREE.Mesh(new THREE.SphereGeometry(0.035, 8, 8), materials.goldTrim);
+        centerDot.position.set(midX, baseH + panelH / 2, zPos);
+        bayGroup.add(centerDot);
+
+        // 4. Tay vịn bo trên cùng vát dốc thoát nước hình yên ngựa
+        const handrail = new THREE.Mesh(new THREE.BoxGeometry(len, railH, 0.16), materials.stonePolished);
+        handrail.position.set(midX, baseH + panelH + railH / 2, zPos);
+        handrail.castShadow = true;
+        bayGroup.add(handrail);
+
+        return bayGroup;
+      }
+
+      // 1. KHOANG BƯNG ĐÁ TIẾP GIÁP BỊT KÍN GIỮA CỘT PHỤ VÀ CỘT CHÍNH (CHỈ CÒN 1 LỐI ĐI GIỮA DUY NHẤT)
+      const frontZ = halfL - wallInset; // 5.35m
+      // Bên Tả: từ mép ngoài cột chính (-0.85) sang mép trong cột phụ (-1.51)
+      layerGroups.walls.add(createConnectingBalustradeBay(-1.51, -0.85, frontZ, 'BƯNG ĐÁ TIẾP GIÁP CỘT PHỤ - CỘT CHÍNH TẢ (KÍN 1 LỐI GIỮA)'));
+      // Bên Hữu: từ mép ngoài cột chính (+0.85) sang mép trong cột phụ (+1.51)
+      layerGroups.walls.add(createConnectingBalustradeBay(0.85, 1.51, frontZ, 'BƯNG ĐÁ TIẾP GIÁP CỘT CHÍNH - CỘT PHỤ HỮU (KÍN 1 LỐI GIỮA)'));
+
+      // 2. TƯỜNG TIỀN NÁCH TỪ TRỤ GÓC ĐẾN MÉP NGOÀI TRỤ CỔNG PHỤ (BÊN TẢ & BÊN HỮU)
+      layerGroups.walls.add(createStoneBalustrade(-halfW + wallInset, frontZ, -1.79, frontZ, 2, 'TƯỜNG TIỀN TẢ (TỪ TRỤ GÓC ĐẾN TRỤ PHỤ)'));
+      layerGroups.walls.add(createStoneBalustrade(1.79, frontZ, halfW - wallInset, frontZ, 2, 'TƯỜNG TIỀN HỮU (TỪ TRỤ PHỤ ĐẾN TRỤ GÓC)'));
+
+      // TƯỜNG SAU TẢ (NỐI TỪ GÓC ĐẾN CÁNH LĂNG): 1 KHOANG BƯNG ĐÁ
+      layerGroups.walls.add(createStoneBalustrade(-halfW + wallInset, -halfL + wallInset, -2.60, -halfL + wallInset, 1, 'TƯỜNG HẬU TẢ (NỐI CÁNH LĂNG)'));
+
+      // TƯỜNG SAU HỮU (NỐI TỪ CÁNH LĂNG ĐẾN GÓC): 1 KHOANG BƯNG ĐÁ
+      layerGroups.walls.add(createStoneBalustrade(2.60, -halfL + wallInset, halfW - wallInset, -halfL + wallInset, 1, 'TƯỜNG HẬU HỮU (NỐI CÁNH LĂNG)'));
+
+      // 4 TRỤ GÓC KHUÔN VIÊN BỀ THẾ (25x25cm x Cao 1.30m)
+      function createCornerPillarMaster(x, z, name) {
+        const p = new THREE.Group();
+        p.userData = { type: 'pillar', name: name || 'TRỤ GÓC ĐÁ LĂNG MỘ', detail: 'Trụ góc đá xanh nguyên khối, đỉnh tạc búp sen đại' };
+
+        const shaft = new THREE.Mesh(new THREE.BoxGeometry(0.26, 1.15, 0.26), materials.stonePolished);
+        shaft.position.set(x, 1.15 / 2, z);
+        shaft.castShadow = true;
+        p.add(shaft);
+
+        const cap = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.08, 0.32), materials.stoneSatin);
+        cap.position.set(x, 1.15 + 0.04, z);
+        p.add(cap);
+
+        const lotus = new THREE.Mesh(new THREE.SphereGeometry(0.11, 14, 14), materials.stonePolished);
+        lotus.scale.set(0.9, 1.6, 0.9);
+        lotus.position.set(x, 1.15 + 0.08 + 0.12, z);
+        lotus.castShadow = true;
+        p.add(lotus);
+        return p;
+      }
+
+      layerGroups.walls.add(createCornerPillarMaster(-halfW + wallInset, -halfL + wallInset, 'TRỤ GÓC HẬU TẢ'));
+      layerGroups.walls.add(createCornerPillarMaster(halfW - wallInset, -halfL + wallInset, 'TRỤ GÓC HẬU HỮU'));
+      layerGroups.walls.add(createCornerPillarMaster(-halfW + wallInset, halfL - wallInset, 'TRỤ GÓC TIỀN TẢ'));
+      layerGroups.walls.add(createCornerPillarMaster(halfW - wallInset, halfL - wallInset, 'TRỤ GÓC TIỀN HỮU'));
+
+      // CỔNG TỨ TRỤ: 2 CỘT CHÍNH ĐỈNH NGHÊ ĐÁ CHẦU (KHÔNG CHÓP NHỌN)
+      function createGateMainPillar(isLeft) {
+        const pillarGroup = new THREE.Group();
+        const sign = isLeft ? -1 : 1;
+        const posX = sign * (1.10 / 2 + 0.15);
+        const posZ = 5.50 - 0.15;
+
+        // Chân tảng bồng hoa sen
+        const base = new THREE.Mesh(new THREE.BoxGeometry(0.38, 0.24, 0.38), materials.stoneSatin);
+        base.position.set(posX, 0.12, posZ);
+        base.castShadow = true;
+        pillarGroup.add(base);
+
+        // Thân cột đá xanh chạm câu đối vàng chìm
+        const shaft = new THREE.Mesh(new THREE.BoxGeometry(0.30, 2.05, 0.30), materials.stonePolished);
+        shaft.position.set(posX, 0.24 + 1.025, posZ);
+        shaft.castShadow = true;
+        pillarGroup.add(shaft);
+
+        const tablet = new THREE.Mesh(new THREE.PlaneGeometry(0.18, 1.50), materials.goldTrim);
+        tablet.position.set(posX, 0.24 + 1.05, posZ + 0.152);
+        pillarGroup.add(tablet);
+
+        // Đấu trán cột bát giác
+        const cap = new THREE.Mesh(new THREE.BoxGeometry(0.40, 0.14, 0.40), materials.stoneSatin);
+        cap.position.set(posX, 2.36, posZ);
+        pillarGroup.add(cap);
+
+        // ĐỈNH CỘT: TƯỢNG NGHÊ ĐÁ CHẦU PHONG THỦY ĐẦM KHỐI (KHÔNG DÙNG NÓN NHỌN)
+        const ngheBase = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.19, 0.12, 8), materials.stonePolished);
+        ngheBase.position.set(posX, 2.49, posZ);
+        pillarGroup.add(ngheBase);
+
+        // Khối thân nghê đá dũng mãnh uy linh
+        const ngheBody = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.28, 0.22), materials.stonePolished);
+        ngheBody.position.set(posX, 2.69, posZ);
+        ngheBody.castShadow = true;
+        pillarGroup.add(ngheBody);
+
+        // Đầu nghê chầu hướng ra minh đường
+        const ngheHead = new THREE.Mesh(new THREE.SphereGeometry(0.11, 10, 10), materials.stonePolished);
+        ngheHead.position.set(posX, 2.87, posZ + 0.05);
+        pillarGroup.add(ngheHead);
+
+        // Hạt ngọc vàng trên đỉnh bờm nghê
+        const jewel = new THREE.Mesh(new THREE.SphereGeometry(0.045, 8, 8), materials.goldTrim);
+        jewel.position.set(posX, 2.99, posZ);
+        pillarGroup.add(jewel);
+
+        pillarGroup.userData = {
+          type: 'pillar',
+          name: isLeft ? 'TRỤ CỔNG CHÍNH TẢ (30×30cm)' : 'TRỤ CỔNG CHÍNH HỮU (30×30cm)',
+          detail: 'Cổng Tứ Trụ Cung Đăng Khoa 110cm, câu đối vàng chìm, đỉnh nghê chầu đá khối'
+        };
+        return pillarGroup;
+      }
+
+      layerGroups.walls.add(createGateMainPillar(true));
+      layerGroups.walls.add(createGateMainPillar(false));
+
+      // 2 CỘT TRỤ QUÂN BÊN CẠNH VỚI ĐÈN LỒNG ĐÁ LỤC GIÁC
+      function createGateSubPillar(isLeft) {
+        const pillarGroup = new THREE.Group();
+        const sign = isLeft ? -1 : 1;
+        const posX = sign * (1.10 / 2 + 0.30 + 0.65 + 0.15);
+        const posZ = 5.50 - 0.15;
+
+        const shaft = new THREE.Mesh(new THREE.BoxGeometry(0.28, 1.70, 0.28), materials.stoneSatin);
+        shaft.position.set(posX, 0.85, posZ);
+        shaft.castShadow = true;
+        pillarGroup.add(shaft);
+
+        const lanternGeo = new THREE.CylinderGeometry(0.16, 0.14, 0.35, 6);
+        const lantern = new THREE.Mesh(lanternGeo, materials.stonePolished);
+        lantern.position.set(posX, 1.70 + 0.175, posZ);
+        lantern.castShadow = true;
+        pillarGroup.add(lantern);
+
+        const roof = new THREE.Mesh(new THREE.ConeGeometry(0.22, 0.18, 6), materials.roofTile);
+        roof.position.set(posX, 1.70 + 0.35 + 0.09, posZ);
+        pillarGroup.add(roof);
+
+        const light = new THREE.PointLight(0xfef08a, 0.9, 4.5);
+        light.position.set(posX, 1.70 + 0.18, posZ);
+        pillarGroup.add(light);
+        lights.lanterns.push(light);
+
+        return pillarGroup;
+      }
+
+      layerGroups.walls.add(createGateSubPillar(true));
+      layerGroups.walls.add(createGateSubPillar(false));
+    }
+
+    // =====================================================================
+    // 5.4 THUẬT TOÁN DỰNG MÁI ĐAO CONG CHUẨN CỔ TRUYỀN (TINH CHỈNH ĐẦU ĐAO MÂY CUỐN ĐÁ, BỜ DẢI & CON KÌM NÓC)
+    function createTraditionalCurvedRoof(baseW, baseD, roofHeight, yBase, zCenter) {
+      const roofGroup = new THREE.Group();
+      const segX = 30;
+      const segZ = 30;
+      const positions = [];
+      const uvs = [];
+      const indices = [];
+
+      const halfW = baseW / 2;
+      const halfD = baseD / 2;
+      const liftHeight = roofHeight * 0.32; // Độ võng đao cong thanh thoát tự nhiên
+
+      for (let j = 0; j <= segZ; j++) {
+        const v = (j / segZ) * 2 - 1;
+        const z = v * halfD;
+        for (let i = 0; i <= segX; i++) {
+          const u = (i / segX) * 2 - 1;
+          const x = u * halfW;
+
+          const dMax = Math.max(Math.abs(u), Math.abs(v));
+          // Độ dốc võng ngói âm dương
+          const mainSlope = roofHeight * (1 - Math.pow(dMax, 0.90));
+
+          // Độ vút 4 góc đao cong
+          const cornerFactor = Math.pow(Math.abs(u) * Math.abs(v), 2.2);
+          const cornerLift = liftHeight * cornerFactor;
+
+          const y = yBase + mainSlope + cornerLift;
+          positions.push(x, y, z + zCenter);
+          uvs.push((u + 1) * 3, (v + 1) * 3);
+        }
+      }
+
+      for (let j = 0; j < segZ; j++) {
+        for (let i = 0; i < segX; i++) {
+          const a = j * (segX + 1) + i;
+          const b = a + 1;
+          const c = a + (segX + 1);
+          const d = c + 1;
+          indices.push(a, c, b);
+          indices.push(b, c, d);
+        }
+      }
+
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+      geo.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2));
+      geo.setIndex(indices);
+      geo.computeVertexNormals();
+
+      const roofMesh = new THREE.Mesh(geo, materials.roofTile);
+      roofMesh.castShadow = true;
+      roofMesh.receiveShadow = true;
+      roofGroup.add(roofMesh);
+
+      // BỜ NÓC TRUNG TÂM (RIDGE BEAM)
+      const ridgeW = baseW * 0.46;
+      const ridgeH = 0.09;
+      const ridgeD = 0.13;
+      const ridgeY = yBase + roofHeight + ridgeH / 2;
+      const ridge = new THREE.Mesh(new THREE.BoxGeometry(ridgeW, ridgeH, ridgeD), materials.stonePolished);
+      ridge.position.set(0, ridgeY, zCenter);
+      ridge.castShadow = true;
+      roofGroup.add(ridge);
+
+      // HAI ĐẦU BỜ NÓC: CON KÌM NÓC ĐÁ CHẠM KHẮC MÂY CUỘN
+      function createRidgeEndKim(xSign) {
+        const kim = new THREE.Group();
+        const kimX = xSign * (ridgeW / 2);
+        
+        // Bệ con kìm
+        const kimBase = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.10, 0.14), materials.stonePolished);
+        kimBase.position.set(kimX, ridgeY + 0.04, zCenter);
+        kim.add(kimBase);
+
+        // Mây cuộn đỉnh kìm uốn lượn phong thủy
+        const scroll = new THREE.Mesh(new THREE.TorusGeometry(0.05, 0.022, 8, 16, Math.PI * 1.1), materials.roofTile);
+        scroll.rotation.y = xSign > 0 ? 0 : Math.PI;
+        scroll.rotation.z = Math.PI * 0.3;
+        scroll.position.set(kimX, ridgeY + 0.11, zCenter);
+        kim.add(scroll);
+        return kim;
+      }
+      roofGroup.add(createRidgeEndKim(1));
+      roofGroup.add(createRidgeEndKim(-1));
+
+      // 4 BỜ DẢI ĐÁ (HIP RIDGES) NỐI TỪ ĐỈNH BỜ NÓC XUỐNG 4 GÓC ĐẦU ĐAO
+      function createHipRidgeBeam(x1, y1, z1, x2, y2, z2) {
+        const p1 = new THREE.Vector3(x1, y1, z1);
+        const p2 = new THREE.Vector3(x2, y2, z2);
+        const len = p1.distanceTo(p2);
+        const mid = p1.clone().add(p2).multiplyScalar(0.5);
+        const ridgeGeo = new THREE.BoxGeometry(0.055, 0.038, len);
+        const mesh = new THREE.Mesh(ridgeGeo, materials.roofTile);
+        mesh.position.copy(mid);
+        mesh.lookAt(p2);
+        mesh.castShadow = true;
+        return mesh;
+      }
+
+      // 4 ĐẦU ĐAO MÂY LÁ HÓA RỒNG ĐÁ XANH CỔ TRUYỀN (THAY THẾ HOÀN TOÀN CÁC CHÓP NHỌN VÔ LÝ)
+      const cornerCoords = [
+        { x: -halfW, z: -halfD, ridgeX: -ridgeW / 2, rotY: -Math.PI * 0.75 },
+        { x: halfW, z: -halfD, ridgeX: ridgeW / 2, rotY: Math.PI * 0.75 },
+        { x: -halfW, z: halfD, ridgeX: -ridgeW / 2, rotY: -Math.PI * 0.25 },
+        { x: halfW, z: halfD, ridgeX: ridgeW / 2, rotY: Math.PI * 0.25 }
+      ];
+
+      cornerCoords.forEach(c => {
+        const cornerY = yBase + liftHeight;
+        
+        // 1. Bờ dải đá nối từ đỉnh xuống góc
+        roofGroup.add(createHipRidgeBeam(c.ridgeX, ridgeY, zCenter, c.x, cornerY + 0.03, c.z + zCenter));
+
+        // 2. Đầu đao mây cuốn đá đầm khối, uốn lượn cổ kính (Đá xanh, KHÔNG CHÓP NHỌN)
+        const finialGroup = new THREE.Group();
+        finialGroup.position.set(c.x, cornerY + 0.02, c.z + zCenter);
+        finialGroup.rotation.y = c.rotY;
+
+        // Bệ ngàm đầu đao
+        const eaveBase = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.07, 0.09), materials.roofTile);
+        eaveBase.castShadow = true;
+        finialGroup.add(eaveBase);
+
+        // Vòng mây cuốn cong vút lên của đầu đao
+        const cloudScroll = new THREE.Mesh(
+          new THREE.TorusGeometry(0.075, 0.026, 8, 18, Math.PI * 0.85),
+          materials.roofTile
+        );
+        cloudScroll.position.set(0, 0.05, 0.03);
+        cloudScroll.rotation.x = -Math.PI * 0.35;
+        cloudScroll.castShadow = true;
+        finialGroup.add(cloudScroll);
+
+        // Nụ sen/hạt ngọc tròn phong thủy thanh nhã ở chóp mây (đá mài bóng)
+        const jewel = new THREE.Mesh(new THREE.SphereGeometry(0.026, 10, 10), materials.stonePolished);
+        jewel.position.set(0, 0.11, 0.07);
+        finialGroup.add(jewel);
+
+        roofGroup.add(finialGroup);
+      });
+
+      // CỔ DIÊM THÔNG PHONG CHẠM CHỮ THỌ DƯỚI MÁI
+      const frieze = new THREE.Mesh(new THREE.BoxGeometry(baseW * 0.76, 0.12, baseD * 0.76), materials.stonePolished);
+      frieze.position.set(0, yBase - 0.06, zCenter);
+      roofGroup.add(frieze);
+
+      return roofGroup;
+    }
+
+    // 5.5 LĂNG THỜ ĐÁ CHÍNH & CUỐN THƯ
+    function buildStoneSanctuaryAndScreen() {
+      const langThoGroup = new THREE.Group();
+      langThoGroup.userData = {
+        type: 'langtho', id: 'langTho',
+        name: 'LĂNG THỜ ĐÁ CHÍNH (LONG ĐÌNH 3 MÁI)',
+        detail: 'Lăng cánh 3 mái đao cong hoàng gia, chạm Rồng Mây cuộn, Lưỡng Long Chầu Nguyệt, dài 5.20m x Cao 3.40m'
+      };
+
+      const centerZ = -5.50 + 1.07 / 2; // -4.965m
+
+      // BỆ ĐẾ TAM CẤP CHẠM SÓNG NƯỚC HẢI BA VÀ CÁNH SEN
+      const base1 = new THREE.Mesh(new THREE.BoxGeometry(1.68, 0.22, 1.22), materials.stoneSatin);
+      base1.position.set(0, 0.11, centerZ);
+      base1.castShadow = true;
+      langThoGroup.add(base1);
+
+      const base2 = new THREE.Mesh(new THREE.BoxGeometry(1.52, 0.20, 1.07), materials.stonePolished);
+      base2.position.set(0, 0.22 + 0.10, centerZ);
+      base2.castShadow = true;
+      langThoGroup.add(base2);
+
+      // KHÁM THỜ CHÍNH VỚI 2 CỘT TRÒN CHẠM RỒNG VỜN MÂY 3D
+      function createDragonPillar(x, z) {
+        const col = new THREE.Group();
+        const plinth = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.16, 0.15, 16), materials.stoneSatin);
+        plinth.position.set(x, 0.42 + 0.075, z);
+        col.add(plinth);
+
+        const shaft = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.11, 1.05, 20), materials.stonePolished);
+        shaft.position.set(x, 0.42 + 0.15 + 0.525, z);
+        shaft.castShadow = true;
+        col.add(shaft);
+
+        const dragonSpiral = new THREE.Mesh(new THREE.TorusGeometry(0.13, 0.025, 8, 24), materials.goldTrim);
+        dragonSpiral.rotation.x = Math.PI / 3;
+        dragonSpiral.position.set(x, 0.42 + 0.55, z);
+        col.add(dragonSpiral);
+
+        const dragonHead = new THREE.Mesh(new THREE.ConeGeometry(0.045, 0.12, 6), materials.goldTrim);
+        dragonHead.position.set(x, 0.42 + 0.95, z + 0.11);
+        dragonHead.rotation.x = -Math.PI / 4;
+        col.add(dragonHead);
+        return col;
+      }
+
+      langThoGroup.add(createDragonPillar(-0.55, centerZ + 0.38));
+      langThoGroup.add(createDragonPillar(0.55, centerZ + 0.38));
+
+      // LÒNG KHÁM THỜ & BÀN HƯƠNG ÁN ĐÁ
+      const chamberBack = new THREE.Mesh(new THREE.BoxGeometry(1.36, 1.15, 0.20), materials.stonePolished);
+      chamberBack.position.set(0, 0.42 + 0.575, centerZ - 0.40);
+      langThoGroup.add(chamberBack);
+
+      const tablet = new THREE.Mesh(new THREE.PlaneGeometry(0.45, 0.70), materials.goldTrim);
+      tablet.position.set(0, 0.42 + 0.65, centerZ - 0.29);
+      langThoGroup.add(tablet);
+
+      const altar = new THREE.Mesh(new THREE.BoxGeometry(0.85, 0.38, 0.42), materials.stonePolished);
+      altar.position.set(0, 0.42 + 0.19, centerZ - 0.10);
+      langThoGroup.add(altar);
+
+      const incense = new THREE.Mesh(new THREE.CylinderGeometry(0.10, 0.08, 0.18, 16), materials.goldTrim);
+      incense.position.set(0, 0.42 + 0.38 + 0.09, centerZ - 0.10);
+      langThoGroup.add(incense);
+
+      // CỬA VÕNG TRÁN KHÁM: LƯỠNG LONG CHẦU NGUYỆT
+      const lintel = new THREE.Mesh(new THREE.BoxGeometry(1.42, 0.22, 0.15), materials.stonePolished);
+      lintel.position.set(0, 1.62, centerZ + 0.35);
+      langThoGroup.add(lintel);
+
+      const moonDisc = new THREE.Mesh(new THREE.SphereGeometry(0.08, 12, 12), materials.goldTrim);
+      moonDisc.position.set(0, 1.62, centerZ + 0.43);
+      langThoGroup.add(moonDisc);
+
+      // =====================================================================
+      // 3 TẦNG MÁI ĐAO CONG CHUẨN MỰC TUYỆT ĐỐI (100% KHÔNG MÉO)
+      // =====================================================================
+      langThoGroup.add(createTraditionalCurvedRoof(1.78, 1.32, 0.46, 1.72, centerZ)); // Tầng 1
+      langThoGroup.add(createTraditionalCurvedRoof(1.46, 1.12, 0.40, 2.30, centerZ)); // Tầng 2
+      langThoGroup.add(createTraditionalCurvedRoof(1.18, 0.92, 0.36, 2.82, centerZ)); // Tầng 3
+
+      // ĐỈNH NÓC: NẬM RƯỢU CAM LỘ & MẶT NGUYỆT TRIỀU DƯƠNG
+      const topSun = new THREE.Mesh(new THREE.SphereGeometry(0.12, 16, 16), materials.goldTrim);
+      topSun.position.set(0, 3.28, centerZ);
+      langThoGroup.add(topSun);
+
+      // HAI CÁNH LĂNG 2 BÊN CHẠM PHÙ ĐIÊU TỨ QUÝ TÙNG CÚC TRÚC MAI
+      function createImperialWing(isLeft) {
+        const wing = new THREE.Group();
+        const wingW = 1.85;
+        const wingD = 0.25;
+        const wingH = 1.70;
+        const sign = isLeft ? -1 : 1;
+        const posX = sign * (0.75 + wingW / 2);
+        const posZ = -5.50 + wingD / 2;
+
+        const panel = new THREE.Mesh(new THREE.BoxGeometry(wingW, wingH, wingD), materials.stonePolished);
+        panel.position.set(posX, wingH / 2, posZ);
+        panel.castShadow = true;
+        wing.add(panel);
+
+        // Mái che ngói đao cong trên cánh lăng
+        const wingRoof = createTraditionalCurvedRoof(wingW * 1.05, wingD * 1.6, 0.32, wingH, posZ);
+        wingRoof.position.x = posX;
+        wing.add(wingRoof);
+
+        const vase = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.08, 0.25, 12), materials.stoneSatin);
+        vase.position.set(posX + sign * (wingW / 2 - 0.15), wingH + 0.12, posZ);
+        wing.add(vase);
+        return wing;
+      }
+
+      langThoGroup.add(createImperialWing(true));
+      langThoGroup.add(createImperialWing(false));
+      layerGroups.sanctuary.add(langThoGroup);
+
+      // =====================================================================
+      // CUỐN THƯ ĐÁ CHỮ PHÚC (147cm x 20cm x Cao 1.25m)
+      // =====================================================================
+      const cuonThuGroup = new THREE.Group();
+      cuonThuGroup.userData = {
+        type: 'cuonthu', id: 'cuonThu',
+        name: 'CUỐN THƯ ĐÁ (CHỮ PHÚC)',
+        detail: 'Chắn tà khí minh đường, khắc chữ Phúc vàng kim, gài kiếm và bút lông phong thủy'
+      };
+
+      const ctPos = cadToWorld(367.5, 985);
+      const ctBase = new THREE.Mesh(new THREE.BoxGeometry(1.58, 0.24, 0.32), materials.stoneSatin);
+      ctBase.position.set(ctPos.x, 0.12, ctPos.z);
+      ctBase.castShadow = true;
+      cuonThuGroup.add(ctBase);
+
+      // Thân cuốn thư đá mài nhẵn phẳng phiu
+      const ctBody = new THREE.Mesh(new THREE.BoxGeometry(1.47, 1.05, 0.20), materials.stonePolished);
+      ctBody.position.set(ctPos.x, 0.24 + 0.525, ctPos.z);
+      ctBody.castShadow = true;
+      cuonThuGroup.add(ctBody);
+
+      // Trán cuốn thư ở trên chạm gờ phào giật cấp hoàng gia
+      const ctCrown = new THREE.Mesh(new THREE.BoxGeometry(0.85, 0.12, 0.24), materials.stonePolished);
+      ctCrown.position.set(ctPos.x, 0.24 + 1.05 + 0.06, ctPos.z);
+      ctCrown.castShadow = true;
+      cuonThuGroup.add(ctCrown);
+
+      // Hai tà cuốn thư cuộn tròn hai bên (dáng lụa cuộn phong thủy)
+      [-1, 1].forEach(sign => {
+        const scrollCyl = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.11, 1.15, 16), materials.stonePolished);
+        scrollCyl.position.set(ctPos.x + sign * (1.47 / 2 + 0.06), 0.24 + 0.575, ctPos.z);
+        scrollCyl.castShadow = true;
+        cuonThuGroup.add(scrollCyl);
+
+        // Nụ sen đá trên đỉnh tà cuốn thư
+        const scrollCap = new THREE.Mesh(new THREE.SphereGeometry(0.08, 10, 10), materials.stoneSatin);
+        scrollCap.position.set(ctPos.x + sign * (1.47 / 2 + 0.06), 0.24 + 1.15 + 0.06, ctPos.z);
+        cuonThuGroup.add(scrollCap);
+      });
+
+      // Lòng cuốn thư: Đĩa chạm chữ PHÚC thư pháp mạ vàng 24K trang trọng
+      const phucDisc = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.26, 0.22, 32), materials.goldTrim);
+      phucDisc.rotateX(Math.PI / 2);
+      phucDisc.position.set(ctPos.x, 0.78, ctPos.z);
+      cuonThuGroup.add(phucDisc);
+
+      layerGroups.sanctuary.add(cuonThuGroup);
+    }
+
+    // =====================================================================
+    // 5.6 29 NGÔI MỘ: 3 MỘ HOÀN THIỆN vs 26 MỘ QUY HOẠCH
+    // =====================================================================
+    function buildAllGraves() {
+      currentGraves.forEach(g => {
+        const isCompleted = isCompletedGrave(g.id);
+        const w = g.width / 100;
+        const d = g.height / 100;
+        const h = g.depth / 100;
+        const pos = cadToWorld(g.x + g.width / 2, g.y + g.height / 2);
+
+        const graveGroup = new THREE.Group();
+        graveGroup.userData = {
+          type: 'grave',
+          id: g.id,
+          name: g.name,
+          graveType: g.type,
+          row: g.row,
+          width: g.width,
+          height: g.height,
+          depth: g.depth,
+          fengshui: g.fengshui,
+          x: g.x,
+          y: g.y,
+          isCompleted: isCompleted
+        };
+
+        if (isCompleted) {
+          // 3 MỘ HOÀN THIỆN: MỘ ÔNG, MỘ BÀ & MỘ 07 (ĐÁ XANH MÀI BÓNG LOÁNG)
+          const baseH = h * 0.25;
+          const base1 = new THREE.Mesh(new THREE.BoxGeometry(w * 1.06, baseH, d * 1.06), materials.stoneSatin);
+          base1.position.set(pos.x, baseH / 2, pos.z);
+          base1.castShadow = true;
+          graveGroup.add(base1);
+
+          const bodyH = h * 0.45;
+          const body = new THREE.Mesh(new THREE.BoxGeometry(w * 0.96, bodyH, d * 0.96), materials.stonePolished);
+          body.position.set(pos.x, baseH + bodyH / 2, pos.z);
+          body.castShadow = true;
+          graveGroup.add(body);
+
+          const capH = h * 0.16;
+          const cap = new THREE.Mesh(new THREE.BoxGeometry(w * 0.98, capH, d * 0.98), materials.stonePolished);
+          cap.position.set(pos.x, baseH + bodyH + capH / 2, pos.z);
+          cap.castShadow = true;
+          graveGroup.add(cap);
+
+          // Lỗ thông thiên phong thủy
+          const vent = new THREE.Mesh(new THREE.CylinderGeometry(w * 0.15, w * 0.15, 0.02, 20), materials.stoneSatin);
+          vent.position.set(pos.x, baseH + bodyH + capH + 0.005, pos.z + d * 0.05);
+          graveGroup.add(vent);
+
+          // Ngai bia thờ Tam Sơn đá xanh cổ truyền (phẳng giật cấp, uy nghiêm - TUYỆT ĐỐI KHÔNG BÁN NGUYỆT)
+          const steleH = h * 0.48;
+          const steleD = 0.12;
+          const steleGroup = new THREE.Group();
+
+          // Thân ngai bia chính hình khối vững chãi
+          const steleBody = new THREE.Mesh(new THREE.BoxGeometry(w * 0.86, steleH, steleD), materials.stonePolished);
+          steleBody.position.set(pos.x, baseH + bodyH + capH + steleH / 2, pos.z - d / 2 + steleD / 2);
+          steleBody.castShadow = true;
+          steleGroup.add(steleBody);
+
+          // Trán bia ở giữa (ngọn chính Tam Sơn): Giật cấp nhô cao, gờ phào vát cạnh phẳng phiu
+          const centerCrownH = 0.085;
+          const centerCrownW = w * 0.52;
+          const centerCrown = new THREE.Mesh(new THREE.BoxGeometry(centerCrownW, centerCrownH, steleD * 1.08), materials.stonePolished);
+          centerCrown.position.set(pos.x, baseH + bodyH + capH + steleH + centerCrownH / 2, pos.z - d / 2 + steleD / 2);
+          centerCrown.castShadow = true;
+          steleGroup.add(centerCrown);
+
+          // Gờ phào chỉ đỉnh trán bia phẳng
+          const crownTrim = new THREE.Mesh(new THREE.BoxGeometry(centerCrownW * 0.86, 0.025, steleD * 1.12), materials.stoneSatin);
+          crownTrim.position.set(pos.x, baseH + bodyH + capH + steleH + centerCrownH + 0.012, pos.z - d / 2 + steleD / 2);
+          steleGroup.add(crownTrim);
+
+          // Hai tai ngai tả & hữu: Giật cấp thấp hơn hai bên, tạo hình Tam Sơn đăng đối bề thế
+          const wingW = w * 0.18;
+          const wingH = steleH * 0.76;
+          const wingLeft = new THREE.Mesh(new THREE.BoxGeometry(wingW, wingH, steleD * 0.95), materials.stonePolished);
+          wingLeft.position.set(pos.x - w * 0.86 / 2 + wingW / 2, baseH + bodyH + capH + wingH / 2, pos.z - d / 2 + steleD / 2);
+          wingLeft.castShadow = true;
+          steleGroup.add(wingLeft);
+
+          const wingRight = new THREE.Mesh(new THREE.BoxGeometry(wingW, wingH, steleD * 0.95), materials.stonePolished);
+          wingRight.position.set(pos.x + w * 0.86 / 2 - wingW / 2, baseH + bodyH + capH + wingH / 2, pos.z - d / 2 + steleD / 2);
+          wingRight.castShadow = true;
+          steleGroup.add(wingRight);
+
+          // Tấm bài vị đá đen bóng khắc chữ viền vàng son ở trung tâm
+          const tablet = new THREE.Mesh(new THREE.PlaneGeometry(w * 0.48, steleH * 0.72), materials.goldTrim);
+          tablet.position.set(pos.x, baseH + bodyH + capH + steleH / 2, pos.z - d / 2 + steleD + 0.002);
+          steleGroup.add(tablet);
+
+          graveGroup.add(steleGroup);
+
+          const inc = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.05, 0.08, 12), materials.goldTrim);
+          inc.position.set(pos.x, baseH + bodyH + capH + 0.04, pos.z + d * 0.35);
+          graveGroup.add(inc);
+
+          layerGroups.completedGraves.add(graveGroup);
+          createFloating3DLabel(g, pos.x, baseH + bodyH + capH + steleH + 0.26, pos.z, true);
+        } else {
+          // 26 MỘ QUY HOẠCH: BỆ ĐÁ THIẾT KẾ ĐỊNH VỊ PHẲNG PHIU (CHỜ XÂY)
+          const plinthH = 0.22;
+          const plinth = new THREE.Mesh(new THREE.BoxGeometry(w, plinthH, d), materials.stonePlanned);
+          plinth.position.set(pos.x, plinthH / 2, pos.z);
+          plinth.castShadow = true;
+          plinth.receiveShadow = true;
+          graveGroup.add(plinth);
+
+          // Vạch tim trục chữ thập kỹ thuật
+          const gridLine1 = new THREE.Mesh(new THREE.PlaneGeometry(w * 0.85, 0.02), materials.goldTrim);
+          gridLine1.rotation.x = -Math.PI / 2;
+          gridLine1.position.set(pos.x, plinthH + 0.002, pos.z);
+          graveGroup.add(gridLine1);
+
+          const gridLine2 = new THREE.Mesh(new THREE.PlaneGeometry(0.02, d * 0.85), materials.goldTrim);
+          gridLine2.rotation.x = -Math.PI / 2;
+          gridLine2.position.set(pos.x, plinthH + 0.002, pos.z);
+          graveGroup.add(gridLine2);
+
+          const outlineGeo = new THREE.BoxGeometry(w * 0.94, 0.01, d * 0.94);
+          const outline = new THREE.Mesh(outlineGeo, materials.stoneSatin);
+          outline.position.set(pos.x, plinthH + 0.001, pos.z);
+          graveGroup.add(outline);
+
+          layerGroups.plannedGraves.add(graveGroup);
+          createFloating3DLabel(g, pos.x, plinthH + 0.35, pos.z, false);
+        }
+      });
+    }
+
+    // 5.7 TẠO NHÃN CHỮ 3D BAY
+    function createFloating3DLabel(grave, x, y, z, isCompleted) {
+      const canvas = document.createElement('canvas');
+      canvas.width = 280; canvas.height = 76;
+      const ctx = canvas.getContext('2d');
+
+      ctx.fillStyle = isCompleted ? 'rgba(12, 26, 30, 0.95)' : 'rgba(15, 23, 42, 0.88)';
+      ctx.strokeStyle = isCompleted ? '#fbbf24' : '#38bdf8';
+      ctx.lineWidth = isCompleted ? 4 : 3;
+      ctx.beginPath();
+      ctx.roundRect(4, 4, 272, 68, 14);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.font = 'bold 24px "Be Vietnam Pro", sans-serif';
+      ctx.fillStyle = isCompleted ? '#fef08a' : '#e2e8f0';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+
+      if (isCompleted) {
+        ctx.fillText(`★ ${grave.name} (ĐÃ XÂY)`, 140, 28);
+        ctx.font = 'bold 15px "JetBrains Mono", monospace';
+        ctx.fillStyle = '#34d399';
+        ctx.fillText(`${grave.width}×${grave.height}cm • ${grave.fengshui || ''}`, 140, 52);
+      } else {
+        ctx.fillText(`📐 ${grave.name} [QUY HOẠCH]`, 140, 28);
+        ctx.font = 'bold 15px "JetBrains Mono", monospace';
+        ctx.fillStyle = '#38bdf8';
+        ctx.fillText(`${grave.width}×${grave.height}cm • Móng +16cm`, 140, 52);
+      }
+
+      const tex = new THREE.CanvasTexture(canvas);
+      const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, depthTest: false }));
+      sprite.scale.set(0.85, 0.23, 1);
+      sprite.position.set(x, y, z);
+      sprite.userData = { graveId: grave.id, isCompleted: isCompleted };
+      layerGroups.labels.add(sprite);
+    }
+
+    // 5.8 HAI TRỤC THẦN ĐẠO & SÂN LỄ BÁI
+    function buildSacredAxesAndCourtyard() {
+      const courtMesh = new THREE.Mesh(new THREE.PlaneGeometry(5.20, 0.80), materials.ceremonialCourtyard);
+      courtMesh.rotation.x = -Math.PI / 2;
+      courtMesh.position.set(0, 0.005, -5.50 + 1.12 + 0.40);
+      layerGroups.sacred.add(courtMesh);
+
+      const axisL = new THREE.Mesh(new THREE.PlaneGeometry(0.615, 7.00), materials.sacredAxis);
+      axisL.rotation.x = -Math.PI / 2;
+      axisL.position.set(cadToWorld(242.5, 550).x, 0.006, 0);
+      layerGroups.sacred.add(axisL);
+
+      const axisR = new THREE.Mesh(new THREE.PlaneGeometry(0.615, 7.00), materials.sacredAxis);
+      axisR.rotation.x = -Math.PI / 2;
+      axisR.position.set(cadToWorld(492.5, 550).x, 0.006, 0);
+      layerGroups.sacred.add(axisR);
+    }
+
+    // 5.9 KÍCH THƯỚC CỐ ĐỊNH BAN ĐẦU
+    function buildStatic3DDimensions() {
+      create3DDimensionCallout(0, 0.15, -4.38, 0, 0.15, -3.58, 'SÂN LỄ 80cm', '#38bdf8');
+      create3DDimensionCallout(-0.55, 0.15, 5.35, 0.55, 0.15, 5.35, 'CỔNG CHÍNH 110cm', '#fbbf24');
+      const pL = cadToWorld(212, 450);
+      const pR = cadToWorld(273.5, 450);
+      create3DDimensionCallout(pL.x, 0.15, pL.z, pR.x, 0.15, pR.z, 'THẦN ĐẠO 61.5cm', '#34d399');
+    }
+
+    function create3DDimensionCallout(x1, y1, z1, x2, y2, z2, text, colorHex, targetGroup = layerGroups.dimensions) {
+      const lineGeo = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(x1, y1, z1), new THREE.Vector3(x2, y2, z2)]);
+      targetGroup.add(new THREE.Line(lineGeo, new THREE.LineBasicMaterial({ color: colorHex, linewidth: 2 })));
+
+      const dotGeo = new THREE.SphereGeometry(0.035, 8, 8);
+      const dotMat = new THREE.MeshBasicMaterial({ color: colorHex });
+      const d1 = new THREE.Mesh(dotGeo, dotMat); d1.position.set(x1, y1, z1);
+      const d2 = new THREE.Mesh(dotGeo, dotMat); d2.position.set(x2, y2, z2);
+      targetGroup.add(d1);
+      targetGroup.add(d2);
+
+      const canvas = document.createElement('canvas');
+      canvas.width = 256; canvas.height = 64;
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = 'rgba(2, 6, 23, 0.92)';
+      ctx.strokeStyle = colorHex;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.roundRect(4, 4, 248, 56, 12);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.font = 'bold 22px "JetBrains Mono", monospace';
+      ctx.fillStyle = colorHex;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(text, 128, 32);
+
+      const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(canvas), depthTest: false }));
+      sprite.scale.set(0.85, 0.22, 1);
+      sprite.position.set((x1+x2)/2, (y1+y2)/2 + 0.16, (z1+z2)/2);
+      targetGroup.add(sprite);
+    }
+
+    // =====================================================================
+    // 6. TÍNH NĂNG ĐẮT GIÁ: HIỂN THỊ KHOẢNG CÁCH 3D VỚI CÁC CẤU KIỆN LIỀN KỀ
+    // =====================================================================
+    function renderInteractive3DClearances(grave) {
+      // Xóa các đường gióng đo đạc tương tác cũ
+      while(layerGroups.interactiveDimensions.children.length > 0) {
+        const c = layerGroups.interactiveDimensions.children[0];
+        layerGroups.interactiveDimensions.remove(c);
+        if (c.geometry) c.geometry.dispose();
+      }
+
+      if (!grave) return;
+
+      const gX = grave.x;
+      const gY = grave.y;
+      const gW = grave.width;
+      const gH = grave.height;
+      const posThis = cadToWorld(gX + gW / 2, gY + gH / 2);
+      const yElevation = 0.28;
+
+      // 1. DÒ TÌM MỘ HOẶC TƯỜNG BÊN TRÁI
+      let leftDist = gX - 20; // Khoảng cách ra mép trong tường tả (X=20)
+      let leftNeighbor = null;
+      currentGraves.forEach(o => {
+        if (o.id === grave.id || o.row !== grave.row) return;
+        if (o.x + o.width <= gX) {
+          const d = gX - (o.x + o.width);
+          if (d < leftDist) {
+            leftDist = d;
+            leftNeighbor = o;
+          }
+        }
+      });
+
+      const xThisLeftWorld = cadToWorld(gX, gY + gH / 2).x;
+      if (leftNeighbor) {
+        const xNeighRightWorld = cadToWorld(leftNeighbor.x + leftNeighbor.width, leftNeighbor.y + leftNeighbor.height / 2).x;
+        create3DDimensionCallout(xNeighRightWorld, yElevation, posThis.z, xThisLeftWorld, yElevation, posThis.z, `← ${leftDist.toFixed(1)}cm`, '#22d3ee', layerGroups.interactiveDimensions);
+      } else {
+        const xWallLeftWorld = cadToWorld(20, gY + gH / 2).x;
+        create3DDimensionCallout(xWallLeftWorld, yElevation, posThis.z, xThisLeftWorld, yElevation, posThis.z, `← Tả ${leftDist.toFixed(1)}cm`, '#38bdf8', layerGroups.interactiveDimensions);
+      }
+
+      // 2. DÒ TÌM MỘ HOẶC TƯỜNG BÊN PHẢI
+      let rightDist = 715 - (gX + gW); // Khoảng cách ra mép trong tường hữu (X=715)
+      let rightNeighbor = null;
+      currentGraves.forEach(o => {
+        if (o.id === grave.id || o.row !== grave.row) return;
+        if (o.x >= gX + gW) {
+          const d = o.x - (gX + gW);
+          if (d < rightDist) {
+            rightDist = d;
+            rightNeighbor = o;
+          }
+        }
+      });
+
+      const xThisRightWorld = cadToWorld(gX + gW, gY + gH / 2).x;
+      if (rightNeighbor) {
+        const xNeighLeftWorld = cadToWorld(rightNeighbor.x, rightNeighbor.y + rightNeighbor.height / 2).x;
+        create3DDimensionCallout(xThisRightWorld, yElevation, posThis.z, xNeighLeftWorld, yElevation, posThis.z, `${rightDist.toFixed(1)}cm →`, '#22d3ee', layerGroups.interactiveDimensions);
+      } else {
+        const xWallRightWorld = cadToWorld(715, gY + gH / 2).x;
+        create3DDimensionCallout(xThisRightWorld, yElevation, posThis.z, xWallRightWorld, yElevation, posThis.z, `${rightDist.toFixed(1)}cm Hữu →`, '#38bdf8', layerGroups.interactiveDimensions);
+      }
+
+      // 3. DÒ TÌM HÀNG MỘ HOẶC LĂNG PHÍA TRÊN (BẮC)
+      const zThisTopWorld = cadToWorld(gX + gW / 2, gY).z;
+      if (grave.row === 1) {
+        // Hàng 1 gióng tới sân lễ trước lăng (80cm)
+        const zCourtWorld = cadToWorld(gX + gW / 2, 112).z;
+        create3DDimensionCallout(posThis.x, yElevation, zCourtWorld, posThis.x, yElevation, zThisTopWorld, `↑ Sân Lễ 80.0cm`, '#fbbf24', layerGroups.interactiveDimensions);
+      } else {
+        // Đo tới mép dưới hàng mộ trên
+        let topDist = 30.0;
+        let topGraveY = gY - 30.0;
+        const zNeighBottomWorld = cadToWorld(gX + gW / 2, topGraveY).z;
+        create3DDimensionCallout(posThis.x, yElevation, zNeighBottomWorld, posThis.x, yElevation, zThisTopWorld, `↑ ${topDist.toFixed(1)}cm`, '#fbbf24', layerGroups.interactiveDimensions);
+      }
+
+      // 4. DÒ TÌM HÀNG MỘ HOẶC CUỐN THƯ PHÍA DƯỚI (NAM)
+      const zThisBottomWorld = cadToWorld(gX + gW / 2, gY + gH).z;
+      if (grave.row === 5) {
+        // Hàng 5 gióng tới cuốn thư đá (68cm)
+        const zCuonThuWorld = cadToWorld(gX + gW / 2, 985).z;
+        create3DDimensionCallout(posThis.x, yElevation, zThisBottomWorld, posThis.x, yElevation, zCuonThuWorld, `↓ Minh Đường 68cm`, '#c084fc', layerGroups.interactiveDimensions);
+      } else {
+        let bottomDist = 30.0;
+        let bottomGraveY = gY + gH + 30.0;
+        const zNeighTopWorld = cadToWorld(gX + gW / 2, bottomGraveY).z;
+        create3DDimensionCallout(posThis.x, yElevation, zThisBottomWorld, posThis.x, yElevation, zNeighTopWorld, `↓ ${bottomDist.toFixed(1)}cm`, '#fbbf24', layerGroups.interactiveDimensions);
+      }
+    }
+
+    // =====================================================================
+    // 7. TƯƠNG TÁC CHỌN VÀ TRA CỨU CẤU KIỆN (RAYCASTING)
+    // =====================================================================
+    window.addEventListener('pointerdown', event => {
+      if (event.target !== renderer.domElement) return;
+      mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+      mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+      // KIỂM TRA NHẤP CHUỘT VÀO MẶT TRỜI / MẶT TRĂNG ĐỂ KÉO ĐỔ BÓNG
+      raycaster.setFromCamera(mouse, camera);
+      const celestialHits = raycaster.intersectObject(sunMesh, true);
+      if (celestialHits.length > 0) {
+        celestialState.isDragging = true;
+        controls.enabled = false; // Tạm tắt xoay camera để thao tác kéo mượt mà
+        document.body.style.cursor = 'grabbing';
+        showToast('☀️ Đang kéo Mặt Trời để đổi hướng nắng & bóng đổ...');
+        return;
+      }
+
+      if (isMeasureActive) { handleTapeMeasureClick(); return; }
+
+      raycaster.setFromCamera(mouse, camera);
+      const clickables = [];
+      layerGroups.completedGraves.traverse(c => { if (c.isMesh) clickables.push(c); });
+      layerGroups.plannedGraves.traverse(c => { if (c.isMesh) clickables.push(c); });
+      layerGroups.sanctuary.traverse(c => { if (c.isMesh) clickables.push(c); });
+      layerGroups.walls.traverse(c => { if (c.isMesh) clickables.push(c); });
+      layerGroups.foundation.traverse(c => { if (c.isMesh) clickables.push(c); });
+
+      const intersects = raycaster.intersectObjects(clickables, true);
+      if (intersects.length > 0) {
+        let root = intersects[0].object;
+        while (root.parent && root.parent !== scene && !root.userData.type) root = root.parent;
+        selectObject(root.userData.type ? root : intersects[0].object);
+      } else {
+        deselectCurrentObject();
+      }
+    });
+
+    function selectObject(obj) {
+      selectedObject3D = obj;
+      highlightSelectedObject(obj);
+
+      document.getElementById('cardGeneralSite').style.display = 'none';
+      document.getElementById('cardSelectedObject').style.display = 'flex';
+
+      const uData = obj.userData || {};
+      document.getElementById('inspectObjName').textContent = uData.name || 'CẤU KIỆN ĐÁ';
+      const typeEl = document.getElementById('inspectObjType');
+      const statusEl = document.getElementById('inspectObjStatus');
+
+      if (uData.type === 'grave') {
+        const isComp = isCompletedGrave(uData.id);
+        if (isComp) {
+          statusEl.innerHTML = '<span style="color:#10b981; font-weight:800;">★ ĐÃ HOÀN THIỆN THỰC TẾ</span>';
+          typeEl.textContent = 'HOÀN THIỆN';
+          typeEl.style.color = '#fbbf24';
+          typeEl.style.borderColor = '#fbbf24';
+        } else {
+          statusEl.innerHTML = '<span style="color:#38bdf8; font-weight:700;">📐 VỊ TRÍ QUY HOẠCH (CHỜ XÂY)</span>';
+          typeEl.textContent = 'QUY HOẠCH';
+          typeEl.style.color = '#38bdf8';
+          typeEl.style.borderColor = '#0284c7';
+        }
+
+        document.getElementById('inspectObjCoords').textContent = `X=${uData.x.toFixed(1)}, Y=${uData.y.toFixed(1)} cm`;
+        document.getElementById('inspectStoneSize').textContent = `${uData.height} × ${uData.width} × ${uData.depth} cm`;
+        document.getElementById('inspectFoundationSize').textContent = `${uData.height + 16} × ${uData.width + 16} × 50 cm`;
+        document.getElementById('inspectFengShui').textContent = `Cung Đỏ: ${uData.fengshui || 'Đại Cát'}`;
+        const vol = (uData.width * uData.height * uData.depth) / 1000000;
+        document.getElementById('inspectStoneWeight').textContent = isComp ? `~${(vol * 2.7).toFixed(2)} Tấn (Đá khối hoàn thiện)` : `Thiết kế ${uData.width}×${uData.height}cm`;
+
+        calculateGraveClearance4Way(uData);
+
+        // KÍCH HOẠT THƯỚC ĐO 3D LIỀN KỀ TRỰC TIẾP TRÊN CANVAS
+        renderInteractive3DClearances(uData);
+      } else if (uData.type === 'langtho') {
+        statusEl.innerHTML = '<span style="color:#34d399; font-weight:800;">ĐÁ XANH NINH BÌNH</span>';
+        typeEl.textContent = 'LONG ĐÌNH';
+        document.getElementById('inspectObjCoords').textContent = 'Trục Giữa X=367.5, Y=5.0 cm';
+        document.getElementById('inspectStoneSize').textContent = '520 × 107 × 340 cm (3 Mái Đao Cong)';
+        document.getElementById('inspectFoundationSize').textContent = '165 × 130 × 60 cm (Lồi)';
+        document.getElementById('inspectFengShui').textContent = 'Cung Quý Tử 107cm (Vương Giả)';
+        document.getElementById('inspectStoneWeight').textContent = '~8.50 Tấn (Chạm rồng tinh xảo)';
+        clearanceCompassStatic('Tựa móng sau 0cm', 'Cánh Tả 87.5cm', 'Cánh Hữu 87.5cm', 'Sân Lễ 80.0cm');
+
+        // Gióng cự ly cho lăng thờ
+        while(layerGroups.interactiveDimensions.children.length > 0) layerGroups.interactiveDimensions.remove(layerGroups.interactiveDimensions.children[0]);
+        create3DDimensionCallout(0, 0.25, -4.38, 0, 0.25, -3.58, 'Sân Lễ Bái 80.0cm', '#38bdf8', layerGroups.interactiveDimensions);
+      } else if (uData.type === 'cuonthu') {
+        statusEl.innerHTML = '<span style="color:#34d399; font-weight:800;">ĐÁ XANH NGUYÊN KHỐI</span>';
+        typeEl.textContent = 'CUỐN THƯ';
+        document.getElementById('inspectObjCoords').textContent = 'Trục Giữa X=367.5, Y=985.0 cm';
+        document.getElementById('inspectStoneSize').textContent = '147 × 20 × 125 cm';
+        document.getElementById('inspectFoundationSize').textContent = '167 × 40 × 50 cm';
+        document.getElementById('inspectFengShui').textContent = 'Thêm Đinh 147cm (Vượng Khí)';
+        document.getElementById('inspectStoneWeight').textContent = '~0.95 Tấn';
+        clearanceCompassStatic('Minh Đường 285cm', 'Sườn Tả 214cm', 'Sườn Hữu 214cm', 'Cổng Ra 70.0cm');
+      }
+
+      // Cập nhật thông số ngầm, TUYỆT ĐỐI KHÔNG TỰ ĐỘNG BUNG PANEL (chỉ mở khi người dùng nhấn nút tam giác ở cạnh)
+      const objName = uData.name || 'Cấu kiện 3D';
+      const sizeDesc = uData.width ? ` (${uData.width}×${uData.height}cm)` : '';
+      showToast(`🎯 Đã chọn: ${objName}${sizeDesc} • Nhấn tam giác ◀ ở mép phải để xem chi tiết`);
+
+      // Nháy sáng nhẹ nút tam giác bên phải để báo hiệu có thông tin
+      const rightToggleBtn = document.getElementById('btnEdgeRight') || document.querySelector('.edge-right');
+      if (rightToggleBtn) {
+        rightToggleBtn.classList.add('pulse-notify');
+        setTimeout(() => rightToggleBtn.classList.remove('pulse-notify'), 1800);
+      }
+    }
+
+    function highlightSelectedObject(obj) {
+      while(layerGroups.interactiveHighlight.children.length > 0) {
+        layerGroups.interactiveHighlight.remove(layerGroups.interactiveHighlight.children[0]);
+      }
+      const box = new THREE.Box3().setFromObject(obj);
+      layerGroups.interactiveHighlight.add(new THREE.Box3Helper(box, 0xfbbf24));
+    }
+
+    function deselectCurrentObject() {
+      selectedObject3D = null;
+      while(layerGroups.interactiveHighlight.children.length > 0) {
+        layerGroups.interactiveHighlight.remove(layerGroups.interactiveHighlight.children[0]);
+      }
+      while(layerGroups.interactiveDimensions.children.length > 0) {
+        layerGroups.interactiveDimensions.remove(layerGroups.interactiveDimensions.children[0]);
+      }
+      document.getElementById('cardGeneralSite').style.display = 'flex';
+      document.getElementById('cardSelectedObject').style.display = 'none';
+    }
+
+    function focusCameraOnSelected() {
+      if (!selectedObject3D) return;
+      const box = new THREE.Box3().setFromObject(selectedObject3D);
+      const center = box.getCenter(new THREE.Vector3());
+      new TWEEN.Tween(controls.target).to({ x: center.x, y: center.y, z: center.z }, 800).easing(TWEEN.Easing.Cubic.Out).start();
+      new TWEEN.Tween(camera.position).to({ x: center.x + 2.2, y: center.y + 2.0, z: center.z + 2.8 }, 800).easing(TWEEN.Easing.Cubic.Out).start();
+    }
+
+    function calculateGraveClearance4Way(grave) {
+      const gX = grave.x; const gY = grave.y; const gW = grave.width;
+      let leftDist = gX - 20;
+      let rightDist = 715 - (gX + gW);
+      currentGraves.forEach(o => {
+        if (o.id === grave.id || o.row !== grave.row) return;
+        if (o.x + o.width <= gX) { const d = gX - (o.x + o.width); if (d < leftDist) leftDist = d; }
+        if (o.x >= gX + gW) { const d = o.x - (gX + gW); if (d < rightDist) rightDist = d; }
+      });
+      const topDist = grave.row === 1 ? 80.0 : 30.0;
+      const bottomDist = grave.row === 5 ? 68.0 : 30.0;
+
+      document.getElementById('clearanceTop').textContent = `↑ ${topDist.toFixed(1)}cm`;
+      document.getElementById('clearanceBottom').textContent = `↓ ${bottomDist.toFixed(1)}cm`;
+      document.getElementById('clearanceLeft').textContent = `← ${leftDist.toFixed(1)}cm`;
+      document.getElementById('clearanceRight').textContent = `${rightDist.toFixed(1)}cm →`;
+      document.getElementById('clearanceCenter').textContent = grave.name;
+    }
+
+    function clearanceCompassStatic(top, left, right, bottom) {
+      document.getElementById('clearanceTop').textContent = `↑ ${top}`;
+      document.getElementById('clearanceLeft').textContent = `← ${left}`;
+      document.getElementById('clearanceRight').textContent = `${right} →`;
+      document.getElementById('clearanceBottom').textContent = `↓ ${bottom}`;
+      document.getElementById('clearanceCenter').textContent = 'TÂM ĐIỂM';
+    }
+
+    function populateGraveQuickList() {
+      const listContainer = document.getElementById('graveQuickList');
+      listContainer.innerHTML = '';
+
+      currentGraves.forEach(g => {
+        const isComp = isCompletedGrave(g.id);
+        const item = document.createElement('div');
+        item.style.cssText = `
+          display: flex; align-items: center; justify-content: space-between;
+          padding: 5px 8px; border-radius: 6px; font-size: 11px; cursor: pointer; transition: all 0.15s;
+          background: ${isComp ? 'rgba(245, 158, 11, 0.14)' : 'rgba(15, 23, 42, 0.6)'};
+          border: 1px solid ${isComp ? 'rgba(245, 158, 11, 0.4)' : 'rgba(255, 255, 255, 0.06)'};
+        `;
+        item.innerHTML = `
+          <div style="display:flex; align-items:center; gap:6px;">
+            <span style="color:${isComp ? '#fbbf24' : '#38bdf8'}">${isComp ? '★' : '📐'}</span>
+            <span style="font-weight:700; color:${isComp ? '#fef08a' : '#fff'}">${g.name}</span>
+            <span style="font-size:9.5px; color:var(--text-muted); font-family:var(--font-mono);">${g.width}×${g.height}</span>
+          </div>
+          <span style="font-size:9px; font-weight:700; color:${isComp ? '#34d399' : '#38bdf8'}; font-family:var(--font-mono);">
+            ${isComp ? 'HOÀN THIỆN' : 'QUY HOẠCH'}
+          </span>
+        `;
+        item.onmouseenter = () => { item.style.borderColor = '#38bdf8'; item.style.background = 'rgba(30, 41, 59, 0.9)'; };
+        item.onmouseleave = () => {
+          item.style.borderColor = isComp ? 'rgba(245, 158, 11, 0.4)' : 'rgba(255, 255, 255, 0.06)';
+          item.style.background = isComp ? 'rgba(245, 158, 11, 0.14)' : 'rgba(15, 23, 42, 0.6)';
+        };
+        item.onclick = () => {
+          let target = null;
+          const searchGroup = isComp ? layerGroups.completedGraves : layerGroups.plannedGraves;
+          searchGroup.children.forEach(grp => { if (grp.userData.id === g.id) target = grp; });
+          if (target) { selectObject(target); focusCameraOnSelected(); }
+        };
+        listContainer.appendChild(item);
+      });
+    }
+
+    // =====================================================================
+    // 8. ĐIỀU HƯỚNG CAMERA (12 GÓC NHÌN PHỐI CẢNH NGHỆ THUẬT & KỸ THUẬT)
+    // =====================================================================
+    function setCameraPreset(key) {
+      document.querySelectorAll('.cam-btn').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = document.getElementById(`btnCam${key.charAt(0).toUpperCase() + key.slice(1)}`);
+      if (activeBtn) activeBtn.classList.add('active');
+
+      let targetPos = { x: 0, y: 10.2, z: 14.2 };
+      let targetLook = { x: 0, y: 0.6, z: 0 };
+
+      switch(key) {
+        case 'overview':
+          targetPos = { x: 0, y: 10.5, z: 13.0 };
+          targetLook = { x: 0, y: 0.5, z: 0 };
+          break;
+        case 'top':
+          targetPos = { x: 0, y: 16.5, z: 0.01 };
+          targetLook = { x: 0, y: 0, z: 0 };
+          break;
+        case 'frontElevation':
+          targetPos = { x: 0, y: 1.8, z: 10.2 };
+          targetLook = { x: 0, y: 1.5, z: -5.0 };
+          break;
+        case 'gate':
+          targetPos = { x: 0, y: 1.65, z: 7.2 };
+          targetLook = { x: 0, y: 1.5, z: -5.0 };
+          break;
+        case 'altar':
+          targetPos = { x: 0, y: 2.9, z: -3.1 };
+          targetLook = { x: 0, y: 2.1, z: -4.965 };
+          break;
+        case 'grandparents':
+          targetPos = { x: 0, y: 2.1, z: -1.6 };
+          targetLook = { x: 0, y: 0.9, z: -3.4 };
+          break;
+        case 'grave07':
+          const p7 = cadToWorld(40 + 81/2, 369 + 127/2);
+          targetPos = { x: p7.x - 1.2, y: 1.8, z: p7.z + 1.8 };
+          targetLook = { x: p7.x, y: 0.8, z: p7.z };
+          break;
+        case 'screen':
+          targetPos = { x: 0, y: 1.6, z: 6.2 };
+          targetLook = { x: 0, y: 1.0, z: 4.3 };
+          break;
+        case 'leftAxis':
+          const posL = cadToWorld(242.5, 950);
+          targetPos = { x: posL.x, y: 1.65, z: posL.z };
+          targetLook = { x: posL.x, y: 1.2, z: -5.0 };
+          break;
+        case 'rightAxis':
+          const posR = cadToWorld(492.5, 950);
+          targetPos = { x: posR.x, y: 1.65, z: posR.z };
+          targetLook = { x: posR.x, y: 1.2, z: -5.0 };
+          break;
+        case 'cinematic':
+          targetPos = { x: -6.5, y: 2.8, z: 9.5 };
+          targetLook = { x: 0.5, y: 1.8, z: -3.5 };
+          break;
+        case 'sunsetGlow':
+          targetPos = { x: 5.8, y: 2.4, z: 8.5 };
+          targetLook = { x: -1.5, y: 1.6, z: -4.0 };
+          setLightingMode('sunset');
+          break;
+      }
+
+      new TWEEN.Tween(camera.position).to(targetPos, 900).easing(TWEEN.Easing.Cubic.Out).start();
+      new TWEEN.Tween(controls.target).to(targetLook, 900).easing(TWEEN.Easing.Cubic.Out).start();
+    }
+
+    // =====================================================================
+    // 9. CÁC TÙY CHỌN BẬT / TẮT (TOGGLES & SHORTCUTS)
+    // =====================================================================
+    // 1-CLICK TOGGLE TOÀN BỘ NHÃN MỘ (THEO YÊU CẦU CỦA NGƯỜI DÙNG)
+    function toggleAllLabelsGlobal() {
+      isAllLabelsVisible = !isAllLabelsVisible;
+      const btn = document.getElementById('btnToggleAllLabels');
+      const icon = document.getElementById('iconLabelsBtn');
+      const label = document.getElementById('labelLabelsBtn');
+      const sw = document.getElementById('layerToggleLabels');
+
+      layerGroups.labels.visible = isAllLabelsVisible;
+      if (sw) sw.checked = isAllLabelsVisible;
+
+      if (isAllLabelsVisible) {
+        btn.classList.add('active');
+        icon.textContent = '🏷️';
+        label.textContent = 'Nhãn Mộ: BẬT';
+        showToast('🏷️ Đã hiển thị toàn bộ Nhãn Tên Mộ 3D');
+      } else {
+        btn.classList.remove('active');
+        icon.textContent = '🕶️';
+        label.textContent = 'Nhãn Mộ: ĐÃ ẨN';
+        showToast('🕶️ Đã ẩn toàn bộ Nhãn Mộ (Tập trung ngắm đá)');
+      }
+    }
+
+    function toggleLabelsFromSwitch(checked) {
+      isAllLabelsVisible = checked;
+      const btn = document.getElementById('btnToggleAllLabels');
+      const icon = document.getElementById('iconLabelsBtn');
+      const label = document.getElementById('labelLabelsBtn');
+
+      layerGroups.labels.visible = isAllLabelsVisible;
+      if (isAllLabelsVisible) {
+        btn.classList.add('active');
+        icon.textContent = '🏷️';
+        label.textContent = 'Nhãn Mộ: BẬT';
+      } else {
+        btn.classList.remove('active');
+        icon.textContent = '🕶️';
+        label.textContent = 'Nhãn Mộ: ĐÃ ẨN';
+      }
+    }
+
+    // LỌC 3 MỘ ĐÃ XÂY
+    function toggleOnlyCompletedMode() {
+      isOnlyCompletedMode = !isOnlyCompletedMode;
+      const btn = document.getElementById('btnToggleOnlyCompleted');
+      const icon = document.getElementById('iconCompletedMode');
+      const label = document.getElementById('labelCompletedMode');
+
+      if (isOnlyCompletedMode) {
+        btn.classList.add('active');
+        icon.textContent = '🌟';
+        label.textContent = 'Đang xem: 3 Mộ Đã Xây';
+        layerGroups.plannedGraves.visible = false;
+        layerGroups.labels.children.forEach(s => {
+          if (!s.userData.isCompleted) s.visible = false;
+        });
+        showToast('🌟 Chế độ Hiện Trạng: Chỉ hiển thị Mộ Ông, Mộ Bà, Mộ 07 đã hoàn thiện');
+      } else {
+        btn.classList.remove('active');
+        icon.textContent = '🏛️';
+        label.textContent = 'Đầy Đủ 29 Mộ Quy Hoạch';
+        layerGroups.plannedGraves.visible = true;
+        if (isAllLabelsVisible) {
+          layerGroups.labels.children.forEach(s => { s.visible = true; });
+        }
+        showToast('🏛️ Chế độ Quy Hoạch: Hiển thị đầy đủ 29 ngôi mộ');
+      }
+    }
+
+    function toggleLayer(layerKey, isVisible) {
+      if (layerGroups[layerKey]) {
+        layerGroups[layerKey].visible = isVisible;
+        showToast(`${isVisible ? '👁️ Đã hiện' : '🕶️ Đã ẩn'}: Lớp ${layerKey}`);
+      }
+    }
+
+    function toggleXRayFoundation() {
+      isXRayMode = !isXRayMode;
+      const btn = document.getElementById('btnToggleXRay');
+      if (isXRayMode) {
+        btn.classList.add('active');
+        layerGroups.completedGraves.children.forEach(grp => {
+          grp.traverse(m => { if (m.isMesh) { m.material.transparent = true; m.material.opacity = 0.25; } });
+        });
+        layerGroups.plannedGraves.children.forEach(grp => {
+          grp.traverse(m => { if (m.isMesh) { m.material.transparent = true; m.material.opacity = 0.20; } });
+        });
+        layerGroups.sanctuary.children.forEach(grp => {
+          grp.traverse(m => { if (m.isMesh) { m.material.transparent = true; m.material.opacity = 0.25; } });
+        });
+        layerGroups.foundation.children.forEach(m => { if (m.isMesh) m.material = materials.concreteXRay; });
+        showToast('🏗️ Chế độ X-Ray: Nổi bật cốt móng bê tông âm đất');
+      } else {
+        btn.classList.remove('active');
+        layerGroups.completedGraves.children.forEach(grp => {
+          grp.traverse(m => { if (m.isMesh) { m.material.transparent = false; m.material.opacity = 1.0; } });
+        });
+        layerGroups.plannedGraves.children.forEach(grp => {
+          grp.traverse(m => { if (m.isMesh) { m.material.transparent = false; m.material.opacity = 1.0; } });
+        });
+        layerGroups.sanctuary.children.forEach(grp => {
+          grp.traverse(m => { if (m.isMesh) { m.material.transparent = false; m.material.opacity = 1.0; } });
+        });
+        layerGroups.foundation.children.forEach(m => { if (m.isMesh) m.material = materials.concreteFoundation; });
+        showToast('🪨 Trở về chế độ mô hình hoàn thiện đá');
+      }
+    }
+
+    function setNavigationMode(mode) {
+      currentNavMode = mode;
+      const btnOrbit = document.getElementById('btnNavOrbit');
+      const btnWalk = document.getElementById('btnNavWalk');
+      const walkNotice = document.getElementById('walkHudNotice');
+      const joystickZone = document.getElementById('mobile-joystick-zone');
+
+      if (mode === 'walk') {
+        btnOrbit.classList.remove('active');
+        btnWalk.classList.add('active');
+        walkNotice.style.display = 'flex';
+        controls.enabled = false;
+        camera.position.set(0, walkState.eyeHeight, 5.8);
+        walkState.yaw = Math.PI;
+        walkState.pitch = 0;
+        if ('ontouchstart' in window || navigator.maxTouchPoints > 0) joystickZone.style.display = 'block';
+        showToast('🚶 Đã kích hoạt Chế Độ Đi Dạo Thực Tế Ảo');
+      } else {
+        btnOrbit.classList.add('active');
+        btnWalk.classList.remove('active');
+        walkNotice.style.display = 'none';
+        joystickZone.style.display = 'none';
+        controls.enabled = true;
+        resetDefaultView();
+        showToast('🛰️ Chế Độ Xoay Toàn Cảnh');
+      }
+    }
+
+    window.addEventListener('keydown', e => {
+      if (e.key === 'Escape') {
+        if (currentNavMode === 'walk') setNavigationMode('orbit');
+        if (isMeasureActive) toggleMeasureTool();
+        deselectCurrentObject();
+        return;
+      }
+      if (e.key.toLowerCase() === 'l') {
+        toggleAllLabelsGlobal();
+        return;
+      }
+      if (currentNavMode !== 'walk') return;
+      switch(e.code) {
+        case 'KeyW': case 'ArrowUp': walkState.moveForward = true; break;
+        case 'KeyS': case 'ArrowDown': walkState.moveBackward = true; break;
+        case 'KeyA': case 'ArrowLeft': walkState.moveLeft = true; break;
+        case 'KeyD': case 'ArrowRight': walkState.moveRight = true; break;
+      }
+    });
+
+    window.addEventListener('keyup', e => {
+      if (currentNavMode !== 'walk') return;
+      switch(e.code) {
+        case 'KeyW': case 'ArrowUp': walkState.moveForward = false; break;
+        case 'KeyS': case 'ArrowDown': walkState.moveBackward = false; break;
+        case 'KeyA': case 'ArrowLeft': walkState.moveLeft = false; break;
+        case 'KeyD': case 'ArrowRight': walkState.moveRight = false; break;
+      }
+    });
+
+    window.addEventListener('mousedown', e => {
+      if (currentNavMode === 'walk') { walkState.isMouseDown = true; walkState.prevMouse = { x: e.clientX, y: e.clientY }; }
+    });
+    window.addEventListener('mousemove', e => {
+      if (currentNavMode === 'walk' && walkState.isMouseDown) {
+        const deltaX = e.clientX - walkState.prevMouse.x;
+        const deltaY = e.clientY - walkState.prevMouse.y;
+        walkState.yaw -= deltaX * 0.003;
+        walkState.pitch -= deltaY * 0.003;
+        walkState.pitch = Math.max(-Math.PI / 3, Math.min(Math.PI / 3, walkState.pitch));
+        walkState.prevMouse = { x: e.clientX, y: e.clientY };
+      }
+    });
+    window.addEventListener('mouseup', () => { walkState.isMouseDown = false; });
+
+    function updateWalkMovement(delta) {
+      if (currentNavMode !== 'walk') return;
+      const forward = new THREE.Vector3(-Math.sin(walkState.yaw), 0, -Math.cos(walkState.yaw));
+      const right = new THREE.Vector3(Math.cos(walkState.yaw), 0, -Math.sin(walkState.yaw));
+      const move = new THREE.Vector3();
+      if (walkState.moveForward) move.add(forward);
+      if (walkState.moveBackward) move.sub(forward);
+      if (walkState.moveRight) move.add(right);
+      if (walkState.moveLeft) move.sub(right);
+      move.normalize();
+
+      camera.position.addScaledVector(move, walkState.speed * delta);
+      camera.position.x = Math.max(-3.4, Math.min(3.4, camera.position.x));
+      camera.position.z = Math.max(-5.2, Math.min(6.5, camera.position.z));
+      camera.position.y = walkState.eyeHeight;
+
+      const targetLook = new THREE.Vector3(
+        camera.position.x - Math.sin(walkState.yaw) * Math.cos(walkState.pitch),
+        camera.position.y + Math.sin(walkState.pitch),
+        camera.position.z - Math.cos(walkState.yaw) * Math.cos(walkState.pitch)
+      );
+      camera.lookAt(targetLook);
+    }
+
+    // =====================================================================
+    // 10. MÔI TRƯỜNG ÁNH SÁNG & THƯỚC ĐO 3D
+    // =====================================================================
+    function setLightingMode(mode) {
+      document.querySelectorAll('.env-btn').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = document.getElementById(`btnEnv${mode.charAt(0).toUpperCase() + mode.slice(1)}`);
+      if (activeBtn) activeBtn.classList.add('active');
+
+      switch(mode) {
+        case 'day':
+          scene.background = new THREE.Color(0x020710);
+          scene.fog.color = new THREE.Color(0x020710);
+          lights.sun.color.setHex(0xfff7e6);
+          lights.sun.intensity = 1.65;
+          lights.ambient.intensity = 0.65;
+          lights.spotSanctuary.intensity = 1.8;
+          lights.lanterns.forEach(l => l.intensity = 0.9);
+          showToast('☀️ Ánh sáng Ban Ngày Hoàng Gia');
+          break;
+        case 'sunset':
+          scene.background = new THREE.Color(0x1a0a06);
+          scene.fog.color = new THREE.Color(0x1a0a06);
+          lights.sun.color.setHex(0xf97316);
+          lights.sun.intensity = 2.0;
+          lights.ambient.color.setHex(0xfeb272);
+          lights.ambient.intensity = 0.50;
+          lights.spotSanctuary.intensity = 2.5;
+          lights.lanterns.forEach(l => l.intensity = 1.8);
+          showToast('🌅 Ánh sáng Chiều Hoàng Hôn Cổ Kính');
+          break;
+        case 'night':
+          scene.background = new THREE.Color(0x010206);
+          scene.fog.color = new THREE.Color(0x010206);
+          lights.sun.intensity = 0.08;
+          lights.ambient.color.setHex(0x1e293b);
+          lights.ambient.intensity = 0.22;
+          lights.spotSanctuary.intensity = 4.2;
+          lights.lanterns.forEach(l => l.intensity = 3.2);
+          showToast('🌙 Đêm Soi Đèn Đá Linh Thiêng');
+          break;
+        case 'cad':
+          scene.background = new THREE.Color(0x041021);
+          scene.fog.color = new THREE.Color(0x041021);
+          lights.sun.intensity = 0.8;
+          lights.ambient.color.setHex(0x38bdf8);
+          lights.ambient.intensity = 0.8;
+          showToast('📐 Phong Cách Kỹ Thuật CAD Xanh');
+          break;
+      }
+    }
+
+    function toggleMeasureTool() {
+      isMeasureActive = !isMeasureActive;
+      const btn = document.getElementById('btnTapeMeasure');
+      const reticle = document.getElementById('measure-reticle');
+      measurePoints = [];
+      if (isMeasureActive) {
+        btn.classList.add('active');
+        reticle.style.display = 'block';
+        showToast('📏 Thước Đo 3D: Nhấp điểm thứ 1');
+      } else {
+        btn.classList.remove('active');
+        reticle.style.display = 'none';
+        showToast('Đã đóng Thước Đo 3D');
+      }
+    }
+
+    function handleTapeMeasureClick() {
+      raycaster.setFromCamera(mouse, camera);
+      const intersects = raycaster.intersectObjects(scene.children, true);
+      if (intersects.length > 0) {
+        const pt = intersects[0].point;
+        measurePoints.push(pt);
+        if (measurePoints.length === 1) {
+          showToast('📍 Điểm 1 đã chọn. Hãy nhấp điểm thứ 2!');
+        } else if (measurePoints.length === 2) {
+          const p1 = measurePoints[0];
+          const p2 = measurePoints[1];
+          const distCm = (p1.distanceTo(p2) * 100).toFixed(1);
+          create3DDimensionCallout(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z, `${distCm} cm`, '#f43f5e');
+          showToast(`📏 Khoảng cách đo được: ${distCm} cm!`);
+          measurePoints = [];
+        }
+      }
+    }
+
+    function toggleAutoRotate() {
+      isAutoRotating = !isAutoRotating;
+      controls.autoRotate = isAutoRotating;
+      controls.autoRotateSpeed = 1.2;
+      const btn = document.getElementById('btnAutoRotate');
+      if (isAutoRotating) { btn.classList.add('active'); showToast('🔄 Tự động xoay 360° đã bật'); }
+      else { btn.classList.remove('active'); showToast('Đã dừng tự xoay'); }
+    }
+
+    function resetDefaultView() { setCameraPreset('overview'); }
+    function toggleSidebar(side) {
+      const isLeft = side === 'left';
+      const el = document.getElementById(isLeft ? 'sidebarLeft' : 'sidebarRight');
+      if (!el) return;
+      el.classList.toggle('collapsed');
+      const isCollapsed = el.classList.contains('collapsed');
+      const btn = document.getElementById(isLeft ? 'btnEdgeLeft' : 'btnEdgeRight');
+      if (btn) {
+        if (isLeft) {
+          btn.textContent = isCollapsed ? '▶' : '◀';
+          btn.title = isCollapsed ? 'Mở Bảng Lớp Trái' : 'Đóng Bảng Lớp Trái';
+        } else {
+          btn.textContent = isCollapsed ? '◀' : '▶';
+          btn.title = isCollapsed ? 'Mở Bảng Thông Số Phải' : 'Đóng Bảng Thông Số Phải';
+        }
+      }
+    }
+
+    function toggleMobileHeaderCompact() {
+      const hdr = document.getElementById('mainHudHeader');
+      const btn = document.getElementById('btnToggleMobileHeader');
+      if (hdr) {
+        hdr.classList.toggle('mobile-collapsed');
+        if (btn) btn.textContent = hdr.classList.contains('mobile-collapsed') ? '☰' : '✕';
+      }
+    }
+
+    function switchPreset(key) {
+      if (key === 'preset2026_pdf') currentGraves = JSON.parse(JSON.stringify(PRESET_735_1100_PDF2026));
+      else currentGraves = JSON.parse(JSON.stringify(PRESET_735_1100));
+      buildComplete3DScene();
+      updateCelestialPosition();
+      showToast(`Đã chuyển: ${key === 'preset2026_pdf' ? 'Mẫu Chuẩn PDF 2026' : 'Mẫu Chuẩn 7.35x11m'}`);
+    }
+
+    function capture3DScreenshot() {
+      renderer.render(scene, camera);
+      const link = document.createElement('a');
+      link.download = `Quy_Hoach_Lang_Mo_3D_${Date.now()}.png`;
+      link.href = renderer.domElement.toDataURL('image/png');
+      link.click();
+      showToast('📷 Đã tải xuống ảnh 3D chất lượng cao!');
+    }
+
+    function openQuantitiesModal() { document.getElementById('quantitiesModal').style.display = 'flex'; }
+    function closeQuantitiesModal() { document.getElementById('quantitiesModal').style.display = 'none'; }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toastNotify');
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => { toast.classList.remove('show'); }, 2400);
+    }
+
+    // =====================================================================
+    // 11. ANIMATION LOOP (60 FPS MƯỢT MÀ)
+    // =====================================================================
+    const clock = new THREE.Clock();
+    
+    // XỬ LÝ KÉO THẢ MẶT TRỜI / MẶT TRĂNG 3D TRÊN BẦU TRỜI
+    window.addEventListener('pointermove', event => {
+      if (event.target !== renderer.domElement && !celestialState.isDragging) return;
+
+      mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+      mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+      if (celestialState.isDragging) {
+        // Chiếu tia từ camera vào bán cầu bầu trời để tính tọa độ kéo
+        raycaster.setFromCamera(mouse, camera);
+        
+        // Tạo mặt phẳng ảo song song với camera qua quả cầu thiên thể
+        const normal = camera.getWorldDirection(new THREE.Vector3()).negate();
+        const plane = new THREE.Plane().setFromNormalAndCoplanarPoint(normal, celestialGroup.position);
+        const intersectPoint = new THREE.Vector3();
+        
+        if (raycaster.ray.intersectPlane(plane, intersectPoint)) {
+          // Chuyển tọa độ không gian thành góc phương vị (Azimuth) và độ cao (Elevation)
+          const x = intersectPoint.x;
+          const y = Math.max(1.5, intersectPoint.y);
+          const z = intersectPoint.z;
+
+          let newAz = (Math.atan2(x, z) * 180 / Math.PI + 360) % 360;
+          const distXZ = Math.hypot(x, z);
+          let newEl = Math.atan2(y, Math.max(0.1, distXZ)) * 180 / Math.PI;
+
+          newEl = Math.max(6, Math.min(85, newEl));
+          celestialState.azimuth = newAz;
+          celestialState.elevation = newEl;
+          updateCelestialPosition();
+        }
+      } else {
+        // Kiểm tra hover qua mặt trời để đổi cursor
+        raycaster.setFromCamera(mouse, camera);
+        const hits = raycaster.intersectObject(sunMesh, true);
+        if (hits.length > 0) {
+          if (!celestialState.isHovered) {
+            celestialState.isHovered = true;
+            document.body.style.cursor = 'grab';
+          }
+        } else {
+          if (celestialState.isHovered) {
+            celestialState.isHovered = false;
+            document.body.style.cursor = 'default';
+          }
+        }
+      }
+    });
+
+    window.addEventListener('pointerup', () => {
+      if (celestialState.isDragging) {
+        celestialState.isDragging = false;
+        controls.enabled = true; // Kích hoạt lại xoay camera bình thường
+        document.body.style.cursor = 'default';
+        showToast('🎯 Đã cố định hướng chiếu nắng và bóng đổ mới');
+      }
+    });
+
+    function animate() {
+      requestAnimationFrame(animate);
+      const delta = clock.getDelta();
+      TWEEN.update();
+      if (currentNavMode === 'orbit') controls.update();
+      else updateWalkMovement(delta);
+      renderer.render(scene, camera);
+    }
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    window.addEventListener('DOMContentLoaded', () => {
+      buildComplete3DScene();
+      animate();
+      showToast('🏛️ Đồ họa 3D Lăng Mộ Đá Xanh Ninh Bình Master sẵn sàng!');
+    });
+  </script>
+</body>
+</html>
