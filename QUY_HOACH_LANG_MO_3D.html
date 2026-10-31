@@ -915,32 +915,34 @@
 
     /* RESPONSIVE CHO MÀN HÌNH DỌC / ĐIỆN THOẠI IPHONE (WIDTH <= 768px) */
     @media (max-width: 768px) {
-      /* HEADER THU GỌN GỌN GÀNG TRÊN MÀN HÌNH DỌC */
+      /* CHẾ ĐỘ MẶC ĐỊNH TRÊN ĐIỆN THOẠI: TOÀN MÀN HÌNH, ẨN CẢ THANH CÔNG CỤ MÉP TRÊN */
       header.hud-header {
+        display: none !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      /* KHI BẬT HIỆN HEADER TRÊN MOBILE (NẾU CẦN THAO TÁC NÂNG CAO) */
+      header.hud-header.mobile-visible {
+        display: flex !important;
         top: max(8px, env(safe-area-inset-top));
         left: 8px;
         right: 8px;
         height: auto;
         min-height: 38px;
-        padding: 4px 10px;
+        padding: 6px 10px;
         border-radius: 12px;
         gap: 6px;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         z-index: 92;
-      }
-
-      /* TRẠNG THÁI THU GỌN MẶC ĐỊNH */
-      header.hud-header.mobile-collapsed {
-        height: 38px;
-        overflow: hidden;
-        background: rgba(6, 14, 26, 0.90);
+        background: rgba(6, 14, 26, 0.95);
         backdrop-filter: blur(24px);
         -webkit-backdrop-filter: blur(24px);
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.7);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
       }
 
-      header.hud-header.mobile-collapsed .header-actions {
-        display: none !important;
+      header.hud-header.mobile-visible .header-actions {
+        display: flex !important;
+        flex-wrap: wrap;
+        gap: 4px;
       }
 
       .mobile-header-toggle {
@@ -1146,16 +1148,16 @@
     <button class="mobile-header-toggle" id="btnToggleMobileHeader" onclick="toggleMobileHeaderCompact()" title="Thu nhỏ / Mở rộng thanh điều khiển trên cùng">☰</button>
 
     <div class="header-actions">
-      <!-- QUAY VỀ BẢN VẼ 2D CAD -->
-      <a href="QUY HOẠCH LĂNG MỘ.html" class="btn btn-cad-return" title="Quay về Bản Vẽ CAD 2D Đầy Đủ">
-        <span>📐</span> Bản Vẽ CAD 2D
-      </a>
+      <!-- 1 NÚT DUY NHẤT CHUYỂN QUA LẠI 2D CAD <-> 3D (TỐI ƯU TỐC ĐỘ, MƯỢT MÀ) -->
+      <button class="btn btn-cad-return" id="btnToggle2D3D" onclick="handleSwitch2D3D()" title="Chuyển đổi qua lại giữa Bản Vẽ 2D CAD và Không Gian 3D (Phím Tab)">
+        <span id="icon2D3D">📐</span> <span id="label2D3D" class="btn-label">Bản Vẽ 2D CAD</span>
+      </button>
 
       <div class="divider-v"></div>
 
-      <!-- NÚT BẬT / TẮT TOÀN BỘ NHÃN MỘ (1-CLICK TOGGLE ALL LABELS) -->
-      <button class="btn active" id="btnToggleAllLabels" onclick="toggleAllLabelsGlobal()" title="Bật / Tắt hiển thị toàn bộ Nhãn Tên Mộ Bay 3D để tập trung ngắm phối cảnh đá như thật (Phím tắt: L)">
-        <span id="iconLabelsBtn">🏷️</span> <span id="labelLabelsBtn" class="btn-label">Nhãn Mộ: BẬT</span>
+      <!-- NÚT BẬT / TẮT TOÀN BỘ NHÃN MỘ (MẶC ĐỊNH TẮT CHO THOÁNG ĐẸP) -->
+      <button class="btn" id="btnToggleAllLabels" onclick="toggleAllLabelsGlobal()" title="Bật / Tắt hiển thị toàn bộ Nhãn Tên Mộ Bay 3D (Phím tắt: L)">
+        <span id="iconLabelsBtn">🏷️</span> <span id="labelLabelsBtn" class="btn-label">Nhãn Mộ: TẮT</span>
       </button>
 
       <!-- NÚT LỌC MỘ: CHỈ XEM 3 MỘ ĐÃ XÂY / XEM TOÀN BỘ 29 MỘ -->
@@ -1292,7 +1294,7 @@
           <div class="layer-item">
             <div class="layer-item-left"><span class="icon">⛩️</span><span>2 Trục Thần Đạo & Sân Lễ</span></div>
             <label class="switch">
-              <input type="checkbox" id="layerToggleSacred" checked onchange="toggleLayer('sacred', this.checked)">
+              <input type="checkbox" id="layerToggleSacred" onchange="toggleLayer('sacred', this.checked)">
               <span class="slider"></span>
             </label>
           </div>
@@ -1484,12 +1486,19 @@
     <button class="btn" id="btnNavWalk" onclick="setNavigationMode('walk')" title="Đi dạo thực tế ảo góc nhìn người thật">
       <span>🚶</span> <span class="btn-label">Đi Dạo Thực Tế</span>
     </button>
+    <button class="btn" id="btnNavGyro" onclick="toggleGyroscopeMode()" title="Nghiêng điện thoại: Góc nhìn xoay theo vật thể góc nhìn 3D chuyển động thực tế">
+      <span>📱</span> <span class="btn-label">Nghiêng Điện Thoại</span>
+    </button>
     <div class="divider-v"></div>
     <button class="btn" id="btnAutoRotate" onclick="toggleAutoRotate()" title="Bật/Tắt tự động xoay 360 độ">
       <span>🔄</span> <span class="btn-label">Tự Xoay 360°</span>
     </button>
     <button class="btn" onclick="resetDefaultView()" title="Đặt lại góc nhìn mặc định">
       <span>🎯</span> <span class="btn-label">Về Gốc</span>
+    </button>
+    <div class="divider-v"></div>
+    <button class="btn" id="btnFullscreenToggle" onclick="toggleFullscreenMode()" title="Bật / Tắt chế độ Toàn Màn Hình">
+      <span id="fullscreenIcon">⛶</span> <span class="btn-label">Toàn Màn Hình</span>
     </button>
   </div>
 
@@ -1659,7 +1668,7 @@
     let selectedObject3D = null;
     let isXRayMode = false;
     let isOnlyCompletedMode = false;
-    let isAllLabelsVisible = true;
+    let isAllLabelsVisible = false;
     let isAutoRotating = false;
     let isMeasureActive = false;
     let measurePoints = [];
@@ -1781,8 +1790,8 @@
     // =====================================================================
     const celestialState = {
       mode: 'day', // 'day' | 'night'
-      azimuth: 45, // 0 - 360 độ
-      elevation: 52, // 6 - 85 độ
+      azimuth: 5, // 5 độ: Mặt trời trên đầu phía trước cổng lăng (Cổng lăng gần chính Đông, chếch Nam 5 độ)
+      elevation: 55, // 55 độ: Trên đầu phía trước cổng lăng chiếu sáng rực rỡ
       radius: 25, // Bán kính thiên cầu
       isDragging: false,
       isHovered: false
@@ -1909,7 +1918,8 @@
       // Tính tên phương vị la bàn
       const az = celestialState.azimuth;
       let dirName = 'Bắc';
-      if (az >= 22.5 && az < 67.5) dirName = 'Đông Bắc';
+      if (az >= 0 && az <= 10) dirName = 'Trước Cổng (Đông Chếch Nam 5°)';
+      else if (az > 10 && az < 67.5) dirName = 'Đông Bắc';
       else if (az >= 67.5 && az < 112.5) dirName = 'Đông';
       else if (az >= 112.5 && az < 157.5) dirName = 'Đông Nam';
       else if (az >= 157.5 && az < 202.5) dirName = 'Nam';
@@ -2197,6 +2207,14 @@
       buildSacredAxesAndCourtyard();
       buildStatic3DDimensions();
       populateGraveQuickList();
+
+      // MẶC ĐỊNH KHỞI ĐỘNG:
+      // 1. Ẩn toàn bộ nhãn tên mộ để ngắm phối cảnh đá như thật
+      layerGroups.labels.visible = false;
+      isAllLabelsVisible = false;
+
+      // 2. Bỏ vầng sáng ở trung tâm mộ khi khởi động (ẩn trục Thần Đạo & Sân Lễ)
+      layerGroups.sacred.visible = false;
     }
 
     // 5.1 NỀN VÀ CẢNH QUAN
@@ -2307,7 +2325,7 @@
         baseBeam.receiveShadow = true;
         subGroup.add(baseBeam);
 
-        // 2. CÁC CỘT TRỤ DÓNG DỐC ĐẦU BÚP SEN ĐÁ
+        // 2. CÁC CỘT TRỤ DÓNG DỐC ĐẦU PHẲNG GIẬT CẤP (BỎ ĐÈN BÚP NHỎ Ở TƯỜNG RÀO)
         for (let i = 0; i <= numBays; i++) {
           const pZ = i * (bayLen + postW) + postW / 2;
           const postGroup = new THREE.Group();
@@ -2319,21 +2337,14 @@
           shaft.castShadow = true;
           postGroup.add(shaft);
 
-          // Đấu mũ cột trụ
-          const cap = new THREE.Mesh(new THREE.BoxGeometry(postW * 1.15, 0.05, postW * 1.15), materials.stoneSatin);
-          cap.position.y = postH + 0.025;
+          // Đấu mũ cột trụ phẳng giật cấp thanh thoát
+          const cap = new THREE.Mesh(new THREE.BoxGeometry(postW * 1.15, 0.045, postW * 1.15), materials.stoneSatin);
+          cap.position.y = postH + 0.0225;
           postGroup.add(cap);
 
-          // Đỉnh cột trụ: BÚP SEN ĐÁ NỞ THANH KHIẾT (Cổ truyền Ninh Bình)
-          const lotusBase = new THREE.Mesh(new THREE.CylinderGeometry(0.055, 0.07, 0.04, 12), materials.stonePolished);
-          lotusBase.position.y = postH + 0.05 + 0.02;
-          postGroup.add(lotusBase);
-
-          const lotusBud = new THREE.Mesh(new THREE.SphereGeometry(0.07, 12, 12), materials.stonePolished);
-          lotusBud.scale.set(0.9, 1.5, 0.9);
-          lotusBud.position.y = postH + 0.05 + 0.04 + 0.08;
-          lotusBud.castShadow = true;
-          postGroup.add(lotusBud);
+          const capStep = new THREE.Mesh(new THREE.BoxGeometry(postW * 0.85, 0.025, postW * 0.85), materials.stonePolished);
+          capStep.position.y = postH + 0.045 + 0.0125;
+          postGroup.add(capStep);
 
           subGroup.add(postGroup);
         }
@@ -2447,25 +2458,77 @@
       // TƯỜNG SAU HỮU (NỐI TỪ CÁNH LĂNG ĐẾN GÓC): 1 KHOANG BƯNG ĐÁ
       layerGroups.walls.add(createStoneBalustrade(2.60, -halfL + wallInset, halfW - wallInset, -halfL + wallInset, 1, 'TƯỜNG HẬU HỮU (NỐI CÁNH LĂNG)'));
 
-      // 4 TRỤ GÓC KHUÔN VIÊN BỀ THẾ (25x25cm x Cao 1.30m)
+      // 4 TRỤ ĐÈN GÓC HÌNH LẬP PHƯƠNG KHUÔN VIÊN BỀ THẾ (ĐÈN LẬP PHƯƠNG 24x24cm x Cao 1.35m)
       function createCornerPillarMaster(x, z, name) {
         const p = new THREE.Group();
-        p.userData = { type: 'pillar', name: name || 'TRỤ GÓC ĐÁ LĂNG MỘ', detail: 'Trụ góc đá xanh nguyên khối, đỉnh tạc búp sen đại' };
+        p.userData = {
+          type: 'pillar',
+          name: name || 'TRỤ ĐÈN GÓC HÌNH LẬP PHƯƠNG',
+          detail: 'Trụ góc đá xanh nguyên khối, đỉnh tạc lồng đèn đá hình lập phương ấm áp soi bóng'
+        };
 
-        const shaft = new THREE.Mesh(new THREE.BoxGeometry(0.26, 1.15, 0.26), materials.stonePolished);
-        shaft.position.set(x, 1.15 / 2, z);
+        // 1. Thân cột trụ đá góc nguyên khối
+        const shaftH = 1.15;
+        const shaft = new THREE.Mesh(new THREE.BoxGeometry(0.26, shaftH, 0.26), materials.stonePolished);
+        shaft.position.set(x, shaftH / 2, z);
         shaft.castShadow = true;
         p.add(shaft);
 
-        const cap = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.08, 0.32), materials.stoneSatin);
-        cap.position.set(x, 1.15 + 0.04, z);
+        // 2. Đấu mũ đỡ chân lồng đèn
+        const cap = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.06, 0.32), materials.stoneSatin);
+        cap.position.set(x, shaftH + 0.03, z);
         p.add(cap);
 
-        const lotus = new THREE.Mesh(new THREE.SphereGeometry(0.11, 14, 14), materials.stonePolished);
-        lotus.scale.set(0.9, 1.6, 0.9);
-        lotus.position.set(x, 1.15 + 0.08 + 0.12, z);
-        lotus.castShadow = true;
-        p.add(lotus);
+        // 3. THÂN ĐÈN HÌNH LẬP PHƯƠNG 24×24×24cm
+        const cubeSize = 0.24;
+        const lanternCube = new THREE.Mesh(new THREE.BoxGeometry(cubeSize, cubeSize, cubeSize), materials.stonePolished);
+        lanternCube.position.set(x, shaftH + 0.06 + cubeSize / 2, z);
+        lanternCube.castShadow = true;
+        p.add(lanternCube);
+
+        // 4 cửa sổ khe sáng 4 mặt chữ Thọ
+        const winMat = new THREE.MeshBasicMaterial({ color: 0xfef08a });
+        const wOffset = cubeSize / 2 + 0.002;
+        const wPlaneH = 0.14, wPlaneW = 0.12;
+        const yCenter = shaftH + 0.06 + cubeSize / 2;
+
+        const wF = new THREE.Mesh(new THREE.PlaneGeometry(wPlaneW, wPlaneH), winMat);
+        wF.position.set(x, yCenter, z + wOffset);
+        p.add(wF);
+        const wB = new THREE.Mesh(new THREE.PlaneGeometry(wPlaneW, wPlaneH), winMat);
+        wB.position.set(x, yCenter, z - wOffset);
+        wB.rotation.y = Math.PI;
+        p.add(wB);
+        const wL = new THREE.Mesh(new THREE.PlaneGeometry(wPlaneW, wPlaneH), winMat);
+        wL.position.set(x - wOffset, yCenter, z);
+        wL.rotation.y = -Math.PI / 2;
+        p.add(wL);
+        const wR = new THREE.Mesh(new THREE.PlaneGeometry(wPlaneW, wPlaneH), winMat);
+        wR.position.set(x + wOffset, yCenter, z);
+        wR.rotation.y = Math.PI / 2;
+        p.add(wR);
+
+        // 4. Mái ngói chóp đèn 4 dái đá giật cấp
+        const roofCap = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.04, 0.28), materials.roofTile);
+        roofCap.position.set(x, shaftH + 0.06 + cubeSize + 0.02, z);
+        roofCap.castShadow = true;
+        p.add(roofCap);
+
+        const roofPeak = new THREE.Mesh(new THREE.ConeGeometry(0.14, 0.07, 4), materials.roofTile);
+        roofPeak.rotation.y = Math.PI / 4;
+        roofPeak.position.set(x, shaftH + 0.06 + cubeSize + 0.04 + 0.035, z);
+        p.add(roofPeak);
+
+        const jewel = new THREE.Mesh(new THREE.SphereGeometry(0.025, 8, 8), materials.goldTrim);
+        jewel.position.set(x, shaftH + 0.06 + cubeSize + 0.04 + 0.07 + 0.025, z);
+        p.add(jewel);
+
+        // Nguồn sáng ấm nhẹ từ 4 góc khuôn viên
+        const cornerLight = new THREE.PointLight(0xfef08a, 0.65, 3.8);
+        cornerLight.position.set(x, yCenter, z);
+        p.add(cornerLight);
+        lights.lanterns.push(cornerLight);
+
         return p;
       }
 
@@ -2474,59 +2537,64 @@
       layerGroups.walls.add(createCornerPillarMaster(-halfW + wallInset, halfL - wallInset, 'TRỤ GÓC TIỀN TẢ'));
       layerGroups.walls.add(createCornerPillarMaster(halfW - wallInset, halfL - wallInset, 'TRỤ GÓC TIỀN HỮU'));
 
-      // CỔNG TỨ TRỤ: 2 CỘT CHÍNH ĐỈNH NGHÊ ĐÁ CHẦU (KHÔNG CHÓP NHỌN)
+      // CỔNG TỨ TRỤ: 2 CỘT CHÍNH ĐỈNH NGHÊ ĐÁ CHẦU (HẠ THẤP 10% THEO YÊU CẦU)
       function createGateMainPillar(isLeft) {
         const pillarGroup = new THREE.Group();
         const sign = isLeft ? -1 : 1;
         const posX = sign * (1.10 / 2 + 0.15);
         const posZ = 5.50 - 0.15;
 
-        // Chân tảng bồng hoa sen
-        const base = new THREE.Mesh(new THREE.BoxGeometry(0.38, 0.24, 0.38), materials.stoneSatin);
-        base.position.set(posX, 0.12, posZ);
+        // Chân tảng bồng hoa sen (Hạ 10%: 0.24m -> 0.216m)
+        const baseH = 0.216;
+        const base = new THREE.Mesh(new THREE.BoxGeometry(0.38, baseH, 0.38), materials.stoneSatin);
+        base.position.set(posX, baseH / 2, posZ);
         base.castShadow = true;
         pillarGroup.add(base);
 
-        // Thân cột đá xanh chạm câu đối vàng chìm
-        const shaft = new THREE.Mesh(new THREE.BoxGeometry(0.30, 2.05, 0.30), materials.stonePolished);
-        shaft.position.set(posX, 0.24 + 1.025, posZ);
+        // Thân cột đá xanh chạm câu đối vàng chìm (Hạ 10%: 2.05m -> 1.845m)
+        const shaftH = 1.845;
+        const shaft = new THREE.Mesh(new THREE.BoxGeometry(0.30, shaftH, 0.30), materials.stonePolished);
+        shaft.position.set(posX, baseH + shaftH / 2, posZ);
         shaft.castShadow = true;
         pillarGroup.add(shaft);
 
-        const tablet = new THREE.Mesh(new THREE.PlaneGeometry(0.18, 1.50), materials.goldTrim);
-        tablet.position.set(posX, 0.24 + 1.05, posZ + 0.152);
+        const tablet = new THREE.Mesh(new THREE.PlaneGeometry(0.18, 1.35), materials.goldTrim);
+        tablet.position.set(posX, baseH + shaftH / 2, posZ + 0.152);
         pillarGroup.add(tablet);
 
-        // Đấu trán cột bát giác
-        const cap = new THREE.Mesh(new THREE.BoxGeometry(0.40, 0.14, 0.40), materials.stoneSatin);
-        cap.position.set(posX, 2.36, posZ);
+        // Đấu trán cột (Hạ 10%: 0.14m -> 0.126m)
+        const capH = 0.126;
+        const cap = new THREE.Mesh(new THREE.BoxGeometry(0.40, capH, 0.40), materials.stoneSatin);
+        cap.position.set(posX, baseH + shaftH + capH / 2, posZ);
         pillarGroup.add(cap);
 
-        // ĐỈNH CỘT: TƯỢNG NGHÊ ĐÁ CHẦU PHONG THỦY ĐẦM KHỐI (KHÔNG DÙNG NÓN NHỌN)
-        const ngheBase = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.19, 0.12, 8), materials.stonePolished);
-        ngheBase.position.set(posX, 2.49, posZ);
+        // ĐỈNH CỘT: TƯỢNG NGHÊ ĐÁ CHẦU PHONG THỦY ĐẦM KHỐI (Hạ 10%)
+        const ngheBaseH = 0.108;
+        const ngheBase = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.19, ngheBaseH, 8), materials.stonePolished);
+        ngheBase.position.set(posX, baseH + shaftH + capH + ngheBaseH / 2, posZ);
         pillarGroup.add(ngheBase);
 
-        // Khối thân nghê đá dũng mãnh uy linh
-        const ngheBody = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.28, 0.22), materials.stonePolished);
-        ngheBody.position.set(posX, 2.69, posZ);
+        // Khối thân nghê đá dũng mãnh uy linh (Hạ 10%: 0.28m -> 0.252m)
+        const ngheBodyH = 0.252;
+        const ngheBody = new THREE.Mesh(new THREE.BoxGeometry(0.18, ngheBodyH, 0.22), materials.stonePolished);
+        ngheBody.position.set(posX, baseH + shaftH + capH + ngheBaseH + ngheBodyH / 2, posZ);
         ngheBody.castShadow = true;
         pillarGroup.add(ngheBody);
 
         // Đầu nghê chầu hướng ra minh đường
-        const ngheHead = new THREE.Mesh(new THREE.SphereGeometry(0.11, 10, 10), materials.stonePolished);
-        ngheHead.position.set(posX, 2.87, posZ + 0.05);
+        const ngheHead = new THREE.Mesh(new THREE.SphereGeometry(0.10, 10, 10), materials.stonePolished);
+        ngheHead.position.set(posX, baseH + shaftH + capH + ngheBaseH + ngheBodyH + 0.04, posZ + 0.045);
         pillarGroup.add(ngheHead);
 
         // Hạt ngọc vàng trên đỉnh bờm nghê
-        const jewel = new THREE.Mesh(new THREE.SphereGeometry(0.045, 8, 8), materials.goldTrim);
-        jewel.position.set(posX, 2.99, posZ);
+        const jewel = new THREE.Mesh(new THREE.SphereGeometry(0.04, 8, 8), materials.goldTrim);
+        jewel.position.set(posX, baseH + shaftH + capH + ngheBaseH + ngheBodyH + 0.12, posZ);
         pillarGroup.add(jewel);
 
         pillarGroup.userData = {
           type: 'pillar',
-          name: isLeft ? 'TRỤ CỔNG CHÍNH TẢ (30×30cm)' : 'TRỤ CỔNG CHÍNH HỮU (30×30cm)',
-          detail: 'Cổng Tứ Trụ Cung Đăng Khoa 110cm, câu đối vàng chìm, đỉnh nghê chầu đá khối'
+          name: isLeft ? 'TRỤ CỔNG CHÍNH TẢ (30×30cm - Hạ 10%)' : 'TRỤ CỔNG CHÍNH HỮU (30×30cm - Hạ 10%)',
+          detail: 'Cổng Tứ TrỤ Cung Đăng Khoa 110cm, câu đối vàng chìm, đỉnh nghê chầu đá khối'
         };
         return pillarGroup;
       }
@@ -2534,30 +2602,34 @@
       layerGroups.walls.add(createGateMainPillar(true));
       layerGroups.walls.add(createGateMainPillar(false));
 
-      // 2 CỘT TRỤ QUÂN BÊN CẠNH VỚI ĐÈN LỒNG ĐÁ LỤC GIÁC
+      // 2 CỘT TRỤ QUÂN BÊN CẠNH VỚI ĐÈN LỒNG ĐÁ (HẠ THẤP 10%)
       function createGateSubPillar(isLeft) {
         const pillarGroup = new THREE.Group();
         const sign = isLeft ? -1 : 1;
         const posX = sign * (1.10 / 2 + 0.30 + 0.65 + 0.15);
         const posZ = 5.50 - 0.15;
 
-        const shaft = new THREE.Mesh(new THREE.BoxGeometry(0.28, 1.70, 0.28), materials.stoneSatin);
-        shaft.position.set(posX, 0.85, posZ);
+        // Thân cột hạ 10%: 1.70m -> 1.53m
+        const shaftH = 1.53;
+        const shaft = new THREE.Mesh(new THREE.BoxGeometry(0.28, shaftH, 0.28), materials.stoneSatin);
+        shaft.position.set(posX, shaftH / 2, posZ);
         shaft.castShadow = true;
         pillarGroup.add(shaft);
 
-        const lanternGeo = new THREE.CylinderGeometry(0.16, 0.14, 0.35, 6);
+        const lanternH = 0.315; // 0.35m * 0.9
+        const lanternGeo = new THREE.CylinderGeometry(0.15, 0.13, lanternH, 6);
         const lantern = new THREE.Mesh(lanternGeo, materials.stonePolished);
-        lantern.position.set(posX, 1.70 + 0.175, posZ);
+        lantern.position.set(posX, shaftH + lanternH / 2, posZ);
         lantern.castShadow = true;
         pillarGroup.add(lantern);
 
-        const roof = new THREE.Mesh(new THREE.ConeGeometry(0.22, 0.18, 6), materials.roofTile);
-        roof.position.set(posX, 1.70 + 0.35 + 0.09, posZ);
+        const roofH = 0.162; // 0.18m * 0.9
+        const roof = new THREE.Mesh(new THREE.ConeGeometry(0.20, roofH, 6), materials.roofTile);
+        roof.position.set(posX, shaftH + lanternH + roofH / 2, posZ);
         pillarGroup.add(roof);
 
-        const light = new THREE.PointLight(0xfef08a, 0.9, 4.5);
-        light.position.set(posX, 1.70 + 0.18, posZ);
+        const light = new THREE.PointLight(0xfef08a, 0.85, 4.2);
+        light.position.set(posX, shaftH + lanternH / 2, posZ);
         pillarGroup.add(light);
         lights.lanterns.push(light);
 
@@ -2569,18 +2641,18 @@
     }
 
     // =====================================================================
-    // 5.4 THUẬT TOÁN DỰNG MÁI ĐAO CONG CHUẨN CỔ TRUYỀN (TINH CHỈNH ĐẦU ĐAO MÂY CUỐN ĐÁ, BỜ DẢI & CON KÌM NÓC)
+    // 5.4 THUẬT TOÁN DỰNG MÁI ĐAO CONG CHUẨN CỔ TRUYỀN (TINH TẾ, THANH THOÁT, KHÔNG MÉO)
     function createTraditionalCurvedRoof(baseW, baseD, roofHeight, yBase, zCenter) {
       const roofGroup = new THREE.Group();
-      const segX = 30;
-      const segZ = 30;
+      const segX = 32;
+      const segZ = 32;
       const positions = [];
       const uvs = [];
       const indices = [];
 
       const halfW = baseW / 2;
       const halfD = baseD / 2;
-      const liftHeight = roofHeight * 0.32; // Độ võng đao cong thanh thoát tự nhiên
+      const liftHeight = roofHeight * 0.28; // Độ vút đao cong thanh thoát tự nhiên
 
       for (let j = 0; j <= segZ; j++) {
         const v = (j / segZ) * 2 - 1;
@@ -2590,11 +2662,11 @@
           const x = u * halfW;
 
           const dMax = Math.max(Math.abs(u), Math.abs(v));
-          // Độ dốc võng ngói âm dương
-          const mainSlope = roofHeight * (1 - Math.pow(dMax, 0.90));
+          // Độ dốc võng ngói âm dương mềm mại chuẩn kiến trúc cổ truyền
+          const mainSlope = roofHeight * (1 - Math.pow(dMax, 0.92));
 
-          // Độ vút 4 góc đao cong
-          const cornerFactor = Math.pow(Math.abs(u) * Math.abs(v), 2.2);
+          // Độ vút 4 góc đao cong mượt mà, thanh thoát
+          const cornerFactor = Math.pow(Math.abs(u) * Math.abs(v), 2.4);
           const cornerLift = liftHeight * cornerFactor;
 
           const y = yBase + mainSlope + cornerLift;
@@ -2625,10 +2697,16 @@
       roofMesh.receiveShadow = true;
       roofGroup.add(roofMesh);
 
-      // BỜ NÓC TRUNG TÂM (RIDGE BEAM)
+      // DIỀM TÀU MÁI NGÓI CHIẾU DƯỚI (EAVE FASCIA MOLDING) TẠO ĐỘ DÀY ĐÁ NGUYÊN KHỐI TINH TẾ
+      const fascia = new THREE.Mesh(new THREE.BoxGeometry(baseW * 0.95, 0.042, baseD * 0.95), materials.stonePolished);
+      fascia.position.set(0, yBase - 0.02, zCenter);
+      fascia.castShadow = true;
+      roofGroup.add(fascia);
+
+      // BỜ NÓC TRUNG TÂM (RIDGE BEAM) BO VIỀN TINH TẾ
       const ridgeW = baseW * 0.46;
-      const ridgeH = 0.09;
-      const ridgeD = 0.13;
+      const ridgeH = 0.082;
+      const ridgeD = 0.12;
       const ridgeY = yBase + roofHeight + ridgeH / 2;
       const ridge = new THREE.Mesh(new THREE.BoxGeometry(ridgeW, ridgeH, ridgeD), materials.stonePolished);
       ridge.position.set(0, ridgeY, zCenter);
@@ -2640,16 +2718,14 @@
         const kim = new THREE.Group();
         const kimX = xSign * (ridgeW / 2);
         
-        // Bệ con kìm
-        const kimBase = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.10, 0.14), materials.stonePolished);
-        kimBase.position.set(kimX, ridgeY + 0.04, zCenter);
+        const kimBase = new THREE.Mesh(new THREE.BoxGeometry(0.075, 0.085, 0.13), materials.stonePolished);
+        kimBase.position.set(kimX, ridgeY + 0.035, zCenter);
         kim.add(kimBase);
 
-        // Mây cuộn đỉnh kìm uốn lượn phong thủy
-        const scroll = new THREE.Mesh(new THREE.TorusGeometry(0.05, 0.022, 8, 16, Math.PI * 1.1), materials.roofTile);
+        const scroll = new THREE.Mesh(new THREE.TorusGeometry(0.042, 0.018, 8, 16, Math.PI * 1.1), materials.roofTile);
         scroll.rotation.y = xSign > 0 ? 0 : Math.PI;
         scroll.rotation.z = Math.PI * 0.3;
-        scroll.position.set(kimX, ridgeY + 0.11, zCenter);
+        scroll.position.set(kimX, ridgeY + 0.095, zCenter);
         kim.add(scroll);
         return kim;
       }
@@ -2662,7 +2738,7 @@
         const p2 = new THREE.Vector3(x2, y2, z2);
         const len = p1.distanceTo(p2);
         const mid = p1.clone().add(p2).multiplyScalar(0.5);
-        const ridgeGeo = new THREE.BoxGeometry(0.055, 0.038, len);
+        const ridgeGeo = new THREE.BoxGeometry(0.05, 0.032, len);
         const mesh = new THREE.Mesh(ridgeGeo, materials.roofTile);
         mesh.position.copy(mid);
         mesh.lookAt(p2);
@@ -2670,7 +2746,7 @@
         return mesh;
       }
 
-      // 4 ĐẦU ĐAO MÂY LÁ HÓA RỒNG ĐÁ XANH CỔ TRUYỀN (THAY THẾ HOÀN TOÀN CÁC CHÓP NHỌN VÔ LÝ)
+      // 4 ĐẦU ĐAO MÂY LÁ HÓA RỒNG ĐÁ XANH CỔ TRUYỀN (ĐẦU ĐAO MÂY CUỐN TINH TẾ)
       const cornerCoords = [
         { x: -halfW, z: -halfD, ridgeX: -ridgeW / 2, rotY: -Math.PI * 0.75 },
         { x: halfW, z: -halfD, ridgeX: ridgeW / 2, rotY: Math.PI * 0.75 },
@@ -2680,41 +2756,37 @@
 
       cornerCoords.forEach(c => {
         const cornerY = yBase + liftHeight;
-        
-        // 1. Bờ dải đá nối từ đỉnh xuống góc
-        roofGroup.add(createHipRidgeBeam(c.ridgeX, ridgeY, zCenter, c.x, cornerY + 0.03, c.z + zCenter));
+        roofGroup.add(createHipRidgeBeam(c.ridgeX, ridgeY, zCenter, c.x, cornerY + 0.025, c.z + zCenter));
 
-        // 2. Đầu đao mây cuốn đá đầm khối, uốn lượn cổ kính (Đá xanh, KHÔNG CHÓP NHỌN)
         const finialGroup = new THREE.Group();
         finialGroup.position.set(c.x, cornerY + 0.02, c.z + zCenter);
         finialGroup.rotation.y = c.rotY;
 
-        // Bệ ngàm đầu đao
-        const eaveBase = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.07, 0.09), materials.roofTile);
+        const eaveBase = new THREE.Mesh(new THREE.BoxGeometry(0.075, 0.06, 0.085), materials.roofTile);
         eaveBase.castShadow = true;
         finialGroup.add(eaveBase);
 
-        // Vòng mây cuốn cong vút lên của đầu đao
+        // Vòng mây cuốn cong vút tinh tế
         const cloudScroll = new THREE.Mesh(
-          new THREE.TorusGeometry(0.075, 0.026, 8, 18, Math.PI * 0.85),
+          new THREE.TorusGeometry(0.065, 0.022, 10, 20, Math.PI * 0.88),
           materials.roofTile
         );
-        cloudScroll.position.set(0, 0.05, 0.03);
-        cloudScroll.rotation.x = -Math.PI * 0.35;
+        cloudScroll.position.set(0, 0.042, 0.025);
+        cloudScroll.rotation.x = -Math.PI * 0.32;
         cloudScroll.castShadow = true;
         finialGroup.add(cloudScroll);
 
-        // Nụ sen/hạt ngọc tròn phong thủy thanh nhã ở chóp mây (đá mài bóng)
-        const jewel = new THREE.Mesh(new THREE.SphereGeometry(0.026, 10, 10), materials.stonePolished);
-        jewel.position.set(0, 0.11, 0.07);
+        // Hạt ngọc tròn phong thủy thanh nhã
+        const jewel = new THREE.Mesh(new THREE.SphereGeometry(0.022, 10, 10), materials.stonePolished);
+        jewel.position.set(0, 0.092, 0.058);
         finialGroup.add(jewel);
 
         roofGroup.add(finialGroup);
       });
 
       // CỔ DIÊM THÔNG PHONG CHẠM CHỮ THỌ DƯỚI MÁI
-      const frieze = new THREE.Mesh(new THREE.BoxGeometry(baseW * 0.76, 0.12, baseD * 0.76), materials.stonePolished);
-      frieze.position.set(0, yBase - 0.06, zCenter);
+      const frieze = new THREE.Mesh(new THREE.BoxGeometry(baseW * 0.76, 0.11, baseD * 0.76), materials.stonePolished);
+      frieze.position.set(0, yBase - 0.055, zCenter);
       roofGroup.add(frieze);
 
       return roofGroup;
@@ -3912,12 +3984,161 @@
       }
     });
 
-    function animate() {
+    
+    // =====================================================================
+    // 3.4 HỆ THỐNG CẢM BIẾN NGHIÊNG ĐIỆN THOẠI (GYROSCOPE 3D SENSING)
+    // =====================================================================
+    let isGyroActive = false;
+    let gyroBaseline = null;
+    let gyroTargetSpherical = new THREE.Spherical();
+    let baseSpherical = new THREE.Spherical();
+
+    function toggleGyroscopeMode() {
+      if (isGyroActive) {
+        disableGyroscope();
+      } else {
+        requestAndEnableGyroscope();
+      }
+    }
+
+    function requestAndEnableGyroscope() {
+      if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+        // iOS 13+ Safari Permission Flow
+        DeviceOrientationEvent.requestPermission()
+          .then(permissionState => {
+            if (permissionState === 'granted') {
+              enableGyroscope();
+            } else {
+              showToast('⚠️ Cần cấp quyền Cảm biến Chuyển động trên iPhone để bật tính năng này!');
+            }
+          })
+          .catch(err => {
+            console.warn('Gyro permission error:', err);
+            enableGyroscope();
+          });
+      } else if (window.DeviceOrientationEvent) {
+        enableGyroscope();
+      } else {
+        showToast('⚠️ Thiết bị của bạn không hỗ trợ cảm biến con quay hồi chuyển.');
+      }
+    }
+
+    function enableGyroscope() {
+      isGyroActive = true;
+      gyroBaseline = null;
+
+      // Lưu lại bán kính và góc hiện tại của camera so với tâm lăng mộ
+      const offset = camera.position.clone().sub(controls.target);
+      baseSpherical.setFromVector3(offset);
+      gyroTargetSpherical.copy(baseSpherical);
+
+      window.addEventListener('deviceorientation', onDeviceOrientationChange, false);
+
+      const btn = document.getElementById('btnNavGyro');
+      if (btn) btn.classList.add('active');
+      showToast('📱 Đã BẬT Cảm Biến Nghiêng: Hãy nghiêng điện thoại để xoay góc nhìn 3D!');
+    }
+
+    function disableGyroscope() {
+      isGyroActive = false;
+      gyroBaseline = null;
+      window.removeEventListener('deviceorientation', onDeviceOrientationChange, false);
+
+      const btn = document.getElementById('btnNavGyro');
+      if (btn) btn.classList.remove('active');
+      showToast('📱 Đã TẮT Cảm Biến Nghiêng');
+    }
+
+    function onDeviceOrientationChange(event) {
+      if (!isGyroActive) return;
+      const beta = event.beta;   // [-180, 180] Độ nghiêng trước/sau
+      const gamma = event.gamma; // [-90, 90] Độ nghiêng trái/phải
+
+      if (beta === null || gamma === null) return;
+
+      if (!gyroBaseline) {
+        gyroBaseline = { beta: beta, gamma: gamma };
+        return;
+      }
+
+      // Độ lệch nghiêng so với tư thế ban đầu của người dùng
+      const dGamma = (gamma - gyroBaseline.gamma) * (Math.PI / 180);
+      const dBeta = (beta - gyroBaseline.beta) * (Math.PI / 180);
+
+      const sens = 1.25;
+      gyroTargetSpherical.theta = baseSpherical.theta - dGamma * sens;
+      gyroTargetSpherical.phi = Math.max(0.12, Math.min(Math.PI / 2 - 0.05, baseSpherical.phi - dBeta * sens));
+      gyroTargetSpherical.radius = baseSpherical.radius;
+    }
+
+    // =====================================================================
+    // 3.5 CHẾ ĐỘ TOÀN MÀN HÌNH (FULLSCREEN TOGGLE)
+    // =====================================================================
+    function toggleFullscreenMode() {
+      const isFull = !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement);
+      if (!isFull) {
+        const el = document.documentElement;
+        if (el.requestFullscreen) el.requestFullscreen().catch(() => {});
+        else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+        else if (el.msRequestFullscreen) el.msRequestFullscreen();
+        showToast('⛶ Đã mở Toàn Màn Hình');
+      } else {
+        if (document.exitFullscreen) document.exitFullscreen().catch(() => {});
+        else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+        showToast('⛶ Đã thoát Toàn Màn Hình');
+      }
+
+      // Trên điện thoại, nút này còn hỗ trợ bật/tắt thanh công cụ mép trên khi cần
+      const hdr = document.getElementById('mainHudHeader');
+      if (hdr && window.innerWidth <= 768) {
+        hdr.classList.toggle('mobile-visible');
+      }
+    }
+
+    document.addEventListener('fullscreenchange', () => {
+      const isFull = !!document.fullscreenElement;
+      const icon = document.getElementById('fullscreenIcon');
+      if (icon) icon.textContent = isFull ? '🗗' : '⛶';
+    });
+
+    // =====================================================================
+    // 3.6 XỬ LÝ NÚT DUY NHẤT CHUYỂN 2D/3D (MƯỢT MÀ, TỐI ƯU TỐC ĐỘ)
+    // =====================================================================
+    function handleSwitch2D3D() {
+      // Nếu đang chạy trong Master Suite (có window.parent.toggleMasterMode hoặc window.toggleMasterMode)
+      if (typeof toggleMasterMode === 'function') {
+        toggleMasterMode();
+      } else if (window.parent && typeof window.parent.toggleMasterMode === 'function') {
+        window.parent.toggleMasterMode();
+      } else {
+        // Chuyển trang mượt mà sang bản vẽ CAD 2D
+        window.location.href = 'QUY HOẠCH LĂNG MỘ.html';
+      }
+    }
+
+function animate() {
       requestAnimationFrame(animate);
       const delta = clock.getDelta();
       TWEEN.update();
-      if (currentNavMode === 'orbit') controls.update();
-      else updateWalkMovement(delta);
+
+      // Cập nhật góc nhìn theo cảm biến con quay hồi chuyển khi nghiêng máy
+      if (isGyroActive) {
+        const offset = camera.position.clone().sub(controls.target);
+        const curSpherical = new THREE.Spherical().setFromVector3(offset);
+
+        curSpherical.theta += (gyroTargetSpherical.theta - curSpherical.theta) * 0.12;
+        curSpherical.phi += (gyroTargetSpherical.phi - curSpherical.phi) * 0.12;
+        curSpherical.radius = gyroTargetSpherical.radius;
+
+        offset.setFromSpherical(curSpherical);
+        camera.position.copy(controls.target).add(offset);
+        camera.lookAt(controls.target);
+      } else if (currentNavMode === 'orbit') {
+        controls.update();
+      } else {
+        updateWalkMovement(delta);
+      }
+
       renderer.render(scene, camera);
     }
 
@@ -3929,6 +4150,7 @@
 
     window.addEventListener('DOMContentLoaded', () => {
       buildComplete3DScene();
+      updateCelestialPosition();
       animate();
       showToast('🏛️ Đồ họa 3D Lăng Mộ Đá Xanh Ninh Bình Master sẵn sàng!');
     });
