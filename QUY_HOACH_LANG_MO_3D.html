@@ -60,25 +60,60 @@
       z-index: 1;
     }
 
-    /* HEADER TOOLBAR */
-    header.hud-header {
+    /* FLOATING BRAND PILL (TỐI GIẢN, SIÊU SANG TRỌNG, KHÔNG CHE CHẮN GÓC NHÌN) */
+    .hud-brand-pill {
       position: absolute;
-      top: 14px;
+      top: max(14px, env(safe-area-inset-top));
       left: 16px;
-      right: 16px;
-      z-index: 100;
+      z-index: 90;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 8px 16px;
-      background: var(--bg-panel);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid var(--border-cyan);
-      border-radius: 14px;
-      box-shadow: var(--glass-shadow);
+      gap: 8px;
+      padding: 6px 14px;
+      background: rgba(6, 14, 26, 0.78);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      border-radius: 30px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
+      font-size: 11px;
+      color: #f8fafc;
       pointer-events: auto;
+      user-select: none;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .hud-brand-pill:hover {
+      background: rgba(6, 14, 26, 0.92);
+      border-color: rgba(56, 189, 248, 0.6);
+      box-shadow: 0 0 18px rgba(56, 189, 248, 0.35);
+      transform: translateY(-1px);
+    }
+    .hud-brand-pill .pill-icon {
+      font-size: 15px;
+      filter: drop-shadow(0 0 6px rgba(251, 191, 36, 0.6));
+    }
+    .hud-brand-pill .pill-title {
+      font-weight: 800;
+      letter-spacing: 0.6px;
+      color: #ffffff;
+    }
+    .hud-brand-pill .pill-badge {
+      font-size: 9.5px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 10px;
+      background: rgba(56, 189, 248, 0.16);
+      border: 1px solid rgba(56, 189, 248, 0.45);
+      color: #38bdf8;
+    }
+    .hud-brand-pill .pill-status {
+      font-size: 9px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 10px;
+      background: rgba(245, 158, 11, 0.16);
+      border: 1px solid rgba(251, 191, 36, 0.4);
+      color: #fbbf24;
     }
 
     .brand-section {
@@ -183,12 +218,7 @@
       box-shadow: 0 0 16px rgba(251, 191, 36, 0.4);
     }
 
-    .btn-cad-return {
-      background: linear-gradient(135deg, #0284c7, #2563eb);
-      color: #ffffff;
-      border-color: #38bdf8;
-      font-weight: 700;
-    }
+    
 
     .divider-v {
       width: 1px;
@@ -443,23 +473,32 @@
       font-size: 9px;
     }
 
+    /* THANH CÔNG CỤ ĐIỀU HÀNH 3D DUY NHẤT Ở MÉP DƯỚI */
     .hud-bottom-bar {
       position: absolute;
-      bottom: 20px;
+      bottom: max(16px, env(safe-area-inset-bottom));
       left: 50%;
       transform: translateX(-50%);
       z-index: 100;
       display: flex;
       align-items: center;
-      gap: 8px;
-      padding: 6px 14px;
-      background: var(--bg-panel);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid var(--border-cyan);
+      gap: 6px;
+      padding: 6px 16px;
+      background: rgba(6, 14, 26, 0.88);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1.5px solid rgba(56, 189, 248, 0.35);
       border-radius: 40px;
-      box-shadow: var(--glass-shadow);
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.8), 0 0 24px rgba(56, 189, 248, 0.16);
       pointer-events: auto;
+      max-width: calc(100vw - 32px);
+      box-sizing: border-box;
+      user-select: none;
+    }
+    .hud-bottom-bar .toolbar-group {
+      display: flex;
+      align-items: center;
+      gap: 5px;
     }
 
     .edge-toggle-btn {
@@ -647,31 +686,33 @@
       .hud-bottom-bar span.btn-label { display: none; }
     }
   
-    /* SOLAR / LUNAR SHADOW CONTROLLER HUD */
+    /* SOLAR / LUNAR SHADOW CONTROLLER WIDGET (POPUP NGAY TRÊN THANH CÔNG CỤ DƯỚI) */
     .solar-hud-card {
       position: absolute;
-      top: 68px;
-      right: 18px;
-      width: 290px;
-      background: rgba(8, 18, 30, 0.88);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(56, 189, 248, 0.28);
-      border-radius: 12px;
-      padding: 12px 14px;
-      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.65), 0 0 20px rgba(56, 189, 248, 0.12);
-      z-index: 95;
+      bottom: 74px;
+      left: 50%;
+      transform: translateX(-50%) translateY(16px);
+      opacity: 0;
+      pointer-events: none;
+      visibility: hidden;
+      width: min(340px, calc(100vw - 32px));
+      background: rgba(6, 15, 28, 0.95);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1.5px solid rgba(56, 189, 248, 0.45);
+      border-radius: 16px;
+      padding: 14px 16px;
+      box-shadow: 0 20px 48px rgba(0, 0, 0, 0.85), 0 0 28px rgba(56, 189, 248, 0.22);
+      z-index: 105;
       font-size: 11px;
       color: #e2e8f0;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    .solar-hud-card.minimized {
-      width: auto;
-      padding: 6px 10px;
-      background: rgba(8, 18, 30, 0.92);
-    }
-    .solar-hud-card.minimized .solar-body {
-      display: none;
+    .solar-hud-card.active-open {
+      opacity: 1;
+      pointer-events: auto;
+      visibility: visible;
+      transform: translateX(-50%) translateY(0);
     }
     .solar-header {
       display: flex;
@@ -915,63 +956,60 @@
 
     /* RESPONSIVE CHO MÀN HÌNH DỌC / ĐIỆN THOẠI IPHONE (WIDTH <= 768px) */
     @media (max-width: 768px) {
-      /* CHẾ ĐỘ MẶC ĐỊNH TRÊN ĐIỆN THOẠI: TOÀN MÀN HÌNH, ẨN CẢ THANH CÔNG CỤ MÉP TRÊN */
-      header.hud-header {
-        display: none !important;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      }
-
-      /* KHI BẬT HIỆN HEADER TRÊN MOBILE (NẾU CẦN THAO TÁC NÂNG CAO) */
-      header.hud-header.mobile-visible {
-        display: flex !important;
+      .hud-brand-pill {
         top: max(8px, env(safe-area-inset-top));
-        left: 8px;
-        right: 8px;
-        height: auto;
-        min-height: 38px;
-        padding: 6px 10px;
-        border-radius: 12px;
-        gap: 6px;
-        z-index: 92;
-        background: rgba(6, 14, 26, 0.95);
-        backdrop-filter: blur(24px);
-        -webkit-backdrop-filter: blur(24px);
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+        left: 10px;
+        padding: 4px 10px;
+        font-size: 10px;
+        gap: 5px;
+      }
+      .hud-brand-pill .pill-badge,
+      .hud-brand-pill .pill-status {
+        display: none !important;
       }
 
-      header.hud-header.mobile-visible .header-actions {
+      /* THANH CÔNG CỤ DƯỚI ĐÁY CUỘN NGANG CỰC MƯỢT TRÊN ĐIỆN THOẠI */
+      .hud-bottom-bar {
+        bottom: max(10px, env(safe-area-inset-bottom)) !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        width: calc(100vw - 16px) !important;
+        max-width: calc(100vw - 16px) !important;
+        padding: 5px 8px !important;
+        gap: 5px !important;
+        border-radius: 35px !important;
+        overflow-x: auto !important;
+        white-space: nowrap !important;
+        scrollbar-width: none !important;
+        -webkit-overflow-scrolling: touch !important;
         display: flex !important;
-        flex-wrap: wrap;
-        gap: 4px;
+        align-items: center !important;
+        justify-content: flex-start !important;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.9) !important;
+      }
+      .hud-bottom-bar::-webkit-scrollbar {
+        display: none !important;
+      }
+      .hud-bottom-bar .btn {
+        padding: 6px 10px !important;
+        border-radius: 20px !important;
+        font-size: 11px !important;
+        flex-shrink: 0 !important;
+      }
+      .hud-bottom-bar span.btn-label {
+        font-size: 10px !important;
+        display: inline-block !important;
+      }
+      .hud-bottom-bar .toolbar-group {
+        display: flex !important;
+        align-items: center !important;
+        gap: 4px !important;
+        flex-shrink: 0 !important;
       }
 
-      .mobile-header-toggle {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: rgba(56, 189, 248, 0.15);
-        border: 1px solid rgba(56, 189, 248, 0.4);
-        color: #38bdf8;
-        border-radius: 6px;
-        width: 28px;
-        height: 28px;
-        font-size: 13px;
-        cursor: pointer;
-        flex-shrink: 0;
-      }
-
-      .brand-section {
-        gap: 6px;
-      }
-      .brand-badge {
-        width: 26px;
-        height: 26px;
-        font-size: 14px;
-      }
-      .brand-text h1 {
-        font-size: 11px;
-        letter-spacing: 0.3px;
-        white-space: nowrap;
+      .solar-hud-card {
+        bottom: 68px !important;
+        width: calc(100vw - 20px) !important;
       }
       .brand-text p {
         display: none !important;
@@ -1072,126 +1110,13 @@
     <line x1="17" y1="12" x2="22" y2="12"/>
   </svg>
 
-  <!-- HEADER HUD -->
-  
-  <!-- WIDGET ĐIỀU KHIỂN MẶT TRỜI / MẶT TRĂNG & TỰ DO KÉO ĐỔ BÓNG 3D -->
-  <div class="solar-hud-card minimized" id="solarHudPanel">
-    <div class="solar-header" onclick="toggleSolarHudMinimize()">
-      <div class="solar-header-title">
-        <span class="solar-icon-spin" id="solarIconHeader">☀️</span>
-        <span id="solarTitleHeader">MẶT TRỜI & ĐỔ BÓNG 3D</span>
-      </div>
-      <button class="solar-toggle-btn" id="btnMinMaxSolar">_</button>
-    </div>
-
-    <div class="solar-body">
-      <!-- CHUYỂN CHẾ ĐỘ NGÀY / ĐÊM -->
-      <div class="solar-mode-tabs">
-        <button class="solar-tab-btn active" id="btnTabDay" onclick="setCelestialMode('day')">
-          <span>☀️</span> Ban Ngày
-        </button>
-        <button class="solar-tab-btn" id="btnTabNight" onclick="setCelestialMode('night')">
-          <span>🌙</span> Ban Đêm
-        </button>
-      </div>
-
-      <!-- CHỌN NHANH GIỜ TRONG NGÀY -->
-      <div class="solar-quick-times">
-        <button class="time-chip-btn" onclick="applyPresetTime(6, 12, '06:00')">🌅 6h Bình Minh</button>
-        <button class="time-chip-btn active" onclick="applyPresetTime(45, 52, '09:00')">☀️ 9h Sáng</button>
-        <button class="time-chip-btn" onclick="applyPresetTime(180, 80, '12:00')">☀️ 12h Trưa</button>
-        <button class="time-chip-btn" onclick="applyPresetTime(225, 45, '15:30')">🌇 15h Chiều</button>
-        <button class="time-chip-btn" onclick="applyPresetTime(265, 10, '17:30')">🌆 17h Hoàng Hôn</button>
-        <button class="time-chip-btn" onclick="applyPresetTime(45, 60, '21:00')">🌙 21h Đêm Trăng</button>
-      </div>
-
-      <!-- THANH TRƯỢT GÓC PHƯƠNG VỊ (HƯỚNG NẮNG) -->
-      <div class="solar-slider-row">
-        <div class="solar-slider-header">
-          <span>🧭 Hướng Nắng (Phương Vị)</span>
-          <span class="solar-slider-val" id="valAzimuth">45° (Đông Bắc)</span>
-        </div>
-        <input type="range" class="solar-range-input" id="sliderAzimuth" min="0" max="360" value="45" oninput="onSolarSliderInput()">
-      </div>
-
-      <!-- THANH TRƯỢT ĐỘ CAO (BÓNG NGẮN/DÀI) -->
-      <div class="solar-slider-row">
-        <div class="solar-slider-header">
-          <span>📐 Độ Cao Chiếu Nắng</span>
-          <span class="solar-slider-val" id="valElevation">52° (Bóng Vừa)</span>
-        </div>
-        <input type="range" class="solar-range-input" id="sliderElevation" min="6" max="85" value="52" oninput="onSolarSliderInput()">
-      </div>
-
-      <!-- HƯỚNG DẪN KÉO TRỰC TIẾP TRÊN TRỜI -->
-      <div class="solar-tip-drag">
-        <span>👆</span>
-        <span><b>Mẹo tương tác:</b> Nhấp chuột trực tiếp lên quả cầu Mặt Trời/Mặt Trăng trên trời và kéo rê để đổi hướng bóng đổ tức thì!</span>
-      </div>
-    </div>
+    <!-- FLOATING BRAND PILL (TỐI GIẢN, SIÊU SANG TRỌNG, 100% KHÔNG CHE MÀN HÌNH) -->
+  <div class="hud-brand-pill" id="hudBrandPill" title="Quy Hoạch Lăng Mộ Đá Hoàng Gia 3D • 7.35m × 11.00m">
+    <span class="pill-icon">🏛️</span>
+    <span class="pill-title">LĂNG MỘ ĐÁ 3D</span>
+    <span class="pill-badge">7.35m × 11.00m</span>
+    <span class="pill-status">29 Mộ • Ninh Bình</span>
   </div>
-
-  <header class="hud-header mobile-collapsed" id="mainHudHeader">
-    <div class="brand-section">
-      <div class="brand-badge">🏛️</div>
-      <div class="brand-text">
-        <h1>LĂNG MỘ ĐÁ <span class="highlight">3D</span></h1>
-        <p>
-          Khuôn viên: <span class="badge-spec">7.35m × 11.00m</span>
-          Chất liệu: <span class="badge-spec" style="color:#34d399;">Đá Xanh Ninh Bình</span>
-          Hiện trạng: <span class="badge-spec" style="color:#fbbf24;">3 Mộ Đã Xây • 26 Mộ Quy Hoạch</span>
-        </p>
-      </div>
-    </div>
-
-    <!-- NÚT THU PHÓNG HEADER TRÊN ĐIỆN THOẠI IPHONE -->
-    <button class="mobile-header-toggle" id="btnToggleMobileHeader" onclick="toggleMobileHeaderCompact()" title="Thu nhỏ / Mở rộng thanh điều khiển trên cùng">☰</button>
-
-    <div class="header-actions">
-      <!-- 1 NÚT DUY NHẤT CHUYỂN QUA LẠI 2D CAD <-> 3D (TỐI ƯU TỐC ĐỘ, MƯỢT MÀ) -->
-      <button class="btn btn-cad-return" id="btnToggle2D3D" onclick="handleSwitch2D3D()" title="Chuyển đổi qua lại giữa Bản Vẽ 2D CAD và Không Gian 3D (Phím Tab)">
-        <span id="icon2D3D">📐</span> <span id="label2D3D" class="btn-label">Bản Vẽ 2D CAD</span>
-      </button>
-
-      <div class="divider-v"></div>
-
-      <!-- NÚT BẬT / TẮT TOÀN BỘ NHÃN MỘ (MẶC ĐỊNH TẮT CHO THOÁNG ĐẸP) -->
-      <button class="btn" id="btnToggleAllLabels" onclick="toggleAllLabelsGlobal()" title="Bật / Tắt hiển thị toàn bộ Nhãn Tên Mộ Bay 3D (Phím tắt: L)">
-        <span id="iconLabelsBtn">🏷️</span> <span id="labelLabelsBtn" class="btn-label">Nhãn Mộ: TẮT</span>
-      </button>
-
-      <!-- NÚT LỌC MỘ: CHỈ XEM 3 MỘ ĐÃ XÂY / XEM TOÀN BỘ 29 MỘ -->
-      <button class="btn btn-gold" id="btnToggleOnlyCompleted" onclick="toggleOnlyCompletedMode()" title="Chuyển chế độ hiển thị: Chỉ xem 3 Mộ đã hoàn thiện (Mộ Ông, Mộ Bà, Mộ 07) hoặc xem trọn bộ 29 Mộ quy hoạch">
-        <span id="iconCompletedMode">🌟</span> <span id="labelCompletedMode" class="btn-label">3 Mộ Đã Xây (Hiện Trạng)</span>
-      </button>
-
-      <!-- CHẾ ĐỘ X-RAY MÓNG THI CÔNG -->
-      <button class="btn" id="btnToggleXRay" onclick="toggleXRayFoundation()" title="Bật/Tắt chế độ X-Ray: Làm mờ thân đá để nhìn rõ toàn bộ cốt móng bê tông âm đất">
-        <span>🏗️</span> <span class="btn-label">X-Ray Móng BTCT</span>
-      </button>
-
-      <!-- THƯỚC ĐO 3D TƯƠNG TÁC -->
-      <button class="btn" id="btnTapeMeasure" onclick="toggleMeasureTool()" title="Bật Thước Đo 3D: Nhấp chọn 2 điểm trong không gian để đo khoảng cách thực">
-        <span>📏</span> <span class="btn-label">Thước Đo 3D</span>
-      </button>
-
-      <!-- BẢNG THỐNG KÊ KHỐI LƯỢNG -->
-      <button class="btn" onclick="openQuantitiesModal()" title="Xem Thống Kê Chi Tiết Khối Lượng Đá & Bê Tông">
-        <span>📊</span> <span class="btn-label">Khối Lượng</span>
-      </button>
-
-      <!-- CHỤP ẢNH 3D SIÊU NÉT -->
-      <button class="btn" onclick="capture3DScreenshot()" title="Chụp ảnh 3D phân giải cao">
-        <span>📷</span> Chụp 3D
-      </button>
-
-      <div class="divider-v"></div>
-
-      <!-- BẬT/TẮT 2 BẢNG CÔNG CỤ -->
-      <button class="btn" onclick="toggleSidebar('left')" title="Hiện/Ẩn Bảng Lớp & Cài Đặt">⚙️ Lớp</button>
-      <button class="btn" onclick="toggleSidebar('right')" title="Hiện/Ẩn Bảng Thông Số 3D">🎯 Chi Tiết</button>
-    </div>
-  </header>
 
   <!-- TOGGLE SIDEBAR NỔI HAI BÊN (NÚT TAM GIÁC CHUẨN TOUCH IPHONE) -->
   <div class="edge-toggle-btn edge-left" id="btnEdgeLeft" onclick="toggleSidebar('left')" title="Mở Bảng Lớp Trái (Nhấn nút tam giác)">▶</div>
@@ -1478,18 +1403,124 @@
     </div>
   </aside>
 
-  <!-- HUD ĐIỀU HÀNH DƯỚI CÙNG -->
-  <div class="hud-bottom-bar">
-    <button class="btn active" id="btnNavOrbit" onclick="setNavigationMode('orbit')" title="Xoay chuột tự do 360 độ quanh khuôn viên">
-      <span>🛰️</span> <span class="btn-label">Xoay Toàn Cảnh</span>
-    </button>
-    <button class="btn" id="btnNavWalk" onclick="setNavigationMode('walk')" title="Đi dạo thực tế ảo góc nhìn người thật">
-      <span>🚶</span> <span class="btn-label">Đi Dạo Thực Tế</span>
-    </button>
-    <button class="btn" id="btnNavGyro" onclick="toggleGyroscopeMode()" title="Nghiêng điện thoại: Góc nhìn xoay theo vật thể góc nhìn 3D chuyển động thực tế">
-      <span>📱</span> <span class="btn-label">Nghiêng Điện Thoại</span>
-    </button>
+      <!-- WIDGET ĐIỀU KHIỂN MẶT TRỜI / MẶT TRĂNG & TỰ DO KÉO ĐỔ BÓNG 3D (POPUP NGAY TRÊN THANH CÔNG CỤ) -->
+  <div class="solar-hud-card" id="solarHudPanel">
+    <div class="solar-header">
+      <div class="solar-header-title" style="cursor:default;">
+        <span class="solar-icon-spin" id="solarIconHeader">☀️</span>
+        <span id="solarTitleHeader">MẶT TRỜI & ĐỔ BÓNG 3D</span>
+      </div>
+      <button class="solar-toggle-btn" onclick="toggleSolarHudWidget()" title="Đóng bảng chỉnh ánh sáng" style="font-size:13px; width:26px; height:26px; border-radius:50%; background:rgba(255,255,255,0.1); border:1px solid rgba(56,189,248,0.4); color:#38bdf8; display:flex; align-items:center; justify-content:center; cursor:pointer;">✕</button>
+    </div>
+
+    <div class="solar-body">
+      <!-- CHUYỂN CHẾ ĐỘ NGÀY / ĐÊM -->
+      <div class="solar-mode-tabs">
+        <button class="solar-tab-btn active" id="btnTabDay" onclick="setCelestialMode('day')">
+          <span>☀️</span> Ban Ngày
+        </button>
+        <button class="solar-tab-btn" id="btnTabNight" onclick="setCelestialMode('night')">
+          <span>🌙</span> Ban Đêm
+        </button>
+      </div>
+
+      <!-- CHỌN NHANH GIỜ TRONG NGÀY -->
+      <div class="solar-quick-times">
+        <button class="time-chip-btn" onclick="applyPresetTime(6, 12, '06:00')">🌅 6h Sáng</button>
+        <button class="time-chip-btn active" onclick="applyPresetTime(5, 55, '09:00')">☀️ 9h Sáng (Cổng)</button>
+        <button class="time-chip-btn" onclick="applyPresetTime(180, 80, '12:00')">☀️ 12h Trưa</button>
+        <button class="time-chip-btn" onclick="applyPresetTime(225, 45, '15:30')">🌇 15h Chiều</button>
+        <button class="time-chip-btn" onclick="applyPresetTime(265, 10, '17:30')">🌆 17h Hoàng Hôn</button>
+        <button class="time-chip-btn" onclick="applyPresetTime(5, 60, '21:00')">🌙 21h Đêm Trăng</button>
+      </div>
+
+      <!-- THANH TRƯỢT GÓC PHƯƠNG VỊ (HƯỚNG NẮNG) -->
+      <div class="solar-slider-row">
+        <div class="solar-slider-header">
+          <span>🧭 Hướng Nắng (Phương Vị)</span>
+          <span class="solar-slider-val" id="valAzimuth">5° (Trước Cổng - Đông Chếch Nam 5°)</span>
+        </div>
+        <input type="range" class="solar-range-input" id="sliderAzimuth" min="0" max="360" value="5" oninput="onSolarSliderInput()">
+      </div>
+
+      <!-- THANH TRƯỢT ĐỘ CAO (BÓNG NGẮN/DÀI) -->
+      <div class="solar-slider-row">
+        <div class="solar-slider-header">
+          <span>📐 Độ Cao Chiếu Nắng</span>
+          <span class="solar-slider-val" id="valElevation">55° (Trên Đầu Phía Trước Cổng)</span>
+        </div>
+        <input type="range" class="solar-range-input" id="sliderElevation" min="6" max="85" value="55" oninput="onSolarSliderInput()">
+      </div>
+
+      <div class="solar-hint" style="margin-top:8px; font-size:10px; color:#94a3b8; line-height:1.4;">
+        💡 <strong>Mẹo 3D:</strong> Bạn có thể nhấp trực tiếp vào <strong>Quả Cầu Mặt Trời/Mặt Trăng</strong> trên trời và kéo rê để đổi bóng đổ tự do!
+      </div>
+    </div>
+  </div>
+
+<!-- THANH CÔNG CỤ ĐIỀU HÀNH 3D DUY NHẤT Ở MÉP DƯỚI (FULL 3D CHUYÊN NGHIỆP) -->
+  <div class="hud-bottom-bar" id="mainBottomBar">
+    <!-- NHÓM 1: ĐIỀU HƯỚNG GÓC NHÌN & TRẢI NGHIỆM -->
+    <div class="toolbar-group">
+      <button class="btn active" id="btnNavOrbit" onclick="setNavigationMode('orbit')" title="Xoay 3D: Xoay tự do 360 độ quanh lăng mộ">
+        <span>🛰️</span> <span class="btn-label">Xoay 3D</span>
+      </button>
+      <button class="btn" id="btnNavWalk" onclick="setNavigationMode('walk')" title="Đi dạo thực tế ảo góc nhìn người thật (WASD / Phím Mũi Tên)">
+        <span>🚶</span> <span class="btn-label">Đi Dạo</span>
+      </button>
+      <button class="btn" id="btnNavGyro" onclick="toggleGyroscopeMode()" title="Nghiêng điện thoại: Xoay góc nhìn 3D theo chuyển động thực tế của điện thoại">
+        <span>📱</span> <span class="btn-label">Nghiêng Máy</span>
+      </button>
+      <button class="btn" id="btnAutoRotate" onclick="toggleAutoRotate()" title="Tự động xoay 360 độ ngắm toàn cảnh lăng mộ">
+        <span>🔄</span> <span class="btn-label">Tự Xoay</span>
+      </button>
+      <button class="btn" onclick="resetDefaultView()" title="Đặt lại góc nhìn mặc định">
+        <span>🎯</span> <span class="btn-label">Về Gốc</span>
+      </button>
+    </div>
+
     <div class="divider-v"></div>
+
+    <!-- NHÓM 2: HIỂN THỊ CẤU KIỆN & ÁNH SÁNG 3D -->
+    <div class="toolbar-group">
+      <button class="btn" id="btnSolarToggle" onclick="toggleSolarHudWidget()" title="Ánh sáng & Bóng đổ: Kéo Mặt Trời / Mặt Trăng thay đổi hướng bóng">
+        <span>☀️</span> <span class="btn-label">Nắng & Bóng</span>
+      </button>
+      <button class="btn" id="btnToggleAllLabels" onclick="toggleAllLabelsGlobal()" title="Bật / Tắt nhãn tên 3D trên các ngôi mộ (Phím L)">
+        <span id="iconLabelsBtn">🏷️</span> <span id="labelLabelsBtn" class="btn-label">Nhãn Mộ</span>
+      </button>
+      <button class="btn" id="btnToggleXRay" onclick="toggleXRayFoundation()" title="X-Ray Móng: Nhìn xuyên thân đá xem kết cấu móng BTCT âm đất">
+        <span>🏗️</span> <span class="btn-label">Móng BTCT</span>
+      </button>
+      <button class="btn btn-gold" id="btnToggleOnlyCompleted" onclick="toggleOnlyCompletedMode()" title="Chuyển chế độ: Chỉ xem 3 Mộ đã xây hoặc xem đủ 29 Mộ">
+        <span id="iconCompletedMode">🌟</span> <span id="labelCompletedMode" class="btn-label">3 Mộ Đã Xây</span>
+      </button>
+      <button class="btn" id="btnTapeMeasure" onclick="toggleMeasureTool()" title="Thước Đo 3D: Nhấp chọn 2 điểm trong không gian để đo khoảng cách thực">
+        <span>📏</span> <span class="btn-label">Thước Đo</span>
+      </button>
+    </div>
+
+    <div class="divider-v"></div>
+
+    <!-- NHÓM 3: BẢNG CHI TIẾT & TIỆN ÍCH -->
+    <div class="toolbar-group">
+      <button class="btn" id="btnSidebarLeft" onclick="toggleSidebar('left')" title="Bật/Tắt Bảng Lớp & Cài Đặt Môi Trường">
+        <span>⚙️</span> <span class="btn-label">Cài Đặt</span>
+      </button>
+      <button class="btn" id="btnSidebarRight" onclick="toggleSidebar('right')" title="Bật/Tắt Bảng Chi Tiết Thông Số Kỹ Thuật & Danh Mục 29 Mộ">
+        <span>📋</span> <span class="btn-label">Thông Số</span>
+      </button>
+      <button class="btn" onclick="openQuantitiesModal()" title="Xem Bảng Thống Kê Chi Tiết Khối Lượng Đá & Bê Tông">
+        <span>📊</span> <span class="btn-label">Khối Lượng</span>
+      </button>
+      <button class="btn" onclick="capture3DScreenshot()" title="Chụp ảnh 3D phân giải cao">
+        <span>📷</span> <span class="btn-label">Chụp 3D</span>
+      </button>
+      <button class="btn" id="btnFullscreenToggle" onclick="toggleFullscreenMode()" title="Bật / Tắt chế độ Toàn Màn Hình">
+        <span id="fullscreenIcon">⛶</span> <span class="btn-label">Toàn Màn Hình</span>
+      </button>
+    </div>
+  </div>
     <button class="btn" id="btnAutoRotate" onclick="toggleAutoRotate()" title="Bật/Tắt tự động xoay 360 độ">
       <span>🔄</span> <span class="btn-label">Tự Xoay 360°</span>
     </button>
@@ -3703,16 +3734,29 @@
     }
 
     window.addEventListener('keydown', e => {
+      if (['INPUT', 'SELECT', 'TEXTAREA'].includes(e.target.tagName)) return;
+
       if (e.key === 'Escape') {
         if (currentNavMode === 'walk') setNavigationMode('orbit');
         if (isMeasureActive) toggleMeasureTool();
         deselectCurrentObject();
+        const solarP = document.getElementById('solarHudPanel');
+        if (solarP) solarP.classList.remove('active-open');
+        const solarBtn = document.getElementById('btnSolarToggle');
+        if (solarBtn) solarBtn.classList.remove('active');
         return;
       }
-      if (e.key.toLowerCase() === 'l') {
-        toggleAllLabelsGlobal();
+
+      const k = e.key.toLowerCase();
+      if (k === 'l') { toggleAllLabelsGlobal(); return; }
+      if (k === 'x') { toggleXRayFoundation(); return; }
+      if (k === 'r') { toggleAutoRotate(); return; }
+      if (k === 'm') { toggleMeasureTool(); return; }
+      if (k === 'h') {
+        alert('⌨️ HỆ THỐNG PHÍM TẮT 3D MASTER:\n\n• [L]: Bật/Tắt nhãn tên 3D trên các ngôi mộ\n• [X]: Bật/Tắt X-Ray móng BTCT âm đất\n• [R]: Bật/Tắt Tự Xoay 360 độ ngắm toàn cảnh\n• [M]: Bật/Tắt Thước Đo 3D tương tác\n• [W, A, S, D] hoặc [Mũi Tên]: Đi dạo thực tế ảo\n• [Kéo Chuột / Chạm]: Kéo Mặt Trời để đổi hướng nắng & bóng đổ\n• [Esc]: Thoát / Về chế độ Xoay 3D');
         return;
       }
+
       if (currentNavMode !== 'walk') return;
       switch(e.code) {
         case 'KeyW': case 'ArrowUp': walkState.moveForward = true; break;
@@ -3883,16 +3927,14 @@
           btn.title = isCollapsed ? 'Mở Bảng Thông Số Phải' : 'Đóng Bảng Thông Số Phải';
         }
       }
-    }
-
-    function toggleMobileHeaderCompact() {
-      const hdr = document.getElementById('mainHudHeader');
-      const btn = document.getElementById('btnToggleMobileHeader');
-      if (hdr) {
-        hdr.classList.toggle('mobile-collapsed');
-        if (btn) btn.textContent = hdr.classList.contains('mobile-collapsed') ? '☰' : '✕';
+      const bottomBtn = document.getElementById(isLeft ? 'btnSidebarLeft' : 'btnSidebarRight');
+      if (bottomBtn) {
+        if (!isCollapsed) bottomBtn.classList.add('active');
+        else bottomBtn.classList.remove('active');
       }
     }
+
+    // Header đã được tinh giản thành floating pill tối giản
 
     function switchPreset(key) {
       if (key === 'preset2026_pdf') currentGraves = JSON.parse(JSON.stringify(PRESET_735_1100_PDF2026));
@@ -4088,11 +4130,7 @@
         showToast('⛶ Đã thoát Toàn Màn Hình');
       }
 
-      // Trên điện thoại, nút này còn hỗ trợ bật/tắt thanh công cụ mép trên khi cần
-      const hdr = document.getElementById('mainHudHeader');
-      if (hdr && window.innerWidth <= 768) {
-        hdr.classList.toggle('mobile-visible');
-      }
+
     }
 
     document.addEventListener('fullscreenchange', () => {
@@ -4102,17 +4140,20 @@
     });
 
     // =====================================================================
-    // 3.6 XỬ LÝ NÚT DUY NHẤT CHUYỂN 2D/3D (MƯỢT MÀ, TỐI ƯU TỐC ĐỘ)
+    // 3.6 BẬT / TẮT BẢNG MẶT TRỜI & ĐỔ BÓNG 3D (WIDGET ĐIỀU HÀNH ÁNH SÁNG)
     // =====================================================================
-    function handleSwitch2D3D() {
-      // Nếu đang chạy trong Master Suite (có window.parent.toggleMasterMode hoặc window.toggleMasterMode)
-      if (typeof toggleMasterMode === 'function') {
-        toggleMasterMode();
-      } else if (window.parent && typeof window.parent.toggleMasterMode === 'function') {
-        window.parent.toggleMasterMode();
+    function toggleSolarHudWidget() {
+      const panel = document.getElementById('solarHudPanel');
+      const btn = document.getElementById('btnSolarToggle');
+      if (!panel) return;
+      const isOpen = panel.classList.contains('active-open');
+      if (isOpen) {
+        panel.classList.remove('active-open');
+        if (btn) btn.classList.remove('active');
       } else {
-        // Chuyển trang mượt mà sang bản vẽ CAD 2D
-        window.location.href = 'QUY HOẠCH LĂNG MỘ.html';
+        panel.classList.add('active-open');
+        if (btn) btn.classList.add('active');
+        showToast('☀️ Bảng Nắng & Bóng Đổ: Kéo thanh trượt hoặc chọn giờ trong ngày');
       }
     }
 
