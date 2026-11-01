@@ -1796,12 +1796,13 @@
 
       <!-- CHỌN NHANH GIỜ TRONG NGÀY -->
       <div class="solar-quick-times">
+        <button class="time-chip-btn active" id="btnRealTimeSun" onclick="resetToRealTimeSun()">⏰ Giờ Thực Tế</button>
         <button class="time-chip-btn" onclick="applyPresetTime(6, 12, '06:00')">🌅 6h Sáng</button>
-        <button class="time-chip-btn active" onclick="applyPresetTime(5, 55, '09:00')">☀️ 9h Sáng (Cổng)</button>
+        <button class="time-chip-btn" onclick="applyPresetTime(15, 52, '09:00')">☀️ 9h Sáng (Cổng)</button>
         <button class="time-chip-btn" onclick="applyPresetTime(180, 80, '12:00')">☀️ 12h Trưa</button>
         <button class="time-chip-btn" onclick="applyPresetTime(225, 45, '15:30')">🌇 15h Chiều</button>
         <button class="time-chip-btn" onclick="applyPresetTime(265, 10, '17:30')">🌆 17h Hoàng Hôn</button>
-        <button class="time-chip-btn" onclick="applyPresetTime(5, 60, '21:00')">🌙 21h Đêm Trăng</button>
+        <button class="time-chip-btn" onclick="applyPresetTime(15, 52, '21:00')">🌙 21h Ban Đêm (Đèn 9h)</button>
       </div>
 
       <!-- THANH TRƯỢT GÓC PHƯƠNG VỊ (HƯỚNG NẮNG) -->
@@ -2650,17 +2651,17 @@
           scene.fog.color.setHex(0xd8ece6);
         }
       } else {
-        // Ban đêm: Ánh trăng xanh bạc
-        sunMat.color.setHex(0xe2e8f0);
+        // Ban đêm: Ánh đèn chiếu sáng kiến trúc theo hướng mặt trời lúc 9 giờ sáng
+        sunMat.color.setHex(0xfef3c7);
         ringMat.color.setHex(0x38bdf8);
-        ringMat.opacity = 0.35;
+        ringMat.opacity = 0.40;
 
-        lights.sun.color.setHex(0x93c5fd);
-        lights.sun.intensity = 0.30;
-        lights.ambient.color.setHex(0x1e293b);
-        lights.ambient.intensity = 0.28;
-        scene.background.setHex(0x010206);
-        scene.fog.color.setHex(0x010206);
+        lights.sun.color.setHex(0xffeedb); // Ánh đèn vàng ấm chiếu sáng công trình
+        lights.sun.intensity = 1.35; // Rực sáng rõ nét, đổ bóng kiến trúc 3D sắc nét
+        lights.ambient.color.setHex(0x1a2e33); // Ánh sáng môi trường đêm xanh xám trang nghiêm
+        lights.ambient.intensity = 0.38;
+        scene.background.setHex(0x0a141a); // Nền trời đêm huyền ảo sâu thẳm
+        scene.fog.color.setHex(0x0a141a);
       }
 
       // Cập nhật các giá trị hiển thị trên UI HUD
@@ -2710,18 +2711,88 @@
         if (btnNight) btnNight.classList.remove('active', 'night');
         if (iconHeader) iconHeader.textContent = '☀️';
         if (titleHeader) titleHeader.textContent = 'MẶT TRỜI & ĐỔ BÓNG 3D';
-        showToast('☀️ Chế độ Mặt Trời: Tự do kéo bóng đổ ban ngày');
+        showToast('☀️ Chế độ Ban Ngày: Mô phỏng ánh nắng & bóng đổ tự nhiên');
       } else {
         if (btnNight) { btnNight.classList.add('active', 'night'); }
         if (btnDay) btnDay.classList.remove('active');
         if (iconHeader) iconHeader.textContent = '🌙';
-        if (titleHeader) titleHeader.textContent = 'MẶT TRĂNG & ÁNH ĐÊM 3D';
-        showToast('🌙 Chế độ Mặt Trăng: Trăng bạc soi bóng đêm huyền ảo');
+        if (titleHeader) titleHeader.textContent = 'ÁNH ĐÊM (HƯỚNG 9H SÁNG)';
+        
+        // Ban đêm: Lấy hướng đèn chiếu theo hướng mặt trời lúc 9 giờ sáng (Azimuth: 15°, Elevation: 52°)
+        celestialState.azimuth = 15;
+        celestialState.elevation = 52;
+        showToast('🌙 Ban đêm: Đã bật ánh đèn kiến trúc theo hướng mặt trời 9h sáng');
       }
       updateCelestialPosition();
     }
 
+    let isManualSolarOverride = false;
+
+    // =====================================================================
+    // CẬP NHẬT BÓNG MẶT TRỜI THEO THỜI GIAN THỰC (MẶC ĐỊNH)
+    // Ban ngày: Theo vị trí thực tế của mặt trời
+    // Ban đêm: Ánh đèn chiếu theo hướng mặt trời lúc 9 giờ sáng
+    // =====================================================================
+    function applyRealTimeSunAndShadow(isInit = false) {
+      const now = new Date();
+      const hours = now.getHours();
+      const minutes = now.getMinutes();
+      const timeDec = hours + minutes / 60.0;
+      const timeStr = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+
+      const sunrise = 5.75; // 05:45 Sáng
+      const sunset = 17.75;  // 17:45 Chiều
+
+      const btnDay = document.getElementById('btnTabDay');
+      const btnNight = document.getElementById('btnTabNight');
+      const iconHeader = document.getElementById('solarIconHeader');
+      const titleHeader = document.getElementById('solarTitleHeader');
+
+      if (timeDec >= sunrise && timeDec <= sunset) {
+        // Ban ngày
+        celestialState.mode = 'day';
+        const progress = (timeDec - sunrise) / (sunset - sunrise); // 0.0 -> 1.0
+        // Hướng mọc Đông trước cổng (5°), trưa đỉnh đầu (~95°), lặn Tây sau lăng (~185°)
+        celestialState.azimuth = 5 + progress * 180;
+        celestialState.elevation = Math.max(8, Math.sin(progress * Math.PI) * 72);
+
+        if (btnDay) btnDay.classList.add('active');
+        if (btnNight) btnNight.classList.remove('active', 'night');
+        if (iconHeader) iconHeader.textContent = '☀️';
+        if (titleHeader) titleHeader.textContent = `MẶT TRỜI THỰC TẾ (${timeStr})`;
+      } else {
+        // Ban đêm: Lấy ánh đèn theo hướng mặt trời lúc 9 giờ sáng
+        celestialState.mode = 'night';
+        // Hướng mặt trời lúc 9h sáng (Trước cổng lăng azimuth: 15°, elevation: 52°)
+        celestialState.azimuth = 15;
+        celestialState.elevation = 52;
+
+        if (btnNight) btnNight.classList.add('active', 'night');
+        if (btnDay) btnDay.classList.remove('active');
+        if (iconHeader) iconHeader.textContent = '🌙';
+        if (titleHeader) titleHeader.textContent = `ÁNH ĐÊM 9H SÁNG (${timeStr})`;
+      }
+
+      updateCelestialPosition();
+
+      // Đánh dấu chip thời gian thực
+      document.querySelectorAll('.time-chip-btn').forEach(b => b.classList.remove('active'));
+      const realChip = document.getElementById('btnRealTimeSun');
+      if (realChip) realChip.classList.add('active');
+
+      if (isInit) {
+        console.log(`[RealTimeSun] Khởi động bóng mặt trời thời gian thực: ${timeStr}, Mode: ${celestialState.mode}, Azimuth: ${celestialState.azimuth.toFixed(1)}°, Elevation: ${celestialState.elevation.toFixed(1)}°`);
+      }
+    }
+
+    function resetToRealTimeSun() {
+      isManualSolarOverride = false;
+      applyRealTimeSunAndShadow(false);
+      showToast('⏰ Đã cập nhật bóng mặt trời theo thời gian thực tế');
+    }
+
     function applyPresetTime(az, el, timeStr) {
+      isManualSolarOverride = true;
       celestialState.azimuth = az;
       celestialState.elevation = el;
       if (timeStr === '21:00') setCelestialMode('night');
@@ -2736,6 +2807,7 @@
     }
 
     function onSolarSliderInput() {
+      isManualSolarOverride = true;
       const sAz = document.getElementById('sliderAzimuth');
       const sEl = document.getElementById('sliderElevation');
       if (sAz) celestialState.azimuth = parseFloat(sAz.value);
@@ -3386,7 +3458,70 @@
         panelMesh.userData = { type: 'heritage_wall', wallId: cfg.id, wallType: cfg.typeKey, name: cfg.name };
         wallGroup.add(panelMesh);
 
+        wallGroup.userData = { wallId: cfg.id, typeKey: cfg.typeKey, x: cfg.x, z: cfg.z };
         layerGroups.heritageWalls.add(wallGroup);
+      });
+    }
+
+    // =====================================================================
+    // 5.4.1 TỰ ĐỘNG ẨN BỨC TƯỜNG PHÍA TRƯỚC THEO GÓC NHÌN (CULLING THÔNG MINH)
+    // Khi đứng ở góc nào nhìn vào thì ẩn bức tường phía đó để không cản trở tầm nhìn tầm thấp.
+    // Các bức tường đối diện phía sau vẫn giữ nguyên làm phông nền di sản tráng lệ.
+    // =====================================================================
+    function updateDynamicWallCulling() {
+      if (!layerGroups.heritageWalls || !layerGroups.heritageWalls.children) return;
+
+      const camPos = camera.position;
+      const target = controls.target;
+      // Vector hướng nhìn từ vị trí camera tới điểm ngắm target
+      const viewDir = new THREE.Vector3().subVectors(target, camPos).normalize();
+
+      // Kiểm tra góc nhìn tầm thấp / tầm trung (khi bức tường phía trước có thể chắn tầm mắt)
+      const isLowOrMidAngle = camPos.y < 14.0;
+
+      layerGroups.heritageWalls.children.forEach(wallGroup => {
+        const cfg = wallGroup.userData;
+        if (!cfg || !cfg.typeKey) return;
+
+        let shouldHide = false;
+
+        if (isLowOrMidAngle) {
+          if (cfg.typeKey === 'south') {
+            // Đang đứng ở phía Nam (trước cổng lăng) nhìn vào trong lăng mộ (hướng Bắc)
+            // Ẩn tường Nam để nhìn thẳng qua cổng vào sân lễ và các ngôi mộ
+            if (camPos.z > 2.0 && viewDir.z <= 0.25) {
+              shouldHide = true;
+            }
+          } else if (cfg.typeKey === 'north') {
+            // Đang đứng ở phía Bắc (sau lăng thờ) nhìn vào trong lăng mộ (hướng Nam)
+            // Ẩn tường Bắc để nhìn từ sau lăng hướng về phía cổng
+            if (camPos.z < -2.0 && viewDir.z >= -0.25) {
+              shouldHide = true;
+            }
+          } else if (cfg.typeKey === 'west') {
+            // Đang đứng ở phía Tây (bên trái) nhìn ngang sang các hàng mộ (hướng Đông)
+            // Ẩn tường Tây để không che khuất 4 hàng mộ
+            if (camPos.x < -2.0 && viewDir.x >= -0.25) {
+              shouldHide = true;
+            }
+          } else if (cfg.typeKey === 'east') {
+            // Đang đứng ở phía Đông (bên phải) nhìn sang các hàng mộ (hướng Tây)
+            // Ẩn tường Đông để không che khuất các hàng mộ
+            if (camPos.x > 2.0 && viewDir.x <= 0.25) {
+              shouldHide = true;
+            }
+          }
+        }
+
+        // Nếu người dùng đang bấm nút chọn xem trực diện bức tường đó thì luôn giữ hiển thị
+        if (currentSelectedHeritageWall === cfg.wallId) {
+          if (cfg.typeKey === 'south' && viewDir.z > 0.20) shouldHide = false;
+          if (cfg.typeKey === 'north' && viewDir.z < -0.20) shouldHide = false;
+          if (cfg.typeKey === 'west' && viewDir.x < -0.20) shouldHide = false;
+          if (cfg.typeKey === 'east' && viewDir.x > 0.20) shouldHide = false;
+        }
+
+        wallGroup.visible = !shouldHide;
       });
     }
 
@@ -5149,14 +5284,12 @@
           showToast('🌅 Ánh sáng Chiều Hoàng Hôn Cổ Kính');
           break;
         case 'night':
-          scene.background = new THREE.Color(0x010206);
-          scene.fog.color = new THREE.Color(0x010206);
-          lights.sun.intensity = 0.08;
-          lights.ambient.color.setHex(0x1e293b);
-          lights.ambient.intensity = 0.22;
-          lights.spotSanctuary.intensity = 4.2;
-          lights.lanterns.forEach(l => l.intensity = 3.2);
-          showToast('🌙 Đêm Soi Đèn Đá Linh Thiêng');
+          scene.background = new THREE.Color(0x0a141a);
+          scene.fog.color = new THREE.Color(0x0a141a);
+          setCelestialMode('night');
+          lights.spotSanctuary.intensity = 3.5;
+          lights.lanterns.forEach(l => l.intensity = 2.5);
+          showToast('🌙 Ban đêm: Đã bật ánh đèn kiến trúc theo hướng mặt trời 9h sáng');
           break;
         case 'cad':
           scene.background = new THREE.Color(0x041021);
@@ -5465,6 +5598,9 @@ function animate() {
       const delta = clock.getDelta();
       TWEEN.update();
 
+      // Cập nhật ẩn/hiện thông minh 4 bức tường triển lãm theo góc nhìn camera
+      updateDynamicWallCulling();
+
       // Cập nhật góc nhìn theo cảm biến con quay hồi chuyển khi nghiêng máy
       if (isGyroActive) {
         const offset = camera.position.clone().sub(controls.target);
@@ -5494,7 +5630,12 @@ function animate() {
 
     window.addEventListener('DOMContentLoaded', () => {
       buildComplete3DScene();
-      updateCelestialPosition();
+      applyRealTimeSunAndShadow(true);
+      setInterval(() => {
+        if (!isManualSolarOverride) {
+          applyRealTimeSunAndShadow(false);
+        }
+      }, 30000);
       animate();
       showToast('🏛️ Đồ họa 3D Lăng Mộ Đá Xanh Ninh Bình Master sẵn sàng!');
     });
