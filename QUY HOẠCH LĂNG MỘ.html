@@ -14263,18 +14263,56 @@
 
     function createPavingTexture() {
       const canvas = document.createElement('canvas');
-      canvas.width = 512; canvas.height = 512;
+      canvas.width = 500; canvas.height = 500; // 500px đại diện cho 1.0m x 1.0m (mỗi 10cm = đúng 50px)
       const ctx = canvas.getContext('2d');
-      ctx.fillStyle = '#202b38';
-      ctx.fillRect(0, 0, 512, 512);
-      ctx.strokeStyle = '#121a22';
-      ctx.lineWidth = 4;
-      const step = 64;
-      for (let x = 0; x <= 512; x += step) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, 512); ctx.stroke(); }
-      for (let y = 0; y <= 512; y += step) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(512, y); ctx.stroke(); }
+
+      // Nền đá Granite xám xanh tự nhiên lát nền minh đường
+      const bgGrad = ctx.createLinearGradient(0, 0, 500, 500);
+      bgGrad.addColorStop(0, '#1a272b');
+      bgGrad.addColorStop(0.5, '#202f34');
+      bgGrad.addColorStop(1, '#182428');
+      ctx.fillStyle = bgGrad;
+      ctx.fillRect(0, 0, 500, 500);
+
+      // Hạt khoáng thớ đá tự nhiên li ti
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.03)';
+      for (let i = 0; i < 220; i++) {
+        ctx.fillRect((i * 37) % 500, (i * 73) % 500, 2, 2);
+      }
+
+      // KẺ Ô VUÔNG CHUẨN ĐÚNG 10CM (mỗi bước 50px = đúng 10cm thực tế)
+      const step10cm = 50;
+      for (let i = 0; i <= 500; i += step10cm) {
+        const is1m = (i === 0 || i === 500);
+        const is50cm = (i === 250);
+
+        if (is1m) {
+          ctx.strokeStyle = 'rgba(212, 175, 55, 0.50)'; // Vạch chỉ 1m hoàng kim nổi bật
+          ctx.lineWidth = 2.5;
+        } else if (is50cm) {
+          ctx.strokeStyle = 'rgba(56, 189, 248, 0.40)'; // Vạch mốc 50cm cyan rõ nét
+          ctx.lineWidth = 2.0;
+        } else {
+          ctx.strokeStyle = 'rgba(74, 115, 122, 0.42)'; // Vạch ô vuông đúng 10cm chuẩn xác
+          ctx.lineWidth = 1.2;
+        }
+
+        ctx.beginPath();
+        ctx.moveTo(i, 0);
+        ctx.lineTo(i, 500);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(0, i);
+        ctx.lineTo(500, i);
+        ctx.stroke();
+      }
+
       const texture = new THREE.CanvasTexture(canvas);
-      texture.wrapS = THREE.RepeatWrapping; texture.wrapT = THREE.RepeatWrapping;
-      texture.repeat.set(8, 12);
+      texture.wrapS = THREE.RepeatWrapping;
+      texture.wrapT = THREE.RepeatWrapping;
+      // Khổ đất 7.35m x 11.00m: lặp lại đúng 7.35 lần theo X và 11.00 lần theo Z -> Mỗi ô vuông là đúng 10cm x 10cm!
+      texture.repeat.set(7.35, 11.00);
       return texture;
     }
 
