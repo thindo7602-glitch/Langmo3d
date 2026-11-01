@@ -6154,7 +6154,7 @@
       </button>
 
       <!-- NÚT LỌC MỘ: CHỈ XEM 3 MỘ ĐÃ XÂY / XEM TOÀN BỘ 29 MỘ -->
-      <button class="btn btn-gold" id="btnToggleOnlyCompleted" onclick="toggleOnlyCompletedMode()" title="Chuyển chế độ hiển thị: Chỉ xem 3 Mộ đã hoàn thiện (Mộ Ông, Mộ Bà, Mộ 07) hoặc xem trọn bộ 29 Mộ quy hoạch">
+      <button class="btn btn-gold" id="btnToggleOnlyCompleted" onclick="toggleOnlyCompletedMode()" title="Chuyển chế độ hiển thị: Chỉ xem 3 Mộ đã hoàn thiện (Mộ Ông, Mộ Bà, Mộ 08) hoặc xem trọn bộ 29 Mộ quy hoạch">
         <span id="iconCompletedMode">🌟</span> <span id="labelCompletedMode" class="btn-label">3 Mộ Đã Xây (Hiện Trạng)</span>
       </button>
 
@@ -6377,7 +6377,7 @@
         </div>
         <div class="prop-row">
           <span class="prop-label">Mộ đã hoàn thiện (3):</span>
-          <span class="prop-value" style="color:var(--accent-gold);">Mộ Ông, Mộ Bà, Mộ 07</span>
+          <span class="prop-value" style="color:var(--accent-gold);">Mộ Ông, Mộ Bà, Mộ 08</span>
         </div>
         <div class="prop-row">
           <span class="prop-label">Mộ quy hoạch (26):</span>
@@ -13845,7 +13845,7 @@
       { id: 'm_nho_goc', name: 'MỘ BÉ', row: 6, type: 'monho', x: 30.0, y: 990.0, width: 50, height: 80, depth: 52, fengshui: 'Đăng Khoa' }
     ];
 
-    const COMPLETED_GRAVE_IDS = ['m1_03', 'm1_04', 'm2_07'];
+    const COMPLETED_GRAVE_IDS = ['m1_03', 'm1_04', 'm2_08'];
     function isCompletedGrave(id) {
       return COMPLETED_GRAVE_IDS.includes(id);
     }
@@ -15110,7 +15110,7 @@
         };
 
         if (isCompleted) {
-          // 3 MỘ HOÀN THIỆN: MỘ ÔNG, MỘ BÀ & MỘ 07 (ĐÁ XANH MÀI BÓNG LOÁNG)
+          // 3 MỘ HOÀN THIỆN: MỘ ÔNG, MỘ BÀ & MỘ 08 (ĐÁ XANH MÀI BÓNG LOÁNG)
           const baseH = h * 0.25;
           const base1 = new THREE.Mesh(new THREE.BoxGeometry(w * 1.06, baseH, d * 1.06), materials.stoneSatin);
           base1.position.set(pos.x, baseH / 2, pos.z);
@@ -15737,7 +15737,7 @@
         layerGroups.labels.children.forEach(s => {
           if (!s.userData.isCompleted) s.visible = false;
         });
-        showToast3D('🌟 Chế độ Hiện Trạng: Chỉ hiển thị Mộ Ông, Mộ Bà, Mộ 07 đã hoàn thiện');
+        showToast3D('🌟 Chế độ Hiện Trạng: Chỉ hiển thị Mộ Ông, Mộ Bà, Mộ 08 đã hoàn thiện');
       } else {
         btn.classList.remove('active');
         icon.textContent = '🏛️';

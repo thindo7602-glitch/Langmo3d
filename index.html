@@ -1618,8 +1618,8 @@
           <button class="cam-btn" id="btnCamGrandparents" onclick="setCameraPreset('grandparents')">
             <span>🪦</span> Mộ Ông & Bà
           </button>
-          <button class="cam-btn" id="btnCamGrave07" onclick="setCameraPreset('grave07')">
-            <span>🪦</span> Mộ 07 (Đã Xây)
+          <button class="cam-btn" id="btnCamGrave08" onclick="setCameraPreset('grave08')">
+            <span>🪦</span> Mộ 08 (Đã Xây)
           </button>
           <button class="cam-btn" id="btnCamScreen" onclick="setCameraPreset('screen')">
             <span>📜</span> Cuốn Thư Phúc
@@ -1679,7 +1679,7 @@
         </div>
         <div class="prop-row">
           <span class="prop-label">Mộ đã hoàn thiện (3):</span>
-          <span class="prop-value" style="color:var(--accent-gold);">Mộ Ông, Mộ Bà, Mộ 07</span>
+          <span class="prop-value" style="color:var(--accent-gold);">Mộ Ông, Mộ Bà, Mộ 08</span>
         </div>
         <div class="prop-row">
           <span class="prop-label">Mộ quy hoạch (26):</span>
@@ -1924,7 +1924,7 @@
               <td>~1.82 m³</td>
             </tr>
             <tr style="background:rgba(245, 158, 11, 0.12);">
-              <td><strong>Mộ Thứ 7 (Mộ 07)</strong></td>
+              <td><strong>Mộ Thứ 8 (Mộ 08)</strong></td>
               <td><span style="color:#fbbf24; font-weight:700;">★ Đã hoàn thiện</span></td>
               <td>81 × 127 × 78</td>
               <td>~0.80 m³</td>
@@ -2421,7 +2421,7 @@
       { id: 'm_nho_goc', name: 'MỘ BÉ', row: 6, type: 'monho', x: 30.0, y: 990.0, width: 50, height: 80, depth: 52, fengshui: 'Đăng Khoa' }
     ];
 
-    const COMPLETED_GRAVE_IDS = ['m1_03', 'm1_04', 'm2_07'];
+    const COMPLETED_GRAVE_IDS = ['m1_03', 'm1_04', 'm2_08'];
     function isCompletedGrave(id) {
       return COMPLETED_GRAVE_IDS.includes(id);
     }
@@ -4448,7 +4448,7 @@
         };
 
         if (isCompleted) {
-          // 3 MỘ HOÀN THIỆN: MỘ ÔNG, MỘ BÀ & MỘ 07 (ĐÁ XANH MÀI BÓNG LOÁNG)
+          // 3 MỘ HOÀN THIỆN: MỘ ÔNG, MỘ BÀ & MỘ 08 (ĐÁ XANH MÀI BÓNG LOÁNG)
           const baseH = h * 0.25;
           const base1 = new THREE.Mesh(new THREE.BoxGeometry(w * 1.06, baseH, d * 1.06), materials.stoneSatin);
           base1.position.set(pos.x, baseH / 2, pos.z);
@@ -4998,9 +4998,10 @@
           targetLook = { x: 0, y: 0.9, z: -3.4 };
           break;
         case 'grave07':
-          const p7 = cadToWorld(40 + 81/2, 369 + 127/2);
-          targetPos = { x: p7.x - 1.2, y: 1.8, z: p7.z + 1.8 };
-          targetLook = { x: p7.x, y: 0.8, z: p7.z };
+        case 'grave08':
+          const p8 = cadToWorld(131 + 81/2, 369 + 127/2);
+          targetPos = { x: p8.x - 1.2, y: 1.8, z: p8.z + 1.8 };
+          targetLook = { x: p8.x, y: 0.8, z: p8.z };
           break;
         case 'screen':
           targetPos = { x: 0, y: 1.6, z: 6.2 };
@@ -5091,7 +5092,7 @@
         layerGroups.labels.children.forEach(s => {
           if (!s.userData.isCompleted) s.visible = false;
         });
-        showToast('🌟 Chế độ Hiện Trạng: Chỉ hiển thị Mộ Ông, Mộ Bà, Mộ 07 đã hoàn thiện');
+        showToast('🌟 Chế độ Hiện Trạng: Chỉ hiển thị Mộ Ông, Mộ Bà, Mộ 08 đã hoàn thiện');
       } else {
         btn.classList.remove('active');
         icon.textContent = '🏛️';
