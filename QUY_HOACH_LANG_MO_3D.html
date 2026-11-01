@@ -1096,7 +1096,377 @@
       }
     }
 
-  </style>
+  
+  /* =====================================================================
+     HERITAGE EXHIBITION WALLS & INTERACTIVE ZOOM LIGHTBOX STYLES
+     ===================================================================== */
+  /* FLOATING PROMPT KHI CLICK VÀO TƯỜNG TRONG 3D */
+  .heritage-wall-prompt {
+    position: absolute;
+    top: 75px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-20px);
+    z-index: 120;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 18px;
+    background: rgba(13, 31, 28, 0.92);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1.5px solid rgba(212, 175, 55, 0.65);
+    border-radius: 30px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.65), 0 0 20px rgba(18, 230, 184, 0.35);
+    color: #e2f2ec;
+    font-size: 13px;
+    font-weight: 600;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .heritage-wall-prompt.show {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(-50%) translateY(0);
+  }
+  .heritage-wall-prompt .prompt-btn {
+    padding: 5px 12px;
+    background: linear-gradient(135deg, #d4af37, #f59e0b);
+    color: #0b1715;
+    border: none;
+    border-radius: 16px;
+    font-weight: 800;
+    font-size: 12px;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.4);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .heritage-wall-prompt .prompt-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 14px rgba(245, 158, 11, 0.6);
+  }
+
+  /* MODAL LIGHTBOX FULLSCREEN ZOOMABLE VIEWER */
+  .heritage-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 250;
+    background: rgba(5, 14, 12, 0.88);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    display: none;
+    flex-direction: column;
+    opacity: 0;
+    transition: opacity 0.35s ease;
+  }
+  .heritage-modal-overlay.open {
+    display: flex;
+    opacity: 1;
+  }
+  .heritage-modal-header {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 20px;
+    background: rgba(14, 28, 25, 0.95);
+    border-bottom: 1px solid rgba(212, 175, 55, 0.35);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  }
+  .heritage-modal-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Cinzel', serif;
+    font-size: 16px;
+    font-weight: 800;
+    color: #e2f2ec;
+    letter-spacing: 0.04em;
+  }
+  .heritage-modal-title span.gold {
+    color: #d4af37;
+    text-shadow: 0 0 12px rgba(212, 175, 55, 0.6);
+  }
+  .heritage-tabs-nav {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    overflow-x: auto;
+    padding: 4px;
+    background: rgba(8, 18, 16, 0.6);
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  .heritage-tab-btn {
+    padding: 6px 14px;
+    background: transparent;
+    border: none;
+    border-radius: 18px;
+    color: #94a3b8;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.25s ease;
+  }
+  .heritage-tab-btn:hover {
+    color: #e2f2ec;
+    background: rgba(255, 255, 255, 0.06);
+  }
+  .heritage-tab-btn.active {
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.35), rgba(18, 230, 184, 0.25));
+    color: #d4af37;
+    border: 1px solid rgba(212, 175, 55, 0.6);
+    text-shadow: 0 0 8px rgba(212, 175, 55, 0.5);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+  }
+  .heritage-zoom-controls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .heritage-zoom-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #e2f2ec;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .heritage-zoom-btn:hover {
+    background: rgba(212, 175, 55, 0.25);
+    border-color: #d4af37;
+    color: #d4af37;
+    transform: scale(1.08);
+  }
+  .heritage-modal-body {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    background: radial-gradient(circle at center, #112421 0%, #071311 100%);
+    cursor: grab;
+  }
+  .heritage-modal-body.grabbing {
+    cursor: grabbing;
+  }
+  .heritage-canvas-viewport {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform-origin: center center;
+    transition: transform 0.08s ease-out;
+  }
+  .heritage-tab-content {
+    display: none;
+    width: 90%;
+    max-width: 1280px;
+    max-height: 85vh;
+    overflow-y: auto;
+    padding: 30px;
+    background: rgba(14, 30, 26, 0.95);
+    border: 1.5px solid rgba(212, 175, 55, 0.45);
+    border-radius: 16px;
+    box-shadow: 0 15px 45px rgba(0,0,0,0.7), 0 0 35px rgba(18, 230, 184, 0.15);
+    color: #e2dcc8;
+    user-select: text;
+  }
+  .heritage-tab-content.active {
+    display: block;
+  }
+
+  /* GIA PHẢ CÂY THẾ HỆ NGHỆ THUẬT */
+  .phado-banner {
+    text-align: center;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1.5px solid rgba(212, 175, 55, 0.35);
+    position: relative;
+  }
+  .phado-title {
+    font-family: 'Cinzel', serif;
+    font-size: 26px;
+    font-weight: 800;
+    color: #ffd700;
+    letter-spacing: 0.08em;
+    text-shadow: 0 0 16px rgba(255, 215, 0, 0.6);
+  }
+  .phado-sub {
+    font-style: italic;
+    color: #12e6b8;
+    font-size: 14px;
+    margin-top: 4px;
+  }
+  .couplet-container {
+    display: flex;
+    justify-content: space-around;
+    margin: 16px 0;
+    gap: 12px;
+  }
+  .couplet-box {
+    flex: 1;
+    background: linear-gradient(135deg, rgba(139, 26, 26, 0.75), rgba(178, 34, 34, 0.6));
+    border: 1px solid rgba(212, 175, 55, 0.6);
+    border-radius: 8px;
+    padding: 10px 14px;
+    text-align: center;
+    font-weight: 700;
+    font-size: 14px;
+    color: #fff6d2;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    text-shadow: 0 1px 4px rgba(0,0,0,0.8);
+  }
+
+  /* KHUNG CÁC THẾ HỆ */
+  .genealogy-node-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 20px;
+  }
+  .gen-tier {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(212, 175, 55, 0.25);
+    border-radius: 12px;
+    padding: 16px;
+    position: relative;
+  }
+  .gen-tier-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+    padding-bottom: 6px;
+  }
+  .gen-badge {
+    padding: 3px 10px;
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.3), rgba(212, 175, 55, 0.1));
+    border: 1px solid #d4af37;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #ffd700;
+  }
+  .gen-cards-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .person-card {
+    padding: 8px 14px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.06), rgba(18, 230, 184, 0.04));
+    border: 1px solid rgba(18, 230, 184, 0.3);
+    border-radius: 8px;
+    font-size: 12px;
+    line-height: 1.5;
+    flex: 1 1 calc(25% - 10px);
+    min-width: 180px;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+  .person-card:hover {
+    transform: translateY(-2px);
+    border-color: #ffd700;
+    box-shadow: 0 4px 12px rgba(212, 175, 55, 0.25);
+  }
+  .person-card.patriarch {
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.25), rgba(139, 26, 26, 0.25));
+    border: 1.5px solid #d4af37;
+    flex: 1 1 100%;
+    text-align: center;
+  }
+  .person-card .p-name {
+    font-weight: 700;
+    font-size: 13.5px;
+    color: #f1f5f9;
+  }
+  .person-card.patriarch .p-name {
+    font-size: 18px;
+    color: #ffd700;
+  }
+  .person-card .p-meta {
+    font-size: 11px;
+    color: #94a3b8;
+    margin-top: 2px;
+  }
+  .person-card .p-ky {
+    font-size: 11px;
+    color: #f87171;
+    font-weight: 600;
+  }
+
+  /* BẢNG NGÀY KỴ */
+  .ky-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 12px;
+    margin-top: 16px;
+  }
+  .ky-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(212, 175, 55, 0.22);
+    border-radius: 10px;
+    padding: 12px 14px;
+  }
+  .ky-month {
+    font-size: 13px;
+    font-weight: 800;
+    color: #ffd700;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+    padding-bottom: 4px;
+    margin-bottom: 8px;
+  }
+  .ky-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11.5px;
+    padding: 3px 0;
+    border-bottom: 1px dashed rgba(255, 255, 255, 0.05);
+  }
+  .ky-day {
+    color: #f87171;
+    font-weight: 700;
+    min-width: 50px;
+  }
+
+  /* BẢNG CAD & THÔNG SỐ */
+  .cad-spec-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 16px;
+  }
+  @media(max-width: 768px) {
+    .cad-spec-grid { grid-template-columns: 1fr; }
+  }
+  .cad-preview-box {
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(56, 189, 248, 0.35);
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+  }
+
+  /* MOBILE TWEAKS */
+  @media(max-width: 640px) {
+    .heritage-modal-header { padding: 8px 12px; }
+    .heritage-modal-title span.title-text { display: none; }
+    .heritage-tab-content { padding: 14px; width: 95%; max-height: 90vh; }
+    .person-card { min-width: 100%; }
+    .couplet-container { flex-direction: column; }
+  }
+
+</style>
 </head>
 <body>
 
@@ -1510,6 +1880,10 @@
       <button class="btn" id="btnSidebarRight" onclick="toggleSidebar('right')" title="Bật/Tắt Bảng Chi Tiết Thông Số Kỹ Thuật & Danh Mục 29 Mộ">
         <span>📋</span> <span class="btn-label">Thông Số</span>
       </button>
+      
+      <button class="btn btn-gold" id="btnHeritageWallSelect" onclick="openHeritageModal('north')" title="Xem 4 Bức Tường Tri Thức & Gia Phả Đỗ Tộc">
+        <span>🏛️</span> <span class="btn-label">Tường Gia Phả</span>
+      </button>
       <button class="btn" onclick="openQuantitiesModal()" title="Xem Bảng Thống Kê Chi Tiết Khối Lượng Đá & Bê Tông">
         <span>📊</span> <span class="btn-label">Khối Lượng</span>
       </button>
@@ -1520,17 +1894,6 @@
         <span id="fullscreenIcon">⛶</span> <span class="btn-label">Toàn Màn Hình</span>
       </button>
     </div>
-  </div>
-    <button class="btn" id="btnAutoRotate" onclick="toggleAutoRotate()" title="Bật/Tắt tự động xoay 360 độ">
-      <span>🔄</span> <span class="btn-label">Tự Xoay 360°</span>
-    </button>
-    <button class="btn" onclick="resetDefaultView()" title="Đặt lại góc nhìn mặc định">
-      <span>🎯</span> <span class="btn-label">Về Gốc</span>
-    </button>
-    <div class="divider-v"></div>
-    <button class="btn" id="btnFullscreenToggle" onclick="toggleFullscreenMode()" title="Bật / Tắt chế độ Toàn Màn Hình">
-      <span id="fullscreenIcon">⛶</span> <span class="btn-label">Toàn Màn Hình</span>
-    </button>
   </div>
 
   <!-- MODAL THỐNG KÊ KHỐI LƯỢNG -->
@@ -1605,6 +1968,373 @@
         <div style="margin-top:16px; display:flex; justify-content:flex-end;">
           <button class="btn btn-gold" onclick="closeQuantitiesModal()">Đóng Bảng</button>
         </div>
+      </div>
+    </div>
+  </div>
+
+  
+  <!-- FLOATING PROMPT KHI CLICK VÀO 4 BỨC TƯỜNG TRI THỨC -->
+  <div class="heritage-wall-prompt" id="heritageWallPrompt">
+    <span id="promptWallIcon">🏛️</span>
+    <span id="promptWallText">Bức Tường Tri Thức & Gia Phả</span>
+    <button class="prompt-btn" onclick="openSelectedHeritageModal()">🔍 Phóng To Đọc</button>
+  </div>
+
+
+  <!-- MODAL LIGHTBOX FULLSCREEN ZOOMABLE VIEWER CHO 4 BỨC TƯỜNG -->
+  <div class="heritage-modal-overlay" id="heritageModal">
+    <div class="heritage-modal-header">
+      <div class="heritage-modal-title">
+        <span>🏛️</span>
+        <span class="gold title-text">TRI THỨC & GIA PHẢ DÒNG HỌ ĐỖ</span>
+      </div>
+      <div class="heritage-tabs-nav">
+        <button class="heritage-tab-btn active" id="tabBtn_north" onclick="switchHeritageTab('north')">📜 Tường Bắc (Phả Đồ 11 Đời)</button>
+        <button class="heritage-tab-btn" id="tabBtn_west" onclick="switchHeritageTab('west')">📅 Tường Tây (Lịch Sử & Ngày Kỵ)</button>
+        <button class="heritage-tab-btn" id="tabBtn_east" onclick="switchHeritageTab('east')">📐 Tường Đông (Mặt Bằng 29 Mộ)</button>
+        <button class="heritage-tab-btn" id="tabBtn_south" onclick="switchHeritageTab('south')">⛩️ Tường Nam (Kiến Trúc & Phong Thủy)</button>
+      </div>
+      <div class="heritage-zoom-controls">
+        <button class="heritage-zoom-btn" onclick="zoomHeritage(0.2)" title="Phóng to">➕</button>
+        <button class="heritage-zoom-btn" onclick="zoomHeritage(-0.2)" title="Thu nhỏ">➖</button>
+        <button class="heritage-zoom-btn" onclick="resetHeritageZoom()" title="Về chuẩn 100%">↺</button>
+        <button class="heritage-zoom-btn" onclick="closeHeritageModal()" title="Đóng cửa sổ" style="background:rgba(239,68,68,0.25);border-color:#ef4444;color:#ef4444;">✕</button>
+      </div>
+    </div>
+
+    <div class="heritage-modal-body" id="heritageModalBody">
+      <div class="heritage-canvas-viewport" id="heritageViewport">
+        
+        <!-- TAB 1: PHẢ ĐỒ 11 THẾ HỆ HỌ ĐỖ -->
+        <div class="heritage-tab-content active" id="tabContent_north">
+          <div class="phado-banner">
+            <div style="font-size:12px; letter-spacing:0.3em; color:#d4af37; text-transform:uppercase;">Gia Phả Dòng Họ Đỗ · Thôn Thôi Ngôi (Hạc Bổng, Yên Đồng, Ninh Bình)</div>
+            <div class="phado-title">PHẢ ĐỒ HỌ ĐỖ · BÁCH NIÊN GIA TỘC</div>
+            <div class="phado-sub">Mười Một Thế Hệ Phát Dương Quang Đại · Ba Nhánh Lớn Vững Bền Hưng Thịnh</div>
+            
+            <div class="couplet-container">
+              <div class="couplet-box">✦ PHƯỚC ĐỨC ÔNG BÀ LƯU HẬU THẾ ✦</div>
+              <div class="couplet-box">✦ HIẾU HIỀN CON CHÁU RẠNG GIA PHONG ✦</div>
+            </div>
+          </div>
+
+          <!-- HAI BÀ CÔ TỔ -->
+          <div style="margin: 12px auto; max-width: 500px; text-align: center; padding: 10px 18px; background: linear-gradient(135deg, rgba(232, 67, 147, 0.15), rgba(255, 255, 255, 0.05)); border: 1px solid rgba(232, 67, 147, 0.4); border-radius: 20px;">
+            <span style="color:#f472b6; font-weight:700; font-size:12px; letter-spacing:0.1em;">HAI BÀ CÔ TỔ LINH THIÊNG PHÙ HỘ DÒNG HỌ:</span><br>
+            <strong style="color:#ffb6c1; font-size:16px;">Cô Tổ Hồng Hoa ✿ Cô Tổ Bạch Hoa</strong>
+          </div>
+
+          <div class="genealogy-node-grid">
+            <!-- ĐỜI I: THUỶ TỔ -->
+            <div class="gen-tier">
+              <div class="gen-tier-header">
+                <span class="gen-badge">ĐỜI THỨ NHẤT · THỦY TỔ</span>
+                <span style="color:#f87171; font-size:11px;">Kỵ nhật: Cụ Tổ 12/10 · Cụ Bà 12/03</span>
+              </div>
+              <div class="gen-cards-row">
+                <div class="person-card patriarch">
+                  <div class="p-name">CỤ TỔ ĐỖ PHÚC QUẢNG & CỤ BÀ</div>
+                  <div class="p-meta">Khai cơ lập nghiệp tại thôn Thôi Ngôi, xã Yên Trị, huyện Ý Yên, tỉnh Nam Định</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ĐỜI II -->
+            <div class="gen-tier">
+              <div class="gen-tier-header">
+                <span class="gen-badge">ĐỜI THỨ HAI</span>
+                <span style="color:#94a3b8; font-size:11px;">Ba người con của Cụ Thủy Tổ</span>
+              </div>
+              <div class="gen-cards-row">
+                <div class="person-card">
+                  <div class="p-name">[2.1] Đỗ Kim Vàng</div>
+                </div>
+                <div class="person-card">
+                  <div class="p-name">[2.2] Đỗ Kim Châu</div>
+                </div>
+                <div class="person-card" style="border-color:#ffd700; background:rgba(212,175,55,0.1);">
+                  <div class="p-name">[2.3] Cụ Đỗ Kim Toàn (Nhánh Chính)</div>
+                  <div class="p-meta">Phu nhân: Cụ Bà Hiệu (Thọ >90 tuổi)</div>
+                  <div class="p-ky">Kỵ Cụ Ông: 04/5 · Kỵ Cụ Bà: 18/5</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ĐỜI III -->
+            <div class="gen-tier">
+              <div class="gen-tier-header">
+                <span class="gen-badge">ĐỜI THỨ BA</span>
+              </div>
+              <div class="gen-cards-row">
+                <div class="person-card"><div class="p-name">[3.1] Đỗ Kim Trưởng</div></div>
+                <div class="person-card"><div class="p-name">[3.2] Đỗ Kim Tuần</div></div>
+                <div class="person-card" style="border-color:#ffd700; background:rgba(212,175,55,0.1);">
+                  <div class="p-name">[3.3] Cụ Đỗ Kim Hứng (Nhánh Chính)</div>
+                  <div class="p-meta">Phu nhân: Cụ Bà Năng (Thọ >70 tuổi)</div>
+                  <div class="p-ky">Kỵ Cụ Ông: 15/5 · Kỵ Cụ Bà: 09/3</div>
+                </div>
+                <div class="person-card"><div class="p-name">[3.4] Đỗ Bá Chiên</div></div>
+                <div class="person-card"><div class="p-name">[3.5] Đỗ Kim Tụy</div></div>
+                <div class="person-card"><div class="p-name">[3.6] Đỗ Kiên (Bà Vũ Viết Tiêu)</div></div>
+              </div>
+            </div>
+
+            <!-- ĐỜI IV -->
+            <div class="gen-tier">
+              <div class="gen-tier-header">
+                <span class="gen-badge">ĐỜI THỨ TƯ</span>
+              </div>
+              <div class="gen-cards-row">
+                <div class="person-card patriarch">
+                  <div class="p-name">CỤ ĐỖ VĂN TRỢ</div>
+                  <div class="p-meta">Chính thất: Cụ Bà Vũ Thị Cố (Kỵ 08/3 - sinh Đỗ Văn Do) | Thứ thất: Cụ Bà Vũ Thị Tẻo (Thọ >70, Kỵ 23/10 - sinh Đỗ Văn Thư & Đỗ Thị Duy)</div>
+                  <div class="p-ky">Kỵ nhật Cụ Ông: 09/3</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ĐỜI V -->
+            <div class="gen-tier">
+              <div class="gen-tier-header">
+                <span class="gen-badge">ĐỜI THỨ NĂM</span>
+                <span style="color:#12e6b8; font-size:11px;">Khởi thảo bản gia phả đầu tiên 15/02 năm Kỷ Mão (1879)</span>
+              </div>
+              <div class="gen-cards-row">
+                <div class="person-card"><div class="p-name">[5.1] Đỗ Văn Do</div></div>
+                <div class="person-card" style="border-color:#ffd700; background:rgba(212,175,55,0.12); flex:2;">
+                  <div class="p-name">[5.2] CỤ ĐỖ VĂN THƯ (Người Biên Chép Gia Phả Kỷ Mão)</div>
+                  <div class="p-meta">Thọ hơn 50 tuổi · Phu nhân: Bà Vũ Thị Thép</div>
+                  <div class="p-ky">Kỵ Ông: 08/2 · Kỵ Bà: 11/5</div>
+                </div>
+                <div class="person-card"><div class="p-name">[5.3] Đỗ Thị Duy</div></div>
+              </div>
+            </div>
+
+            <!-- ĐỜI VI -->
+            <div class="gen-tier">
+              <div class="gen-tier-header">
+                <span class="gen-badge">ĐỜI THỨ SÁU</span>
+              </div>
+              <div class="gen-cards-row">
+                <div class="person-card" style="border-color:#ffd700; background:rgba(212,175,55,0.12); flex:2;">
+                  <div class="p-name">[6.1] CỤ ĐỖ VĂN QUÁN (Nhánh Chính)</div>
+                  <div class="p-meta">Phu nhân: Bà Vũ Thị Luật (Nguồn phát sinh 3 nhánh lớn ở đời VII)</div>
+                  <div class="p-ky">Kỵ Ông: 10/12 · Kỵ Bà: 13/2</div>
+                </div>
+                <div class="person-card"><div class="p-name">[6.2] Đỗ Văn Chi</div></div>
+                <div class="person-card"><div class="p-name">[6.3] Đỗ Văn Tân</div></div>
+                <div class="person-card"><div class="p-name">[6.4] Đỗ Văn Tu</div></div>
+                <div class="person-card"><div class="p-name">[6.5] Đỗ Thị Nhũ</div></div>
+              </div>
+            </div>
+
+            <!-- ĐỜI VII: BA NHÁNH LỚN -->
+            <div class="gen-tier" style="border-color:#12e6b8; background:rgba(18,230,184,0.04);">
+              <div class="gen-tier-header">
+                <span class="gen-badge" style="background:#12e6b8; color:#061412;">ĐỜI THỨ BẢY · NGUỒN PHÁT SINH BA NHÁNH LỚN</span>
+              </div>
+              <div class="gen-cards-row">
+                <div class="person-card" style="border-color:#ffd700; background:rgba(212,175,55,0.15);">
+                  <div class="p-name" style="color:#ffd700;">[7.1] CỤ ĐỖ VĂN CHÂN (Thọ >70)</div>
+                  <div class="p-meta">Phu nhân: Bà Vũ Thị Nhạc · Phát triển ra 2 gia đình lớn: <strong>Gia Đình Ông Lê</strong> & <strong>Gia Đình Ông Cừ</strong></div>
+                  <div class="p-ky">Kỵ Cụ Ông: 14/9 · Kỵ Cụ Bà: 03/10</div>
+                </div>
+                <div class="person-card" style="border-color:#34d399; background:rgba(52,211,153,0.1);">
+                  <div class="p-name" style="color:#34d399;">[7.2] CỤ ĐỖ VĂN PHÁCH</div>
+                  <div class="p-meta">Phát triển ra Nhánh <strong>Gia Đình Ông Xa</strong></div>
+                </div>
+                <div class="person-card" style="border-color:#f59e0b; background:rgba(245,158,11,0.1);">
+                  <div class="p-name" style="color:#f59e0b;">[7.3] CỤ ĐỖ VĂN SAN (Phú Thọ)</div>
+                  <div class="p-meta">Phu nhân: Bà Vũ Thị Du · Định cư và phát triển tại Phú Thọ</div>
+                  <div class="p-ky">Kỵ Cụ Ông: 22/9 · Kỵ Cụ Bà: 16/7</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ĐỜI VIII ĐẾN ĐỜI XI -->
+            <div class="gen-tier">
+              <div class="gen-tier-header">
+                <span class="gen-badge">ĐỜI THỨ TÁM ĐẾN MƯỜI MỘT · HẬU DUỆ MUÔN ĐỜI</span>
+                <span style="color:#12e6b8; font-size:11px;">Cập nhật gia phả: Đỗ Văn Thìn – Đời X – Tháng 9/2026</span>
+              </div>
+              <div style="font-size:12px; line-height:1.7; color:#cbd5e1;">
+                <p>✦ <strong>Nhánh Cụ Đỗ Văn Chân:</strong><br>
+                  • <em>Gia đình Ông Lê (8.1 Đỗ Văn Lê & Trần Thị Vân):</em> Các con Đời IX: Đỗ Thanh Quang, Đỗ Văn Vinh, Đỗ Văn Liền, Đỗ Văn Liễn, Đỗ Văn Lưu, Đỗ Thị Sáu, Đỗ Văn Hoàn. Các cháu Đời X & XI: Đỗ Thanh Sơn, Đỗ Thanh Tùng, Đỗ Thanh Hải, Đỗ Thành Hưng, Đỗ Thành Tuyên, Đỗ Duy Linh, Đỗ Thành Thái, Đỗ Thành Bắc, Đỗ Xuân Phương, Đỗ Quang Khanh, Đỗ Văn Dần, Đỗ Văn Chiến, Đỗ Văn Quân, Đỗ Văn Hoan...<br>
+                  • <em>Gia đình Ông Cừ (8.2 Đỗ Văn Cừ - Kỵ 01/12 & Vũ Thị Nhớn - Kỵ 10/4):</em> Các con Đời IX: Đỗ Thị Giáp (1944), Đỗ Thị Ất (1945), Đỗ Quốc Đính (1950 & Trần Thị An), Đỗ Thị Liên (1953), Đỗ Minh Thanh (1955 & Đinh Thị Hiền), Đỗ Văn Năm (Kỵ 08/11 & Trịnh Thị Định), Đỗ Văn Hiểu (1965 & Phạm Thị Hằng), Đỗ Thị Loan (1968). Các cháu Đời X & XI: Đỗ Văn Bính (1973 - con Đỗ Nhật Minh), <strong>Đỗ Văn Thìn</strong> (1976 & Đinh Thị Xuân - các con: Đỗ Tiến Mạnh 2006, Đỗ Thị Mỹ Vân 2012), Đỗ Văn Dũng (1980), Đỗ Trung Thành (con Đỗ Minh Khánh, Đỗ Huyền My), Đỗ Minh Đức (các con: Đỗ Khánh Linh, Đỗ Minh Quân, Đỗ Minh Vượng), Đỗ Nam Anh (con Đỗ Minh Tuấn), Đỗ Minh Hải (con Đỗ Trần Đăng Anh, Đỗ Trần Thiên Kim), Đỗ Minh Hà (con Đỗ Minh Khang, Đỗ Minh Khôi), Đỗ Trung Hiếu (con Đỗ Trần Khánh Hân 2025)...
+                </p>
+                <p style="margin-top:8px;">✦ <strong>Nhánh Cụ Đỗ Văn Phách:</strong><br>
+                  • <em>Gia đình Ông Xa (8.1 Đỗ Văn Xa & Vũ Thị Quýt):</em> Các con Đời IX: Đỗ Văn Lung (& Vũ Thị Ý), Đỗ Văn Sửu (& Vũ Thị Lụa), Đỗ Thị Tuất, Đỗ Thị Chiên. Các cháu Đời X & XI: Đỗ Văn Thường (& Nguyễn Thị Hương - con: Đỗ Quang Phi), Đỗ Văn Hiếu (& Nguyễn Thị Hằng - các con: Đỗ Quang Trung, Đỗ Quang Trọng), Đỗ Văn Sáng (& Vũ Thị Ngọc)...
+                </p>
+                <p style="margin-top:8px;">✦ <strong>Nhánh Cụ Đỗ Văn San (Phú Thọ):</strong><br>
+                  • Các con Đời VIII: Đỗ Thị Đệ (Kỵ 06/2), Đỗ Thị Hiên (1942-2025, Kỵ 14/10), Đỗ Thị Em, Đỗ Thị Hường, Đỗ Thị Huệ, Đỗ Thị Hảo, <strong>Liệt sĩ Đỗ Ngọc Bích</strong> (1955). Con cháu các thế hệ phát triển đông đúc tại tỉnh Phú Thọ và các tỉnh thành cả nước.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 2: LỊCH SỬ DÒNG HỌ & NGÀY KỴ -->
+        <div class="heritage-tab-content" id="tabContent_west">
+          <div class="phado-banner">
+            <div style="font-size:12px; letter-spacing:0.3em; color:#d4af37; text-transform:uppercase;">Cội Nguồn Tâm Linh & Tưởng Nhớ Tiền Nhân</div>
+            <div class="phado-title">LỊCH SỬ DÒNG TỘC & BẢNG KỴ NHẬT 12 THÁNG</div>
+            <div class="phado-sub">Uống Nước Nhớ Nguồn · Phụng Thờ Tiên Tổ Muôn Đời</div>
+          </div>
+
+          <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(212,175,55,0.25); border-radius:12px; padding:18px; margin-bottom:18px; line-height:1.8;">
+            <p>Dòng họ Đỗ đã nhiều đời định cư tại <strong>thôn Thôi Ngôi, xã Yên Trị, huyện Ý Yên, tỉnh Nam Định</strong> (nay đổi thành thôn Hạc Bổng, xã Yên Đồng, tỉnh Ninh Bình) — nơi <strong>Cụ Tổ Đỗ Phúc Quảng</strong> cùng Cụ Bà đặt nền móng dựng xây cơ nghiệp. Trải qua hơn 10 thế hệ sinh sôi nảy nở, con cháu dòng họ Đỗ tỏa đi bốn phương: Hòa Bình, Phú Thọ, miền Nam và định cư tại nước ngoài. Mảnh đất Thôi Ngôi muôn đời vẫn là chốn cội nguồn linh thiêng để con cháu hướng về kính bái.</p>
+            <p style="margin-top:8px;">Đặc biệt, dòng họ thờ phụng <strong>Hai Bà Cô Tổ Hồng Hoa và Bạch Hoa</strong> — hai bậc tiền linh hiển ứng che chở, độ trì cho cháu con qua mọi biến thiên thời cuộc. Gia phả được <strong>Cụ Đỗ Văn Thư</strong> (đời thứ năm) khởi thảo vào ngày 15 tháng 2 năm Kỷ Mão (1879), được các đời tiếp nối gìn giữ vẹn toàn.</p>
+          </div>
+
+          <div style="font-family:'Cinzel', serif; font-size:16px; font-weight:800; color:#ffd700; margin-bottom:8px;">BẢNG TRA CỨU NGÀY KỴ TỔ TIÊN TRONG 12 THÁNG ÂM LỊCH:</div>
+          <div class="ky-grid">
+            <div class="ky-card">
+              <div class="ky-month">THÁNG HAI (02)</div>
+              <div class="ky-row"><span class="ky-day">Ngày 06</span><span>Bà Đỗ Thị Đệ [8.1 - San]</span></div>
+              <div class="ky-row"><span class="ky-day">Ngày 08</span><span><strong>Cụ Đỗ Văn Thư</strong> (Người chép gia phả Đời V)</span></div>
+              <div class="ky-row"><span class="ky-day">Ngày 13</span><span>Bà Vũ Thị Luật (Phu nhân Cụ Đỗ Văn Quán)</span></div>
+            </div>
+            <div class="ky-card">
+              <div class="ky-month">THÁNG BA (03)</div>
+              <div class="ky-row"><span class="ky-day">Ngày 08</span><span>Cụ Bà Vũ Thị Cố (Chính thất Cụ Đỗ Văn Trợ)</span></div>
+              <div class="ky-row"><span class="ky-day">Ngày 09</span><span>Cụ Bà Năng (Phu nhân Cụ Đỗ Kim Hứng)</span></div>
+              <div class="ky-row"><span class="ky-day">Ngày 09</span><span><strong>Cụ Đỗ Văn Trợ</strong> (Đời IV)</span></div>
+              <div class="ky-row"><span class="ky-day">Ngày 12</span><span><strong>CỤ BÀ THỦY TỔ</strong> (Phu nhân Cụ Đỗ Phúc Quảng)</span></div>
+            </div>
+            <div class="ky-card">
+              <div class="ky-month">THÁNG TƯ (04)</div>
+              <div class="ky-row"><span class="ky-day">Ngày 10</span><span>Cụ Bà Vũ Thị Nhớn (Phu nhân Cụ Đỗ Văn Cừ [8.2])</span></div>
+            </div>
+            <div class="ky-card">
+              <div class="ky-month">THÁNG NĂM (05)</div>
+              <div class="ky-row"><span class="ky-day">Ngày 04</span><span><strong>Cụ Đỗ Kim Toàn</strong> (Đời II - Nhánh chính)</span></div>
+              <div class="ky-row"><span class="ky-day">Ngày 11</span><span>Bà Vũ Thị Thép (Phu nhân Cụ Đỗ Văn Thư)</span></div>
+              <div class="ky-row"><span class="ky-day">Ngày 15</span><span><strong>Cụ Đỗ Kim Hứng</strong> (Đời III)</span></div>
+              <div class="ky-row"><span class="ky-day">Ngày 18</span><span>Cụ Bà Hiệu (Phu nhân Cụ Đỗ Kim Toàn, Thọ >90)</span></div>
+            </div>
+            <div class="ky-card">
+              <div class="ky-month">THÁNG BẢY (07)</div>
+              <div class="ky-row"><span class="ky-day">Ngày 16</span><span>Bà Vũ Thị Du (Phu nhân Cụ Đỗ Văn San - Phú Thọ)</span></div>
+            </div>
+            <div class="ky-card">
+              <div class="ky-month">THÁNG CHÍN (09)</div>
+              <div class="ky-row"><span class="ky-day">Ngày 14</span><span><strong>Cụ Đỗ Văn Chân</strong> (Đời VII, Thọ >70)</span></div>
+              <div class="ky-row"><span class="ky-day">Ngày 22</span><span><strong>Cụ Đỗ Văn San</strong> (Đời VII - Phú Thọ)</span></div>
+            </div>
+            <div class="ky-card">
+              <div class="ky-month">THÁNG MƯỜI (10)</div>
+              <div class="ky-row"><span class="ky-day">Ngày 03</span><span>Bà Vũ Thị Nhạc (Phu nhân Cụ Đỗ Văn Chân)</span></div>
+              <div class="ky-row"><span class="ky-day" style="color:#ffd700;">Ngày 12</span><span><strong style="color:#ffd700;">CỤ TỔ ĐỖ PHÚC QUẢNG (Thuỷ Tổ)</strong></span></div>
+              <div class="ky-row"><span class="ky-day">Ngày 14</span><span>Bà Đỗ Thị Hiên (1942–2025, Nhánh San)</span></div>
+              <div class="ky-row"><span class="ky-day">Ngày 23</span><span>Cụ Bà Vũ Thị Tẻo (Thứ thất Cụ Đỗ Văn Trợ)</span></div>
+            </div>
+            <div class="ky-card">
+              <div class="ky-month">THÁNG MƯỜI MỘT (11)</div>
+              <div class="ky-row"><span class="ky-day">Ngày 08</span><span>Ông Đỗ Văn Năm [9.6]</span></div>
+            </div>
+            <div class="ky-card">
+              <div class="ky-month">THÁNG MƯỜI HAI (12)</div>
+              <div class="ky-row"><span class="ky-day">Ngày 01</span><span><strong>Ông Đỗ Văn Cừ</strong> [8.2]</span></div>
+              <div class="ky-row"><span class="ky-day">Ngày 10</span><span><strong>Cụ Đỗ Văn Quán</strong> (Đời VI)</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 3: MẶT BẰNG CAD & KỸ THUẬT -->
+        <div class="heritage-tab-content" id="tabContent_east">
+          <div class="phado-banner">
+            <div style="font-size:12px; letter-spacing:0.3em; color:#d4af37; text-transform:uppercase;">Quy Chuẩn Kiến Trúc & Xây Dựng Công Trình</div>
+            <div class="phado-title">MẶT BẰNG QUY HOẠCH & THÔNG SỐ KỸ THUẬT 29 MỘ</div>
+            <div class="phado-sub">Khuôn Viên 7.35m × 11.00m (80.85 m²) · Chuẩn Kỹ Thuật CAD & Phong Thủy Thước Lỗ Ban</div>
+          </div>
+
+          <div class="cad-spec-grid">
+            <div class="cad-preview-box">
+              <div style="font-weight:700; color:#38bdf8; font-size:14px; margin-bottom:10px;">📐 BÌNH ĐỒ QUY HOẠCH MẶT BẰNG 29 NGÔI MỘ</div>
+              <svg viewBox="0 0 735 1100" style="width:100%; max-height:480px; background:#040d16; border:1px solid #1e3a5f; border-radius:8px;">
+                <!-- Tường rào bao quanh -->
+                <rect x="0" y="0" width="735" height="1100" fill="none" stroke="#d4af37" stroke-width="6"/>
+                <rect x="20" y="20" width="695" height="1060" fill="rgba(18,230,184,0.03)" stroke="#38bdf8" stroke-width="2"/>
+                
+                <!-- Lăng thờ đá chính giữa sau lăng -->
+                <rect x="107.5" y="20" width="520" height="70" fill="rgba(52,211,153,0.3)" stroke="#34d399" stroke-width="3"/>
+                <rect x="284" y="20" width="167" height="107" fill="rgba(245,158,11,0.3)" stroke="#f59e0b" stroke-width="2"/>
+                <text x="367.5" y="65" fill="#ffd700" font-size="22" font-weight="bold" text-anchor="middle">ĐẠI LĂNG THỜ ĐÁ (5.20m × 1.07m)</text>
+
+                <!-- Cuốn thư đá -->
+                <rect x="284" y="975" width="167" height="40" fill="rgba(245,158,11,0.4)" stroke="#f59e0b" stroke-width="2"/>
+                <text x="367.5" y="1002" fill="#ffd700" font-size="16" font-weight="bold" text-anchor="middle">CUỐN THƯ (1.67m)</text>
+
+                <!-- 29 ngôi mộ -->
+                <!-- Hàng 1 -->
+                <rect x="40" y="212" width="81" height="127" fill="#1e40af" stroke="#60a5fa" stroke-width="2"/><text x="80.5" y="280" fill="#fff" font-size="16" text-anchor="middle">01</text>
+                <rect x="131" y="212" width="81" height="127" fill="#1e40af" stroke="#60a5fa" stroke-width="2"/><text x="171.5" y="280" fill="#fff" font-size="16" text-anchor="middle">02</text>
+                <rect x="273.5" y="192" width="89" height="147" fill="#b45309" stroke="#fbbf24" stroke-width="3"/><text x="318" y="270" fill="#ffd700" font-size="16" font-weight="bold" text-anchor="middle">BÀ</text>
+                <rect x="372.5" y="192" width="89" height="147" fill="#b45309" stroke="#fbbf24" stroke-width="3"/><text x="417" y="270" fill="#ffd700" font-size="16" font-weight="bold" text-anchor="middle">ÔNG</text>
+                <rect x="523" y="212" width="81" height="127" fill="#1e40af" stroke="#60a5fa" stroke-width="2"/><text x="563.5" y="280" fill="#fff" font-size="16" text-anchor="middle">05</text>
+                <rect x="614" y="212" width="81" height="127" fill="#1e40af" stroke="#60a5fa" stroke-width="2"/><text x="654.5" y="280" fill="#fff" font-size="16" text-anchor="middle">06</text>
+
+                <!-- Hàng 2 -->
+                <rect x="40" y="369" width="81" height="127" fill="#b45309" stroke="#fbbf24" stroke-width="2"/><text x="80.5" y="435" fill="#ffd700" font-size="16" text-anchor="middle">07★</text>
+                <rect x="131" y="369" width="81" height="127" fill="#1e40af" stroke="#60a5fa" stroke-width="2"/><text x="171.5" y="435" fill="#fff" font-size="16" text-anchor="middle">08</text>
+                <rect x="281.5" y="369" width="81" height="127" fill="#1e40af" stroke="#60a5fa" stroke-width="2"/><text x="322" y="435" fill="#fff" font-size="16" text-anchor="middle">09</text>
+                <rect x="372.5" y="369" width="81" height="127" fill="#1e40af" stroke="#60a5fa" stroke-width="2"/><text x="413" y="435" fill="#fff" font-size="16" text-anchor="middle">10</text>
+                <rect x="543" y="389" width="61" height="107" fill="#1e40af" stroke="#60a5fa" stroke-width="2"/><text x="573.5" y="445" fill="#fff" font-size="14" text-anchor="middle">11</text>
+                <rect x="614" y="389" width="61" height="107" fill="#1e40af" stroke="#60a5fa" stroke-width="2"/><text x="644.5" y="445" fill="#fff" font-size="14" text-anchor="middle">12</text>
+
+                <!-- Cổng vào -->
+                <rect x="280" y="1080" width="175" height="20" fill="#10b981"/>
+                <text x="367.5" y="1065" fill="#10b981" font-size="18" font-weight="bold" text-anchor="middle">LỐI VÀO CỔNG CHÍNH ĐÔNG (CHẾCH NAM 5°)</text>
+              </svg>
+            </div>
+
+            <div style="font-size:12.5px; line-height:1.75; color:#e2e8f0;">
+              <div style="font-weight:700; color:#ffd700; font-size:14px; margin-bottom:8px; border-bottom:1px solid #d4af37; padding-bottom:4px;">QUY CHUẨN KỸ THUẬT & KÍCH THƯỚC ĐÁ - MÓNG</div>
+              <ul style="padding-left:18px;">
+                <li><strong>Khuôn viên phủ bì:</strong> Rộng <strong>7.35 m</strong> × Dài <strong>11.00 m</strong> (Tổng diện tích: <strong>80.85 m²</strong>).</li>
+                <li><strong>Kích thước lọt lòng:</strong> <strong>6.95 m</strong> × <strong>10.60 m</strong> (Độ dày tường rào đá 20cm mỗi bên).</li>
+                <li><strong>Dãy móng sau lăng:</strong> Rộng <strong>40 cm</strong> gánh toàn bộ tải trọng của đại lăng và tường hậu.</li>
+                <li><strong>Móng giằng 2 bên hông:</strong> Rộng <strong>25 cm</strong> kiên cố dọc tuyến 11m.</li>
+                <li><strong>Móng mặt trước đằng cổng:</strong> Rộng <strong>30 cm</strong>.</li>
+                <li><strong>Quy chuẩn móng mộ đá:</strong> Kích thước móng căn cứ vào đế đá và <strong>mỗi chiều cộng thêm 16 cm</strong> (vỉa hè móng rộng 8 cm mỗi bên).</li>
+                <li><strong>Đại Lăng thờ đá:</strong> Tổng dài <strong>5.20 m</strong>, phần giữa lồi ra <strong>107 cm</strong>, dài phủ bì <strong>1.50 m</strong>. Móng phần lồi: <strong>1.30 m × 1.65 m</strong>. Hai cánh lăng dày <strong>25 cm</strong> tựa trực tiếp lên thân móng sau không rào đá.</li>
+                <li><strong>Cuốn thư đá trấn trạch:</strong> Kích thước <strong>40 cm × 167 cm</strong> chạm long phụng.</li>
+                <li><strong>Hệ thống hố móng âm:</strong> Đào sâu <strong>0.8 m đến 1.1 m</strong>, xây tường gạch xi măng vữa cát kiên cố, đậy tấm đan bê tông phẳng.</li>
+                <li><strong>Gia cố dầm giằng BTCT:</strong> Đổ bê tông dày 20cm với 3 cây thép phi 10 đến phi 12 chống nứt lún tuyệt đối.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 4: PHONG THỦY & ĐIÊU KHẮC ĐÁ -->
+        <div class="heritage-tab-content" id="tabContent_south">
+          <div class="phado-banner">
+            <div style="font-size:12px; letter-spacing:0.3em; color:#d4af37; text-transform:uppercase;">Kiến Trúc Đá Mỹ Nghệ Truyền Thống & Âm Trạch</div>
+            <div class="phado-title">KIẾN TRÚC ĐIÊU KHẮC ĐÁ & PHONG THỦY THƯỚC LỖ BAN</div>
+            <div class="phado-sub">Nghệ Thuật Đá Xanh Nguyên Khối Ninh Vân · Thước Lỗ Ban 38.8cm (Cát Khí Hưng Vượng)</div>
+          </div>
+
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; font-size:12.5px; line-height:1.75; color:#cbd5e1;">
+            <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(212,175,55,0.25); border-radius:12px; padding:16px;">
+              <div style="font-size:14px; font-weight:700; color:#ffd700; margin-bottom:6px; border-bottom:1px solid rgba(212,175,55,0.2); padding-bottom:4px;">🏛️ NGHỆ THUẬT ĐIÊU KHẮC ĐÁ MỸ NGHỆ NINH VÂN</div>
+              <p>Toàn bộ công trình khu lăng mộ được chế tác từ <strong>đá xanh rêu tự nhiên nguyên khối</strong> khai thác từ vùng núi đá Ninh Bình và Thanh Hóa. Chất đá già nua, đanh chắc, có khả năng trường tồn ngàn năm trước mưa nắng phong sương.</p>
+              <p style="margin-top:6px;">• <strong>Đại Lăng Thờ Tam Mái:</strong> Khắc họa mái đao uốn cong thanh thoát, chạm rồng chầu mặt nguyệt, cánh sen và chim hạc cổ truyền.<br>
+              • <strong>Cuốn Thư Bình Phong:</strong> Trấn trạch ngay sau cổng vào, ngăn chặn ám khí, mang lại sinh khí thanh tịnh.<br>
+              • <strong>Lan Can Tường Bao:</strong> Chia khoang bưng sen nở, cột trụ đầu búp sen thanh tịnh, biểu trưng cho sự thoát tục và trường cửu.</p>
+            </div>
+
+            <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(212,175,55,0.25); border-radius:12px; padding:16px;">
+              <div style="font-size:14px; font-weight:700; color:#ffd700; margin-bottom:6px; border-bottom:1px solid rgba(212,175,55,0.2); padding-bottom:4px;">🧭 PHONG THỦY ÂM TRẠCH & THƯỚC LỖ BAN 38.8CM</div>
+              <p>Mọi kích thước cấu kiện đá và nền móng đều được tính toán chuẩn xác theo <strong>Thước Lỗ Ban 38.8 cm (Âm Phần)</strong> rơi vào các cung Đại Cát:</p>
+              <p>• <strong>5.20 m (Đại Lăng):</strong> Rơi vào cung <em>Đại Cát, Thiên Khôi</em> — dòng họ rạng danh muôn đời.<br>
+              • <strong>1.47 m × 0.89 m (Mộ Hai Ông Bà):</strong> Rơi vào cung <em>Lục Hợp, Thêm Đinh, Vượng Tài</em>.<br>
+              • <strong>1.27 m × 0.81 m (Mộ Con):</strong> Rơi vào cung <em>Tiến Bảo, Đăng Khoa</em>.<br>
+              • <strong>1.67 m (Cuốn Thư):</strong> Rơi vào cung <em>Quý Tử, Hỷ Sự</em>.<br>
+              • <strong>Hướng lăng:</strong> Tọa Tây nhìn Đông chếch Nam 5° — Thế "Tọa Sơn Hướng Thủy", lưng tựa vách núi đá sừng sững uy nghi, mặt đón ánh bình minh ấm áp chiếu rọi vĩnh hằng.</p>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
@@ -1710,8 +2440,8 @@
     // =====================================================================
     const container = document.getElementById('webgl-canvas-container');
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x020710);
-    scene.fog = new THREE.FogExp2(0x020710, 0.015);
+    scene.background = new THREE.Color(0xd8ece6);
+    scene.fog = new THREE.FogExp2(0xd8ece6, 0.008);
 
     const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 150);
     camera.position.set(0, 10.2, 14.2);
@@ -1908,16 +2638,16 @@
           lights.sun.intensity = 1.65;
           lights.ambient.color.setHex(0xdff4ff);
           lights.ambient.intensity = 0.60;
-          scene.background.setHex(0x061426);
-          scene.fog.color.setHex(0x061426);
+          scene.background.setHex(0xd4ebe4);
+          scene.fog.color.setHex(0xd4ebe4);
         } else {
           // Nắng chính ngọ
           lights.sun.color.setHex(0xfffbeb);
           lights.sun.intensity = 1.85;
           lights.ambient.color.setHex(0xdff4ff);
           lights.ambient.intensity = 0.70;
-          scene.background.setHex(0x020710);
-          scene.fog.color.setHex(0x020710);
+          scene.background.setHex(0xd8ece6);
+          scene.fog.color.setHex(0xd8ece6);
         }
       } else {
         // Ban đêm: Ánh trăng xanh bạc
@@ -2234,6 +2964,7 @@
       buildFoundationGrid();
       buildPerimeterWallsAndGate();
       buildStoneSanctuaryAndScreen();
+      buildFourHeritageExhibitionWalls();
       buildAllGraves();
       buildSacredAxesAndCourtyard();
       buildStatic3DDimensions();
@@ -2249,6 +2980,561 @@
     }
 
     // 5.1 NỀN VÀ CẢNH QUAN
+    
+    // =====================================================================
+    // 5.4 XÂY DỰNG 4 BỨC TƯỜNG TRI THỨC VÀ GIA PHẢ BAO QUANH 3D
+    // =====================================================================
+    let currentSelectedHeritageWall = 'wall_north';
+    let heritageZoomScale = 1.0;
+    let heritagePan = { x: 0, y: 0 };
+    let isPanningHeritage = false;
+    let startPanPoint = { x: 0, y: 0 };
+
+    // Tạo Canvas Texture Độ Phân Giải Cao Cho Từng Bức Tường
+    function createHeritageCanvasTexture(wallType) {
+      const cvs = document.createElement('canvas');
+      cvs.width = 2048;
+      cvs.height = 1024;
+      const ctx = cvs.getContext('2d');
+
+      // 1. Nền Tường Màu Xanh Nhạt Celadon / Jade Green (#d2ede2)
+      const bgGrad = ctx.createLinearGradient(0, 0, 0, cvs.height);
+      bgGrad.addColorStop(0, '#daf2e9');
+      bgGrad.addColorStop(0.5, '#c8e8dc');
+      bgGrad.addColorStop(1, '#bee2d5');
+      ctx.fillStyle = bgGrad;
+      ctx.fillRect(0, 0, cvs.width, cvs.height);
+
+      // Khung viền chỉ vàng hoàng kim cổ điển
+      ctx.strokeStyle = '#d4af37';
+      ctx.lineWidth = 14;
+      ctx.strokeRect(30, 30, cvs.width - 60, cvs.height - 60);
+
+      ctx.strokeStyle = 'rgba(212, 175, 55, 0.45)';
+      ctx.lineWidth = 4;
+      ctx.strokeRect(46, 46, cvs.width - 92, cvs.height - 92);
+
+      // 4 góc hoa văn góc
+      function drawCornerOrn(cx, cy) {
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.fillStyle = '#d4af37';
+        ctx.fillRect(-15, -15, 30, 30);
+        ctx.restore();
+      }
+      drawCornerOrn(46, 46);
+      drawCornerOrn(cvs.width - 46, 46);
+      drawCornerOrn(46, cvs.height - 46);
+      drawCornerOrn(cvs.width - 46, cvs.height - 46);
+
+      // Vẽ nội dung theo từng bức tường
+      if (wallType === 'north') {
+        // TƯỜNG BẮC: PHẢ ĐỒ 11 THẾ HỆ HỌ ĐỖ
+        ctx.fillStyle = '#b91c1c';
+        ctx.fillRect(cvs.width / 2 - 420, 65, 840, 75);
+        ctx.strokeStyle = '#fef08a';
+        ctx.lineWidth = 4;
+        ctx.strokeRect(cvs.width / 2 - 420, 65, 840, 75);
+
+        ctx.fillStyle = '#fffbeb';
+        ctx.font = 'bold 42px "Cinzel", serif, Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText('PHẢ ĐỒ HỌ ĐỖ · BÁCH NIÊN GIA TỘC', cvs.width / 2, 118);
+
+        ctx.fillStyle = '#065f46';
+        ctx.font = 'italic bold 26px Arial, sans-serif';
+        ctx.fillText('Hạc Bổng - Yên Đồng - Ninh Bình (Thôn Thôi Ngôi, Ý Yên, Nam Định)', cvs.width / 2, 175);
+
+        // Hai câu đối
+        ctx.fillStyle = '#831843';
+        ctx.fillRect(80, 200, 420, 60);
+        ctx.fillStyle = '#fef08a';
+        ctx.font = 'bold 22px Arial, sans-serif';
+        ctx.fillText('Phước Đức Ông Bà Lưu Hậu Thế', 290, 238);
+
+        ctx.fillStyle = '#831843';
+        ctx.fillRect(cvs.width - 500, 200, 420, 60);
+        ctx.fillStyle = '#fef08a';
+        ctx.fillText('Hiếu Hiền Con Cháu Rạng Gia Phong', cvs.width - 290, 238);
+
+        // Cụ Thủy Tổ Box
+        ctx.fillStyle = '#78350f';
+        ctx.fillRect(cvs.width / 2 - 320, 200, 640, 75);
+        ctx.strokeStyle = '#ffd700';
+        ctx.lineWidth = 3;
+        ctx.strokeRect(cvs.width / 2 - 320, 200, 640, 75);
+
+        ctx.fillStyle = '#ffd700';
+        ctx.font = 'bold 28px Arial, sans-serif';
+        ctx.fillText('CỤ TỔ ĐỖ PHÚC QUẢNG & CỤ BÀ', cvs.width / 2, 238);
+        ctx.fillStyle = '#fef3c7';
+        ctx.font = '18px Arial, sans-serif';
+        ctx.fillText('Thuỷ Tổ Đời I · Kỵ Cụ Tổ 12/10 · Kỵ Cụ Bà 12/3', cvs.width / 2, 264);
+
+        // Các thế hệ tiếp theo
+        const gens = [
+          'Đời II: Đỗ Kim Vàng  |  Đỗ Kim Châu  |  Đỗ Kim Toàn (Nhánh chính)',
+          'Đời III: Đỗ Kim Trưởng  |  Đỗ Kim Tuần  |  Đỗ Kim Hứng  |  Đỗ Bá Chiên  |  Đỗ Kim Tụy',
+          'Đời IV: Cụ Đỗ Văn Trợ (Chính thất Vũ Thị Cố · Thứ thất Vũ Thị Tẻo)',
+          'Đời V: Đỗ Văn Do  |  Cụ Đỗ Văn Thư (Người biên chép gia phả 15/02 Kỷ Mão 1879)',
+          'Đời VI: Cụ Đỗ Văn Quán (Bà Vũ Thị Luật - Nguồn phát sinh ba nhánh lớn)',
+          'Đời VII (Ba Nhánh): [7.1] Đỗ Văn Chân  ·  [7.2] Đỗ Văn Phách  ·  [7.3] Đỗ Văn San (Phú Thọ)',
+          'Đời VIII: Nhánh Ông Lê (Đỗ Văn Lê)  ·  Nhánh Ông Cừ (Đỗ Văn Cừ)  ·  Nhánh Ông Xa  ·  Liệt sĩ Đỗ Ngọc Bích'
+        ];
+
+        let startY = 320;
+        gens.forEach((g, idx) => {
+          ctx.fillStyle = idx === 5 ? 'rgba(6, 95, 70, 0.2)' : 'rgba(255, 255, 255, 0.65)';
+          ctx.fillRect(100, startY, cvs.width - 200, 48);
+          ctx.strokeStyle = 'rgba(212, 175, 55, 0.4)';
+          ctx.strokeRect(100, startY, cvs.width - 200, 48);
+
+          ctx.fillStyle = idx === 5 ? '#991b1b' : '#0f172a';
+          ctx.font = 'bold 22px Arial, sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText(g, cvs.width / 2, startY + 32);
+          startY += 62;
+        });
+
+        // Hậu duệ đời IX - XI & Chữ ký
+        ctx.fillStyle = '#065f46';
+        ctx.font = 'italic bold 21px Arial, sans-serif';
+        ctx.fillText('Đời IX - XI: Đỗ Quốc Đính, Đỗ Văn Thìn, Đỗ Minh Thanh, Đỗ Văn Năm, Đỗ Văn Hiểu, Đỗ Văn Vinh, Đỗ Tiến Mạnh, Đỗ Minh Tuấn...', cvs.width / 2, startY + 40);
+
+        ctx.fillStyle = '#b91c1c';
+        ctx.font = 'bold 22px Arial, sans-serif';
+        ctx.fillText('✦ CẬP NHẬT GIA PHẢ: ĐỖ VĂN THÌN – ĐỜI X – THÁNG 9/2026 ✦', cvs.width / 2, startY + 90);
+
+        // Nút bấm gợi ý zoom
+        ctx.fillStyle = '#d97706';
+        ctx.fillRect(cvs.width / 2 - 240, cvs.height - 95, 480, 52);
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 20px Arial, sans-serif';
+        ctx.fillText('🔍 BẤM ĐỂ PHÓNG TO / ĐỌC TOÀN MÀN HÌNH', cvs.width / 2, cvs.height - 62);
+
+      } else if (wallType === 'west') {
+        // TƯỜNG TÂY: LỊCH SỬ & NGÀY KỴ 12 THÁNG
+        ctx.fillStyle = '#065f46';
+        ctx.fillRect(cvs.width / 2 - 450, 65, 900, 75);
+        ctx.strokeStyle = '#ffd700';
+        ctx.lineWidth = 4;
+        ctx.strokeRect(cvs.width / 2 - 450, 65, 900, 75);
+
+        ctx.fillStyle = '#fffbeb';
+        ctx.font = 'bold 36px "Cinzel", serif, Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText('LỊCH SỬ DÒNG TỘC & BẢNG KỴ NHẬT 12 THÁNG', cvs.width / 2, 118);
+
+        ctx.fillStyle = '#1e293b';
+        ctx.font = 'italic 22px Arial, sans-serif';
+        ctx.fillText('Thôn Thôi Ngôi, Yên Trị, Ý Yên, Nam Định (nay Hạc Bổng, Yên Đồng, Ninh Bình) · Hai Bà Cô Tổ Hồng Hoa & Bạch Hoa', cvs.width / 2, 175);
+
+        // Bảng ngày kỵ tóm tắt
+        const kys = [
+          'Tháng 02: 06/2 Bà Đệ (Nhánh San)  |  08/2 Cụ Đỗ Văn Thư (Đời V)  |  13/2 Bà Vũ Thị Luật',
+          'Tháng 03: 08/3 Cụ Bà Vũ Thị Cố  |  09/3 Cụ Đỗ Kim Hứng & Cụ Đỗ Văn Trợ  |  12/3 CỤ BÀ THỦY TỔ',
+          'Tháng 04: 10/4 Cụ Bà Vũ Thị Nhớn (Phu nhân Cụ Đỗ Văn Cừ [8.2])',
+          'Tháng 05: 04/5 Cụ Đỗ Kim Toàn  |  11/5 Bà Vũ Thị Thép  |  15/5 Cụ Đỗ Kim Hứng  |  18/5 Cụ Bà Hiệu',
+          'Tháng 07: 16/7 Bà Vũ Thị Du (Phu nhân Cụ Đỗ Văn San - Phú Thọ)',
+          'Tháng 09: 14/9 Cụ Đỗ Văn Chân (Đời VII, Thọ >70)  |  22/9 Cụ Đỗ Văn San (Phú Thọ)',
+          'Tháng 10: 03/10 Bà Vũ Thị Nhạc  |  12/10 CỤ TỔ ĐỖ PHÚC QUẢNG  |  14/10 Bà Đỗ Thị Hiên  |  23/10 Cụ Bà Vũ Thị Tẻo',
+          'Tháng 11 & 12: 08/11 Ông Đỗ Văn Năm  |  01/12 Ông Đỗ Văn Cừ [8.2]  |  10/12 Cụ Đỗ Văn Quán [6.1]'
+        ];
+
+        let startY = 220;
+        kys.forEach((k, idx) => {
+          ctx.fillStyle = idx % 2 === 0 ? 'rgba(255, 255, 255, 0.75)' : 'rgba(212, 175, 55, 0.15)';
+          ctx.fillRect(100, startY, cvs.width - 200, 56);
+          ctx.strokeStyle = 'rgba(212, 175, 55, 0.4)';
+          ctx.strokeRect(100, startY, cvs.width - 200, 56);
+
+          ctx.fillStyle = idx === 6 ? '#b91c1c' : '#0f172a';
+          ctx.font = 'bold 22px Arial, sans-serif';
+          ctx.fillText(k, cvs.width / 2, startY + 36);
+          startY += 72;
+        });
+
+        // Nút bấm gợi ý zoom
+        ctx.fillStyle = '#059669';
+        ctx.fillRect(cvs.width / 2 - 240, cvs.height - 95, 480, 52);
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 20px Arial, sans-serif';
+        ctx.fillText('🔍 BẤM ĐỂ PHÓNG TO / ĐỌC CHI TIẾT', cvs.width / 2, cvs.height - 62);
+
+      } else if (wallType === 'east') {
+        // TƯỜNG ĐÔNG: BẢN VẼ MẶT BẰNG & KỸ THUẬT 29 MỘ
+        ctx.fillStyle = '#1e3a8a';
+        ctx.fillRect(cvs.width / 2 - 500, 65, 1000, 75);
+        ctx.strokeStyle = '#38bdf8';
+        ctx.lineWidth = 4;
+        ctx.strokeRect(cvs.width / 2 - 500, 65, 1000, 75);
+
+        ctx.fillStyle = '#fffbeb';
+        ctx.font = 'bold 36px "Cinzel", serif, Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText('BẢN VẼ MẶT BẰNG QUY HOẠCH & QUY CHUẨN KỸ THUẬT', cvs.width / 2, 118);
+
+        ctx.fillStyle = '#0369a1';
+        ctx.font = 'italic bold 23px Arial, sans-serif';
+        ctx.fillText('Khuôn Viên: 7.35m × 11.00m (80.85 m²) · Phân Vị 29 Ngôi Mộ Đá & Kết Cấu Móng BTCT', cvs.width / 2, 175);
+
+        const specs = [
+          '• Phủ bì khuôn viên: 7.35 m × 11.00 m  |  Lọt lòng: 6.95 m × 10.60 m (Tường đá bao dày 20 cm).',
+          '• Móng sau lăng: Rộng 40 cm  |  Móng 2 bên hông: Rộng 25 cm  |  Móng trước cổng: Rộng 30 cm.',
+          '• Móng mộ đá: Căn cứ kích thước đế đá và mỗi chiều cộng thêm 16 cm (vỉa hè móng rộng 8 cm mỗi bên).',
+          '• Đại Lăng Thờ Đá: Chiều dài 5.20 m, phần giữa lồi ra 107 cm, dài phủ bì 1.50 m. Móng phần lồi: 1.30 m × 1.65 m.',
+          '• Cuốn Thư Đá: 40 cm × 167 cm (Cung Quý Tử, Hỷ Sự) chạm long phụng trấn trạch.',
+          '• Hố móng âm: Đào sâu 0.8 m đến 1.1 m, xây tường gạch xi măng vữa cát, đậy tấm đan bê tông phẳng.',
+          '• Dầm giằng BTCT: Dày 20 cm, 3 cây thép phi 10-12 chịu lực chống lún nứt công trình đá nặng hàng chục tấn.'
+        ];
+
+        let startY = 220;
+        specs.forEach((s) => {
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.75)';
+          ctx.fillRect(100, startY, cvs.width - 200, 56);
+          ctx.strokeStyle = 'rgba(56, 189, 248, 0.4)';
+          ctx.strokeRect(100, startY, cvs.width - 200, 56);
+
+          ctx.fillStyle = '#0f172a';
+          ctx.font = 'bold 21px Arial, sans-serif';
+          ctx.textAlign = 'left';
+          ctx.fillText(s, 130, startY + 36);
+          startY += 72;
+        });
+
+        // Nút bấm gợi ý zoom
+        ctx.fillStyle = '#0284c7';
+        ctx.fillRect(cvs.width / 2 - 240, cvs.height - 95, 480, 52);
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 20px Arial, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('🔍 BẤM ĐỂ PHÓNG TO / XEM BẢN VẼ CAD', cvs.width / 2, cvs.height - 62);
+
+      } else if (wallType === 'south') {
+        // TƯỜNG NAM: KIẾN TRÚC ĐÁ & PHONG THỦY THƯỚC LỖ BAN
+        ctx.fillStyle = '#7c2d12';
+        ctx.fillRect(cvs.width / 2 - 500, 65, 1000, 75);
+        ctx.strokeStyle = '#fbbf24';
+        ctx.lineWidth = 4;
+        ctx.strokeRect(cvs.width / 2 - 500, 65, 1000, 75);
+
+        ctx.fillStyle = '#fffbeb';
+        ctx.font = 'bold 34px "Cinzel", serif, Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText('ĐIÊU KHẮC ĐÁ MỸ NGHỆ & PHONG THỦY THƯỚC LỖ BAN', cvs.width / 2, 118);
+
+        ctx.fillStyle = '#78350f';
+        ctx.font = 'italic bold 23px Arial, sans-serif';
+        ctx.fillText('Thước Lỗ Ban 38.8cm Âm Phần · Đá Xanh Rêu Tự Nhiên Nguyên Khối Ninh Vân (Ninh Bình)', cvs.width / 2, 175);
+
+        const fengshuis = [
+          '• Thế Đất Tọa Sơn Hướng Thủy: Lưng tựa vách núi đá sừng sững uy nghi, mặt nghinh hướng Đông đón ánh dương vĩnh hằng.',
+          '• Hướng Cổng: Cổng chính hướng Đông chếch Nam 5° đón trọn sinh khí và phúc lộc cát lành trường tồn.',
+          '• Kích thước Đại Lăng 5.20 m: Rơi vào cung ĐẠI CÁT, THIÊN KHÔI (Thước Lỗ Ban 38.8 cm).',
+          '• Mộ Song Thân Ông Bà (1.47 m × 0.89 m): Cung LỤC HỢP, THÊM ĐINH, VƯỢNG TÀI.',
+          '• Mộ Con (1.27 m × 0.81 m): Cung TIẾN BẢO, ĐĂNG KHOA.',
+          '• Cuốn Thư Đá (1.67 m): Cung QUÝ TỬ, HỶ SỰ.',
+          '• Đá xanh rêu Ninh Vân: Chạm trổ mái đao rồng phượng, búp sen trụ cổng, bình phong tứ quý trường tồn cùng thời gian.'
+        ];
+
+        let startY = 220;
+        fengshuis.forEach((f) => {
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.75)';
+          ctx.fillRect(100, startY, cvs.width - 200, 56);
+          ctx.strokeStyle = 'rgba(245, 158, 11, 0.4)';
+          ctx.strokeRect(100, startY, cvs.width - 200, 56);
+
+          ctx.fillStyle = '#0f172a';
+          ctx.font = 'bold 21px Arial, sans-serif';
+          ctx.textAlign = 'left';
+          ctx.fillText(f, 130, startY + 36);
+          startY += 72;
+        });
+
+        // Nút bấm gợi ý zoom
+        ctx.fillStyle = '#b45309';
+        ctx.fillRect(cvs.width / 2 - 240, cvs.height - 95, 480, 52);
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 20px Arial, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('🔍 BẤM ĐỂ PHÓNG TO / ĐỌC PHONG THỦY', cvs.width / 2, cvs.height - 62);
+      }
+
+      const tex = new THREE.CanvasTexture(cvs);
+      tex.anisotropy = renderer.capabilities.getMaxAnisotropy ? renderer.capabilities.getMaxAnisotropy() : 8;
+      tex.needsUpdate = true;
+      return tex;
+    }
+
+    function buildFourHeritageExhibitionWalls() {
+      // Nhóm layer chứa 4 bức tường
+      if (!layerGroups.heritageWalls) {
+        layerGroups.heritageWalls = new THREE.Group();
+        scene.add(layerGroups.heritageWalls);
+      }
+
+      // Vật liệu màu xanh nhạt khác màu đất cho 4 bức tường (#d2ede2 / #c4e6da)
+      const wallMat = new THREE.MeshStandardMaterial({
+        color: 0xd2ede2, // Xanh nhạt Celadon Soft Jade
+        roughness: 0.45,
+        metalness: 0.08,
+        envMap: envTexture,
+        envMapIntensity: 0.35
+      });
+
+      const borderMat = new THREE.MeshStandardMaterial({
+        color: 0xd4af37, // Viền nẹp gấm vàng kim
+        roughness: 0.25,
+        metalness: 0.65,
+        envMap: envTexture,
+        envMapIntensity: 0.7
+      });
+
+      const pedestalMat = new THREE.MeshStandardMaterial({
+        color: 0xb5d8cc, // Chân bệ đá ngọc
+        roughness: 0.40,
+        metalness: 0.12
+      });
+
+      // Cấu hình 4 bức tường (Bắc, Nam, Tây, Đông)
+      const wallConfigs = [
+        {
+          id: 'wall_north',
+          typeKey: 'north',
+          name: 'TƯỜNG BẮC: PHẢ ĐỒ 11 THẾ HỆ HỌ ĐỖ',
+          x: 0, y: 2.85, z: -17.0,
+          w: 32.0, h: 5.7, d: 0.45,
+          rotY: 0
+        },
+        {
+          id: 'wall_south',
+          typeKey: 'south',
+          name: 'TƯỜNG NAM: KIẾN TRÚC ĐÁ & PHONG THỦY THƯỚC LỖ BAN',
+          x: 0, y: 2.85, z: 17.0,
+          w: 32.0, h: 5.7, d: 0.45,
+          rotY: Math.PI
+        },
+        {
+          id: 'wall_west',
+          typeKey: 'west',
+          name: 'TƯỜNG TÂY: LỊCH SỬ DÒNG TỘC & BẢNG KỴ NHẬT 12 THÁNG',
+          x: -15.5, y: 2.85, z: 0,
+          w: 34.0, h: 5.7, d: 0.45,
+          rotY: Math.PI / 2
+        },
+        {
+          id: 'wall_east',
+          typeKey: 'east',
+          name: 'TƯỜNG ĐÔNG: BẢN VẼ MẶT BẰNG QUY HOẠCH & KỸ THUẬT 29 MỘ',
+          x: 15.5, y: 2.85, z: 0,
+          w: 34.0, h: 5.7, d: 0.45,
+          rotY: -Math.PI / 2
+        }
+      ];
+
+      wallConfigs.forEach(cfg => {
+        const wallGroup = new THREE.Group();
+        wallGroup.position.set(cfg.x, 0, cfg.z);
+        wallGroup.rotation.y = cfg.rotY;
+
+        // 1. Chân bệ móng tường
+        const pedGeo = new THREE.BoxGeometry(cfg.w + 0.6, 0.60, cfg.d + 0.35);
+        const pedMesh = new THREE.Mesh(pedGeo, pedestalMat);
+        pedMesh.position.set(0, 0.30, 0);
+        pedMesh.castShadow = true;
+        pedMesh.receiveShadow = true;
+        wallGroup.add(pedMesh);
+
+        // 2. Thân bức tường màu xanh nhạt
+        const bodyGeo = new THREE.BoxGeometry(cfg.w, cfg.h - 0.6, cfg.d);
+        const bodyMesh = new THREE.Mesh(bodyGeo, wallMat);
+        bodyMesh.position.set(0, 0.60 + (cfg.h - 0.6) / 2, 0);
+        bodyMesh.castShadow = true;
+        bodyMesh.receiveShadow = true;
+        bodyMesh.userData = { type: 'heritage_wall', wallId: cfg.id, wallType: cfg.typeKey, name: cfg.name };
+        wallGroup.add(bodyMesh);
+
+        // 3. Mái ngói / phào chỉ đỉnh tường viền vàng kim
+        const corniceGeo = new THREE.BoxGeometry(cfg.w + 0.8, 0.45, cfg.d + 0.45);
+        const corniceMesh = new THREE.Mesh(corniceGeo, borderMat);
+        corniceMesh.position.set(0, cfg.h + 0.22, 0);
+        corniceMesh.castShadow = true;
+        wallGroup.add(corniceMesh);
+
+        // 4. Bảng Tranh Triển Lãm áp Texture Canvas độ phân giải cao
+        const tex = createHeritageCanvasTexture(cfg.typeKey);
+        const panelMat = new THREE.MeshStandardMaterial({
+          map: tex,
+          roughness: 0.28,
+          metalness: 0.05
+        });
+
+        const panelW = Math.min(cfg.w - 2.5, 26.0);
+        const panelH = cfg.h - 1.4;
+        const panelGeo = new THREE.PlaneGeometry(panelW, panelH);
+        const panelMesh = new THREE.Mesh(panelGeo, panelMat);
+        panelMesh.position.set(0, 0.60 + panelH / 2 + 0.1, cfg.d / 2 + 0.03);
+        panelMesh.userData = { type: 'heritage_wall', wallId: cfg.id, wallType: cfg.typeKey, name: cfg.name };
+        wallGroup.add(panelMesh);
+
+        layerGroups.heritageWalls.add(wallGroup);
+      });
+    }
+
+    // Smooth Camera Flight Vào Trực Diện Bức Tường
+    function focusOnHeritageWall(wallId) {
+      currentSelectedHeritageWall = wallId;
+      let camTargetPos, lookTarget, promptText;
+
+      if (wallId === 'wall_north') {
+        camTargetPos = { x: 0, y: 3.2, z: -10.5 };
+        lookTarget = { x: 0, y: 3.0, z: -17.0 };
+        promptText = '📜 Tường Bắc: Phả Đồ 11 Thế Hệ Họ Đỗ';
+      } else if (wallId === 'wall_south') {
+        camTargetPos = { x: 0, y: 3.2, z: 10.5 };
+        lookTarget = { x: 0, y: 3.0, z: 17.0 };
+        promptText = '⛩️ Tường Nam: Điêu Khắc Đá & Phong Thủy Thước Lỗ Ban';
+      } else if (wallId === 'wall_west') {
+        camTargetPos = { x: -9.5, y: 3.2, z: 0 };
+        lookTarget = { x: -15.5, y: 3.0, z: 0 };
+        promptText = '📅 Tường Tây: Lịch Sử Dòng Tộc & Bảng Ngày Kỵ 12 Tháng';
+      } else if (wallId === 'wall_east') {
+        camTargetPos = { x: 9.5, y: 3.2, z: 0 };
+        lookTarget = { x: 15.5, y: 3.0, z: 0 };
+        promptText = '📐 Tường Đông: Mặt Bằng Quy Hoạch & Kỹ Thuật 29 Mộ';
+      }
+
+      new TWEEN.Tween(camera.position).to(camTargetPos, 900).easing(TWEEN.Easing.Cubic.Out).start();
+      new TWEEN.Tween(controls.target).to(lookTarget, 900).easing(TWEEN.Easing.Cubic.Out).start();
+
+      // Hiển thị Floating Prompt
+      const promptEl = document.getElementById('heritageWallPrompt');
+      const textEl = document.getElementById('promptWallText');
+      if (promptEl && textEl) {
+        textEl.textContent = promptText;
+        promptEl.classList.add('show');
+      }
+
+      showToast('🏛️ Đã đưa góc nhìn thẳng vào bức tường. Nhấp nút Phóng To để đọc toàn màn hình!');
+    }
+
+    function openSelectedHeritageModal() {
+      const typeKey = currentSelectedHeritageWall ? currentSelectedHeritageWall.replace('wall_', '') : 'north';
+      openHeritageModal(typeKey);
+    }
+
+    // Modal Lightbox Interactive Zoom & Pan Controls
+    function openHeritageModal(tabKey) {
+      const modal = document.getElementById('heritageModal');
+      if (!modal) return;
+      modal.classList.add('open');
+      switchHeritageTab(tabKey || 'north');
+      resetHeritageZoom();
+
+      // Ẩn prompt nổi
+      const promptEl = document.getElementById('heritageWallPrompt');
+      if (promptEl) promptEl.classList.remove('show');
+    }
+
+    function closeHeritageModal() {
+      const modal = document.getElementById('heritageModal');
+      if (modal) modal.classList.remove('open');
+    }
+
+    function switchHeritageTab(tabKey) {
+      const tabs = ['north', 'west', 'east', 'south'];
+      tabs.forEach(t => {
+        const btn = document.getElementById('tabBtn_' + t);
+        const cnt = document.getElementById('tabContent_' + t);
+        if (btn) btn.classList.toggle('active', t === tabKey);
+        if (cnt) cnt.classList.toggle('active', t === tabKey);
+      });
+      resetHeritageZoom();
+    }
+
+    function updateHeritageTransform() {
+      const vp = document.getElementById('heritageViewport');
+      if (vp) {
+        vp.style.transform = `translate(${heritagePan.x}px, ${heritagePan.y}px) scale(${heritageZoomScale})`;
+      }
+    }
+
+    function zoomHeritage(delta) {
+      heritageZoomScale = Math.max(0.6, Math.min(3.5, heritageZoomScale + delta));
+      updateHeritageTransform();
+    }
+
+    function resetHeritageZoom() {
+      heritageZoomScale = 1.0;
+      heritagePan = { x: 0, y: 0 };
+      updateHeritageTransform();
+    }
+
+    // Kéo Rê (Pan Drag) và Cuộn Zoom bằng chuột / cảm ứng
+    (function initHeritageModalPanZoom() {
+      window.addEventListener('DOMContentLoaded', () => {
+        const body = document.getElementById('heritageModalBody');
+        if (!body) return;
+
+        body.addEventListener('wheel', (e) => {
+          e.preventDefault();
+          const delta = e.deltaY < 0 ? 0.15 : -0.15;
+          zoomHeritage(delta);
+        }, { passive: false });
+
+        body.addEventListener('mousedown', (e) => {
+          if (e.target.closest('.heritage-tab-content') && e.target.tagName !== 'DIV') return;
+          isPanningHeritage = true;
+          startPanPoint = { x: e.clientX - heritagePan.x, y: e.clientY - heritagePan.y };
+          body.classList.add('grabbing');
+        });
+
+        window.addEventListener('mousemove', (e) => {
+          if (!isPanningHeritage) return;
+          heritagePan.x = e.clientX - startPanPoint.x;
+          heritagePan.y = e.clientY - startPanPoint.y;
+          updateHeritageTransform();
+        });
+
+        window.addEventListener('mouseup', () => {
+          isPanningHeritage = false;
+          const bodyEl = document.getElementById('heritageModalBody');
+          if (bodyEl) bodyEl.classList.remove('grabbing');
+        });
+
+        // Hỗ trợ cảm ứng vuốt trên mobile
+        let lastTouchDist = 0;
+        body.addEventListener('touchstart', (e) => {
+          if (e.touches.length === 1) {
+            isPanningHeritage = true;
+            startPanPoint = { x: e.touches[0].clientX - heritagePan.x, y: e.touches[0].clientY - heritagePan.y };
+          } else if (e.touches.length === 2) {
+            lastTouchDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+          }
+        }, { passive: true });
+
+        body.addEventListener('touchmove', (e) => {
+          if (e.touches.length === 1 && isPanningHeritage) {
+            heritagePan.x = e.touches[0].clientX - startPanPoint.x;
+            heritagePan.y = e.touches[0].clientY - startPanPoint.y;
+            updateHeritageTransform();
+          } else if (e.touches.length === 2) {
+            const dist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+            if (lastTouchDist > 0) {
+              const diff = (dist - lastTouchDist) * 0.005;
+              zoomHeritage(diff);
+            }
+            lastTouchDist = dist;
+          }
+        }, { passive: true });
+
+        body.addEventListener('touchend', () => {
+          isPanningHeritage = false;
+          lastTouchDist = 0;
+        });
+      });
+    })();
+
     function buildGroundAndLandscape() {
       const groundGeo = new THREE.BoxGeometry(7.35, 0.15, 11.00);
       const groundMesh = new THREE.Mesh(groundGeo, materials.pavingGround);
@@ -3347,9 +4633,17 @@
       layerGroups.foundation.traverse(c => { if (c.isMesh) clickables.push(c); });
 
       const intersects = raycaster.intersectObjects(clickables, true);
+      
       if (intersects.length > 0) {
         let root = intersects[0].object;
         while (root.parent && root.parent !== scene && !root.userData.type) root = root.parent;
+        
+        // Kiểm tra nhấp vào 4 Bức Tường Tri Thức
+        if (root.userData && root.userData.type === 'heritage_wall') {
+          focusOnHeritageWall(root.userData.wallId);
+          return;
+        }
+
         selectObject(root.userData.type ? root : intersects[0].object);
       } else {
         deselectCurrentObject();
