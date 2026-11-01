@@ -1,4 +1,8 @@
 *.bak
+*.tmp
 inspect_files.js
 node_modules/
 .DS_Store
+.vscode/
+desktop.ini
+png_cursor_base64.txt
