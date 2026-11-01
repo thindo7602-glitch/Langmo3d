@@ -1249,7 +1249,7 @@
     flex: 1;
     position: relative;
     overflow: hidden;
-    background: radial-gradient(circle at center, #112421 0%, #071311 100%);
+    background: radial-gradient(circle at center, #1a2729 0%, #0d1618 100%);
     cursor: grab;
   }
   .heritage-modal-body.grabbing {
@@ -1274,7 +1274,7 @@
     max-height: 85vh;
     overflow-y: auto;
     padding: 30px;
-    background: rgba(14, 30, 26, 0.95);
+    background: rgba(22, 34, 37, 0.96);
     border: 1.5px solid rgba(212, 175, 55, 0.45);
     border-radius: 16px;
     box-shadow: 0 15px 45px rgba(0,0,0,0.7), 0 0 35px rgba(18, 230, 184, 0.15);
@@ -2997,11 +2997,11 @@
       cvs.height = 1024;
       const ctx = cvs.getContext('2d');
 
-      // 1. Nền Tường Màu Xanh Nhạt Celadon / Jade Green (#d2ede2)
+      // 1. Nền Tường Màu Xanh Xám Đá Trầm (Deep Slate Green-Gray) - Tối ưu độ tương phản tối đa cho chữ viết
       const bgGrad = ctx.createLinearGradient(0, 0, 0, cvs.height);
-      bgGrad.addColorStop(0, '#daf2e9');
-      bgGrad.addColorStop(0.5, '#c8e8dc');
-      bgGrad.addColorStop(1, '#bee2d5');
+      bgGrad.addColorStop(0, '#1b2729');   // Xanh xám đá trên cùng
+      bgGrad.addColorStop(0.5, '#26373a'); // Xanh xám đá sáng hơn ở giữa
+      bgGrad.addColorStop(1, '#182325');   // Xanh xám đá dưới chân
       ctx.fillStyle = bgGrad;
       ctx.fillRect(0, 0, cvs.width, cvs.height);
 
@@ -3041,7 +3041,7 @@
         ctx.textAlign = 'center';
         ctx.fillText('PHẢ ĐỒ HỌ ĐỖ · BÁCH NIÊN GIA TỘC', cvs.width / 2, 118);
 
-        ctx.fillStyle = '#065f46';
+        ctx.fillStyle = '#38bdf8';
         ctx.font = 'italic bold 26px Arial, sans-serif';
         ctx.fillText('Hạc Bổng - Yên Đồng - Ninh Bình (Thôn Thôi Ngôi, Ý Yên, Nam Định)', cvs.width / 2, 175);
 
@@ -3084,25 +3084,28 @@
 
         let startY = 320;
         gens.forEach((g, idx) => {
-          ctx.fillStyle = idx === 5 ? 'rgba(6, 95, 70, 0.2)' : 'rgba(255, 255, 255, 0.65)';
+          // Hộp nền xanh xám kính mờ tương phản cao với viền vàng kim
+          ctx.fillStyle = idx === 5 ? 'rgba(212, 175, 55, 0.22)' : 'rgba(255, 255, 255, 0.08)';
           ctx.fillRect(100, startY, cvs.width - 200, 48);
-          ctx.strokeStyle = 'rgba(212, 175, 55, 0.4)';
+          ctx.strokeStyle = idx === 5 ? '#ffd700' : 'rgba(212, 175, 55, 0.55)';
+          ctx.lineWidth = idx === 5 ? 2.5 : 1.5;
           ctx.strokeRect(100, startY, cvs.width - 200, 48);
 
-          ctx.fillStyle = idx === 5 ? '#991b1b' : '#0f172a';
-          ctx.font = 'bold 22px Arial, sans-serif';
+          // Chữ vàng chanh nổi bật cho đời VII (3 nhánh) hoặc chữ trắng tinh khôi siêu sáng
+          ctx.fillStyle = idx === 5 ? '#ffd700' : (idx === 3 ? '#fef08a' : '#ffffff');
+          ctx.font = idx === 5 ? 'bold 23px Arial, sans-serif' : 'bold 22px Arial, sans-serif';
           ctx.textAlign = 'center';
           ctx.fillText(g, cvs.width / 2, startY + 32);
           startY += 62;
         });
 
         // Hậu duệ đời IX - XI & Chữ ký
-        ctx.fillStyle = '#065f46';
+        ctx.fillStyle = '#67e8f9';
         ctx.font = 'italic bold 21px Arial, sans-serif';
         ctx.fillText('Đời IX - XI: Đỗ Quốc Đính, Đỗ Văn Thìn, Đỗ Minh Thanh, Đỗ Văn Năm, Đỗ Văn Hiểu, Đỗ Văn Vinh, Đỗ Tiến Mạnh, Đỗ Minh Tuấn...', cvs.width / 2, startY + 40);
 
-        ctx.fillStyle = '#b91c1c';
-        ctx.font = 'bold 22px Arial, sans-serif';
+        ctx.fillStyle = '#ffd700';
+        ctx.font = 'bold 23px Arial, sans-serif';
         ctx.fillText('✦ CẬP NHẬT GIA PHẢ: ĐỖ VĂN THÌN – ĐỜI X – THÁNG 9/2026 ✦', cvs.width / 2, startY + 90);
 
         // Nút bấm gợi ý zoom
@@ -3125,7 +3128,7 @@
         ctx.textAlign = 'center';
         ctx.fillText('LỊCH SỬ DÒNG TỘC & BẢNG KỴ NHẬT 12 THÁNG', cvs.width / 2, 118);
 
-        ctx.fillStyle = '#1e293b';
+        ctx.fillStyle = '#e2e8f0';
         ctx.font = 'italic 22px Arial, sans-serif';
         ctx.fillText('Thôn Thôi Ngôi, Yên Trị, Ý Yên, Nam Định (nay Hạc Bổng, Yên Đồng, Ninh Bình) · Hai Bà Cô Tổ Hồng Hoa & Bạch Hoa', cvs.width / 2, 175);
 
@@ -3143,13 +3146,15 @@
 
         let startY = 220;
         kys.forEach((k, idx) => {
-          ctx.fillStyle = idx % 2 === 0 ? 'rgba(255, 255, 255, 0.75)' : 'rgba(212, 175, 55, 0.15)';
+          ctx.fillStyle = idx === 6 ? 'rgba(212, 175, 55, 0.22)' : (idx % 2 === 0 ? 'rgba(255, 255, 255, 0.08)' : 'rgba(18, 230, 184, 0.08)');
           ctx.fillRect(100, startY, cvs.width - 200, 56);
-          ctx.strokeStyle = 'rgba(212, 175, 55, 0.4)';
+          ctx.strokeStyle = idx === 6 ? '#ffd700' : 'rgba(212, 175, 55, 0.5)';
+          ctx.lineWidth = idx === 6 ? 2.5 : 1.5;
           ctx.strokeRect(100, startY, cvs.width - 200, 56);
 
-          ctx.fillStyle = idx === 6 ? '#b91c1c' : '#0f172a';
-          ctx.font = 'bold 22px Arial, sans-serif';
+          // Chữ tháng kỵ vàng tươi hoặc trắng tinh khôi, chữ Thủy Tổ vàng kim rực rỡ
+          ctx.fillStyle = idx === 6 ? '#ffd700' : '#ffffff';
+          ctx.font = idx === 6 ? 'bold 23px Arial, sans-serif' : 'bold 22px Arial, sans-serif';
           ctx.fillText(k, cvs.width / 2, startY + 36);
           startY += 72;
         });
@@ -3174,7 +3179,7 @@
         ctx.textAlign = 'center';
         ctx.fillText('BẢN VẼ MẶT BẰNG QUY HOẠCH & QUY CHUẨN KỸ THUẬT', cvs.width / 2, 118);
 
-        ctx.fillStyle = '#0369a1';
+        ctx.fillStyle = '#38bdf8';
         ctx.font = 'italic bold 23px Arial, sans-serif';
         ctx.fillText('Khuôn Viên: 7.35m × 11.00m (80.85 m²) · Phân Vị 29 Ngôi Mộ Đá & Kết Cấu Móng BTCT', cvs.width / 2, 175);
 
@@ -3190,12 +3195,14 @@
 
         let startY = 220;
         specs.forEach((s) => {
-          ctx.fillStyle = 'rgba(255, 255, 255, 0.75)';
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.08)';
           ctx.fillRect(100, startY, cvs.width - 200, 56);
-          ctx.strokeStyle = 'rgba(56, 189, 248, 0.4)';
+          ctx.strokeStyle = 'rgba(56, 189, 248, 0.55)';
+          ctx.lineWidth = 1.5;
           ctx.strokeRect(100, startY, cvs.width - 200, 56);
 
-          ctx.fillStyle = '#0f172a';
+          // Chữ trắng ngà nổi bần bật trên nền xanh xám
+          ctx.fillStyle = '#ffffff';
           ctx.font = 'bold 21px Arial, sans-serif';
           ctx.textAlign = 'left';
           ctx.fillText(s, 130, startY + 36);
@@ -3223,7 +3230,7 @@
         ctx.textAlign = 'center';
         ctx.fillText('ĐIÊU KHẮC ĐÁ MỸ NGHỆ & PHONG THỦY THƯỚC LỖ BAN', cvs.width / 2, 118);
 
-        ctx.fillStyle = '#78350f';
+        ctx.fillStyle = '#fde68a';
         ctx.font = 'italic bold 23px Arial, sans-serif';
         ctx.fillText('Thước Lỗ Ban 38.8cm Âm Phần · Đá Xanh Rêu Tự Nhiên Nguyên Khối Ninh Vân (Ninh Bình)', cvs.width / 2, 175);
 
@@ -3239,12 +3246,14 @@
 
         let startY = 220;
         fengshuis.forEach((f) => {
-          ctx.fillStyle = 'rgba(255, 255, 255, 0.75)';
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.08)';
           ctx.fillRect(100, startY, cvs.width - 200, 56);
-          ctx.strokeStyle = 'rgba(245, 158, 11, 0.4)';
+          ctx.strokeStyle = 'rgba(245, 158, 11, 0.55)';
+          ctx.lineWidth = 1.5;
           ctx.strokeRect(100, startY, cvs.width - 200, 56);
 
-          ctx.fillStyle = '#0f172a';
+          // Chữ trắng tinh và vàng kim nổi bật
+          ctx.fillStyle = '#ffffff';
           ctx.font = 'bold 21px Arial, sans-serif';
           ctx.textAlign = 'left';
           ctx.fillText(f, 130, startY + 36);
@@ -3275,11 +3284,11 @@
 
       // Vật liệu màu xanh nhạt khác màu đất cho 4 bức tường (#d2ede2 / #c4e6da)
       const wallMat = new THREE.MeshStandardMaterial({
-        color: 0xd2ede2, // Xanh nhạt Celadon Soft Jade
-        roughness: 0.45,
-        metalness: 0.08,
+        color: 0x3d4f52, // Xanh xám đá tự nhiên Slate Green-Gray trang trọng
+        roughness: 0.50,
+        metalness: 0.12,
         envMap: envTexture,
-        envMapIntensity: 0.35
+        envMapIntensity: 0.40
       });
 
       const borderMat = new THREE.MeshStandardMaterial({
@@ -3291,9 +3300,9 @@
       });
 
       const pedestalMat = new THREE.MeshStandardMaterial({
-        color: 0xb5d8cc, // Chân bệ đá ngọc
-        roughness: 0.40,
-        metalness: 0.12
+        color: 0x243437, // Chân bệ móng xanh xám đậm kiên cố
+        roughness: 0.45,
+        metalness: 0.15
       });
 
       // Cấu hình 4 bức tường (Bắc, Nam, Tây, Đông)
