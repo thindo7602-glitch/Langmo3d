@@ -14075,21 +14075,92 @@
           scene.fog.color.setHex(0x020710);
         }
       } else {
-        // Ban đêm: Ánh trăng xanh bạc
-        sunMat.color.setHex(0xe2e8f0);
+        // Ban đêm: Ánh đèn chiếu sáng kiến trúc theo hướng mặt trời lúc 9 giờ sáng
+        sunMat.color.setHex(0xfef3c7);
         ringMat.color.setHex(0x38bdf8);
-        ringMat.opacity = 0.35;
+        ringMat.opacity = 0.40;
 
-        lights.sun.color.setHex(0x93c5fd);
-        lights.sun.intensity = 0.30;
-        lights.ambient.color.setHex(0x1e293b);
-        lights.ambient.intensity = 0.28;
-        scene.background.setHex(0x010206);
-        scene.fog.color.setHex(0x010206);
+        lights.sun.color.setHex(0xffeedb); // Ánh đèn vàng ấm chiếu sáng công trình
+        lights.sun.intensity = 1.35; // Rực sáng rõ nét, đổ bóng kiến trúc 3D sắc nét
+        lights.ambient.color.setHex(0x1a2e33); // Ánh sáng môi trường đêm xanh xám trang nghiêm
+        lights.ambient.intensity = 0.38;
+        scene.background.setHex(0x0a141a); // Nền trời đêm huyền ảo sâu thẳm
+        scene.fog.color.setHex(0x0a141a);
       }
 
       // Cập nhật các giá trị hiển thị trên UI HUD
       syncSolarHUD();
+    }
+
+    // =====================================================================
+    // HỆ THỐNG MÔ PHỎNG MẶT TRỜI THỜI GIAN THỰC CHUẨN THIÊN VĂN (NOAA)
+    // Toạ độ GPS Nghĩa trang: 20.414585° N, 105.620330° E
+    // Cổng lăng: Hướng Đông chếch Nam 18° (Phương vị địa lý 108° so với chính Bắc)
+    // =====================================================================
+    const CEMETERY_GEO = {
+      lat: 20.414585,      // Vĩ độ Bắc
+      lon: 105.620330,     // Kinh độ Đông
+      gateAzimuth: 108.0   // Cổng hướng Đông chếch Nam 18° (90° + 18° = 108°)
+    };
+
+    function calculateRealSolarPosition(date) {
+      const rad = Math.PI / 180;
+      const deg = 180 / Math.PI;
+
+      const JD = (date.getTime() / 86400000.0) + 2440587.5;
+      const n = JD - 2451545.0;
+
+      let L = (280.460 + 0.9856474 * n) % 360;
+      if (L < 0) L += 360;
+
+      let g = (357.528 + 0.9856003 * n) % 360;
+      if (g < 0) g += 360;
+
+      const lambda = L + 1.915 * Math.sin(g * rad) + 0.020 * Math.sin(2 * g * rad);
+      const epsilon = 23.439 - 0.0000004 * n;
+
+      const sinDelta = Math.sin(epsilon * rad) * Math.sin(lambda * rad);
+      const delta = Math.asin(sinDelta);
+
+      const y_ra = Math.cos(epsilon * rad) * Math.sin(lambda * rad);
+      const x_ra = Math.cos(lambda * rad);
+      const alpha = Math.atan2(y_ra, x_ra);
+
+      let GMST = (280.46061837 + 360.98564736629 * (JD - 2451545.0)) % 360;
+      if (GMST < 0) GMST += 360;
+
+      let LMST = (GMST + CEMETERY_GEO.lon) % 360;
+      if (LMST < 0) LMST += 360;
+
+      let H = (LMST - alpha * deg) % 360;
+      if (H < 0) H += 360;
+      if (H > 180) H -= 360;
+
+      const H_rad = H * rad;
+      const lat_rad = CEMETERY_GEO.lat * rad;
+
+      const sinAlt = Math.sin(lat_rad) * Math.sin(delta) + Math.cos(lat_rad) * Math.cos(delta) * Math.cos(H_rad);
+      const alt_rad = Math.asin(sinAlt);
+      const elevation = alt_rad * deg;
+
+      const cosAlt = Math.cos(alt_rad);
+      let azimuthGeo = 0;
+      if (Math.abs(cosAlt) > 0.0001) {
+        const sinAz = -Math.cos(delta) * Math.sin(H_rad) / cosAlt;
+        const cosAz = (Math.sin(delta) - Math.sin(lat_rad) * sinAlt) / (Math.cos(lat_rad) * cosAlt);
+        let az = Math.atan2(sinAz, cosAz) * deg;
+        if (az < 0) az += 360;
+        azimuthGeo = az;
+      }
+
+      const azimuthModel = (azimuthGeo - CEMETERY_GEO.gateAzimuth + 360) % 360;
+
+      return {
+        elevation,
+        azimuthGeo,
+        azimuthModel,
+        isDay: elevation > 0.5
+      };
     }
 
     function syncSolarHUD() {
@@ -14101,24 +14172,26 @@
       if (sliderAz) sliderAz.value = Math.round(celestialState.azimuth);
       if (sliderEl) sliderEl.value = Math.round(celestialState.elevation);
 
-      // Tính tên phương vị la bàn
-      const az = celestialState.azimuth;
-      let dirName = 'Bắc';
-      if (az >= 22.5 && az < 67.5) dirName = 'Đông Bắc';
-      else if (az >= 67.5 && az < 112.5) dirName = 'Đông';
-      else if (az >= 112.5 && az < 157.5) dirName = 'Đông Nam';
-      else if (az >= 157.5 && az < 202.5) dirName = 'Nam';
-      else if (az >= 202.5 && az < 247.5) dirName = 'Tây Nam';
-      else if (az >= 247.5 && az < 292.5) dirName = 'Tây';
-      else if (az >= 292.5 && az < 337.5) dirName = 'Tây Bắc';
+      const geoAz = (celestialState.azimuth + CEMETERY_GEO.gateAzimuth) % 360;
+      let dirName = 'Chính Bắc';
+      if (geoAz >= 337.5 || geoAz < 22.5) dirName = 'Chính Bắc';
+      else if (geoAz >= 22.5 && geoAz < 67.5) dirName = 'Đông Bắc';
+      else if (geoAz >= 67.5 && geoAz < 112.5) {
+        dirName = Math.abs(geoAz - 108) <= 4 ? 'Cổng Lăng (Đông Chếch Nam 18°)' : 'Chính Đông';
+      }
+      else if (geoAz >= 112.5 && geoAz < 157.5) dirName = 'Đông Nam';
+      else if (geoAz >= 157.5 && geoAz < 202.5) dirName = 'Chính Nam';
+      else if (geoAz >= 202.5 && geoAz < 247.5) dirName = 'Tây Nam';
+      else if (geoAz >= 247.5 && geoAz < 292.5) dirName = 'Chính Tây';
+      else if (geoAz >= 292.5 && geoAz < 337.5) dirName = 'Tây Bắc';
 
-      if (valAz) valAz.textContent = `${Math.round(az)}° (${dirName})`;
+      if (valAz) valAz.textContent = `Mô hình: ${Math.round(celestialState.azimuth)}° | Địa lý: ${Math.round(geoAz)}° (${dirName})`;
 
       const el = celestialState.elevation;
       let shadowDesc = 'Bóng Vừa';
-      if (el < 18) shadowDesc = 'Bóng Cực Dài';
+      if (el < 18) shadowDesc = 'Bóng Rất Dài (Bình minh/Hoàng hôn)';
       else if (el < 35) shadowDesc = 'Bóng Dài';
-      else if (el > 70) shadowDesc = 'Gần Đứng Bóng';
+      else if (el > 65) shadowDesc = 'Gần Đứng Bóng';
       if (valEl) valEl.textContent = `${Math.round(el)}° (${shadowDesc})`;
     }
 
@@ -14134,32 +14207,104 @@
         if (btnNight) btnNight.classList.remove('active', 'night');
         if (iconHeader) iconHeader.textContent = '☀️';
         if (titleHeader) titleHeader.textContent = 'MẶT TRỜI & ĐỔ BÓNG 3D';
-        showToast3D('☀️ Chế độ Mặt Trời: Tự do kéo bóng đổ ban ngày');
+        if (typeof showToast3D === 'function') showToast3D('☀️ Chế độ Ban Ngày: Mô phỏng ánh nắng theo toạ độ GPS');
       } else {
-        if (btnNight) { btnNight.classList.add('active', 'night'); }
+        if (btnNight) btnNight.classList.add('active', 'night');
         if (btnDay) btnDay.classList.remove('active');
         if (iconHeader) iconHeader.textContent = '🌙';
-        if (titleHeader) titleHeader.textContent = 'MẶT TRĂNG & ÁNH ĐÊM 3D';
-        showToast3D('🌙 Chế độ Mặt Trăng: Trăng bạc soi bóng đêm huyền ảo');
+        if (titleHeader) titleHeader.textContent = 'ÁNH ĐÊM (HƯỚNG 9H SÁNG)';
+
+        const d9 = new Date();
+        d9.setHours(9, 0, 0, 0);
+        const s9 = calculateRealSolarPosition(d9);
+        celestialState.azimuth = s9.azimuthModel;
+        celestialState.elevation = Math.max(12, s9.elevation);
+        if (typeof showToast3D === 'function') showToast3D('🌙 Ban đêm: Bật ánh đèn theo hướng mặt trời 9h sáng');
       }
       updateCelestialPosition();
     }
 
-    function applyPresetTime(az, el, timeStr) {
-      celestialState.azimuth = az;
-      celestialState.elevation = el;
-      if (timeStr === '21:00') setCelestialMode('night');
-      else setCelestialMode('day');
+    let isManualSolarOverride = false;
+
+    function applyRealTimeSunAndShadow(isInit = false) {
+      const now = new Date();
+      const hours = now.getHours();
+      const minutes = now.getMinutes();
+      const timeStr = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+
+      const solar = calculateRealSolarPosition(now);
+
+      const btnDay = document.getElementById('btnTabDay');
+      const btnNight = document.getElementById('btnTabNight');
+      const iconHeader = document.getElementById('solarIconHeader');
+      const titleHeader = document.getElementById('solarTitleHeader');
+
+      if (solar.isDay) {
+        celestialState.mode = 'day';
+        celestialState.azimuth = solar.azimuthModel;
+        celestialState.elevation = Math.max(6, solar.elevation);
+
+        if (btnDay) btnDay.classList.add('active');
+        if (btnNight) btnNight.classList.remove('active', 'night');
+        if (iconHeader) iconHeader.textContent = '☀️';
+        if (titleHeader) titleHeader.textContent = `MẶT TRỜI THỰC TẾ (${timeStr})`;
+      } else {
+        celestialState.mode = 'night';
+        const d9 = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 9, 0, 0);
+        const solar9am = calculateRealSolarPosition(d9);
+        celestialState.azimuth = solar9am.azimuthModel;
+        celestialState.elevation = Math.max(12, solar9am.elevation);
+
+        if (btnNight) btnNight.classList.add('active', 'night');
+        if (btnDay) btnDay.classList.remove('active');
+        if (iconHeader) iconHeader.textContent = '🌙';
+        if (titleHeader) titleHeader.textContent = `ÁNH ĐÊM 9H SÁNG (${timeStr})`;
+      }
+
+      updateCelestialPosition();
+
+      document.querySelectorAll('.time-chip-btn').forEach(b => b.classList.remove('active'));
+      const realChip = document.getElementById('btnRealTimeSun');
+      if (realChip) realChip.classList.add('active');
+    }
+
+    function resetToRealTimeSun() {
+      isManualSolarOverride = false;
+      applyRealTimeSunAndShadow(false);
+      if (typeof showToast3D === 'function') showToast3D('⏰ Đã cập nhật bóng mặt trời theo thời gian thực tế');
+    }
+
+    function applyPresetTime(targetHour, targetMin, timeStr) {
+      isManualSolarOverride = true;
+      const d = new Date();
+      d.setHours(targetHour, targetMin, 0, 0);
+      const solar = calculateRealSolarPosition(d);
+
+      if (timeStr === '21:00') {
+        const d9 = new Date();
+        d9.setHours(9, 0, 0, 0);
+        const s9 = calculateRealSolarPosition(d9);
+        celestialState.mode = 'night';
+        celestialState.azimuth = s9.azimuthModel;
+        celestialState.elevation = Math.max(12, s9.elevation);
+        setCelestialMode('night');
+      } else {
+        celestialState.mode = 'day';
+        celestialState.azimuth = solar.azimuthModel;
+        celestialState.elevation = Math.max(6, solar.elevation);
+        setCelestialMode('day');
+      }
 
       document.querySelectorAll('.time-chip-btn').forEach(b => b.classList.remove('active'));
       const foundBtn = Array.from(document.querySelectorAll('.time-chip-btn')).find(b => b.textContent.includes(timeStr.slice(0, 2)));
       if (foundBtn) foundBtn.classList.add('active');
 
       updateCelestialPosition();
-      showToast3D(`🕒 Đã chuyển sang thời điểm ${timeStr}`);
+      if (typeof showToast3D === 'function') showToast3D(`🕒 Chuyển thời điểm ${timeStr}`);
     }
 
     function onSolarSliderInput() {
+      isManualSolarOverride = true;
       const sAz = document.getElementById('sliderAzimuth');
       const sEl = document.getElementById('sliderElevation');
       if (sAz) celestialState.azimuth = parseFloat(sAz.value);
@@ -16133,6 +16278,8 @@
 
     window.addEventListener('DOMContentLoaded', () => {
       buildComplete3DScene();
+      applyRealTimeSunAndShadow(true);
+      setInterval(() => { if (!isManualSolarOverride) applyRealTimeSunAndShadow(false); }, 60000);
       animate();
       showToast3D('🏛️ Đồ họa 3D Lăng Mộ Đá Xanh Ninh Bình Master sẵn sàng!');
     });

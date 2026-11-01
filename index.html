@@ -1784,6 +1784,18 @@
     </div>
 
     <div class="solar-body">
+      <!-- THÔNG TIN ĐỊA LÝ & HƯỚNG CỔNG PHONG THỦY THỜI GIAN THỰC -->
+      <div style="display:flex; flex-direction:column; gap:4px; margin-bottom:10px; padding:6px 10px; background:rgba(15,23,42,0.65); border:1px solid rgba(56,189,248,0.3); border-radius:8px; font-size:11px; color:#e2e8f0;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span style="color:#38bdf8; font-weight:700;">📍 GPS Nghĩa Trang:</span>
+          <span style="font-family:monospace; color:#fef08a;">20.4146°N, 105.6203°E</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span style="color:#34d399; font-weight:700;">⛩️ Cổng Nghĩa Trang:</span>
+          <span style="color:#6ee7b7; font-weight:600;">Đông chếch Nam 18° (PV 108°)</span>
+        </div>
+      </div>
+
       <!-- CHUYỂN CHẾ ĐỘ NGÀY / ĐÊM -->
       <div class="solar-mode-tabs">
         <button class="solar-tab-btn active" id="btnTabDay" onclick="setCelestialMode('day')">
@@ -1794,15 +1806,15 @@
         </button>
       </div>
 
-      <!-- CHỌN NHANH GIỜ TRONG NGÀY -->
+      <!-- CHỌN NHANH GIỜ TRONG NGÀY (MÔ PHỎNG THIÊN VĂN THỰC TẾ) -->
       <div class="solar-quick-times">
         <button class="time-chip-btn active" id="btnRealTimeSun" onclick="resetToRealTimeSun()">⏰ Giờ Thực Tế</button>
-        <button class="time-chip-btn" onclick="applyPresetTime(6, 12, '06:00')">🌅 6h Sáng</button>
-        <button class="time-chip-btn" onclick="applyPresetTime(15, 52, '09:00')">☀️ 9h Sáng (Cổng)</button>
-        <button class="time-chip-btn" onclick="applyPresetTime(180, 80, '12:00')">☀️ 12h Trưa</button>
-        <button class="time-chip-btn" onclick="applyPresetTime(225, 45, '15:30')">🌇 15h Chiều</button>
-        <button class="time-chip-btn" onclick="applyPresetTime(265, 10, '17:30')">🌆 17h Hoàng Hôn</button>
-        <button class="time-chip-btn" onclick="applyPresetTime(15, 52, '21:00')">🌙 21h Ban Đêm (Đèn 9h)</button>
+        <button class="time-chip-btn" onclick="applyPresetTime(6, 0, '06:00')">🌅 6h Sáng</button>
+        <button class="time-chip-btn" onclick="applyPresetTime(9, 0, '09:00')">☀️ 9h Sáng (Cổng)</button>
+        <button class="time-chip-btn" onclick="applyPresetTime(12, 0, '12:00')">☀️ 12h Trưa</button>
+        <button class="time-chip-btn" onclick="applyPresetTime(15, 30, '15:30')">🌇 15h30 Chiều</button>
+        <button class="time-chip-btn" onclick="applyPresetTime(17, 15, '17:15')">🌆 17h15 Hoàng Hôn</button>
+        <button class="time-chip-btn" onclick="applyPresetTime(21, 0, '21:00')">🌙 21h Đêm (Đèn 9h)</button>
       </div>
 
       <!-- THANH TRƯỢT GÓC PHƯƠNG VỊ (HƯỚNG NẮNG) -->
@@ -2672,6 +2684,96 @@
       syncSolarHUD();
     }
 
+    // =====================================================================
+    // HỆ THỐNG MÔ PHỎNG MẶT TRỜI THỜI GIAN THỰC CHUẨN THIÊN VĂN (NOAA)
+    // Toạ độ GPS Nghĩa trang: 20.414585° N, 105.620330° E
+    // Cổng lăng: Hướng Đông chếch Nam 18° (Phương vị địa lý 108° so với chính Bắc)
+    // =====================================================================
+    const CEMETERY_GEO = {
+      lat: 20.414585,      // Vĩ độ Bắc
+      lon: 105.620330,     // Kinh độ Đông
+      gateAzimuth: 108.0   // Cổng hướng Đông chếch Nam 18° (90° + 18° = 108°)
+    };
+
+    /**
+     * Thuật toán thiên văn chuẩn NOAA tính toán chính xác vị trí Mặt Trời
+     * @param {Date} date - Thời điểm tính toán
+     * @returns {Object} Vị trí góc nâng, phương vị địa lý thực và phương vị mô hình 3D
+     */
+    function calculateRealSolarPosition(date) {
+      const rad = Math.PI / 180;
+      const deg = 180 / Math.PI;
+
+      const JD = (date.getTime() / 86400000.0) + 2440587.5;
+      const n = JD - 2451545.0; // Số ngày kể từ kỷ nguyên J2000.0
+
+      // Kinh độ biểu kiến trung bình của Mặt Trời
+      let L = (280.460 + 0.9856474 * n) % 360;
+      if (L < 0) L += 360;
+
+      // Độ bất thường trung bình
+      let g = (357.528 + 0.9856003 * n) % 360;
+      if (g < 0) g += 360;
+
+      // Kinh độ hoàng đạo
+      const lambda = L + 1.915 * Math.sin(g * rad) + 0.020 * Math.sin(2 * g * rad);
+
+      // Độ nghiêng hoàng đạo
+      const epsilon = 23.439 - 0.0000004 * n;
+
+      // Xích vĩ (delta) và Xích kinh (alpha)
+      const sinDelta = Math.sin(epsilon * rad) * Math.sin(lambda * rad);
+      const delta = Math.asin(sinDelta);
+
+      const y_ra = Math.cos(epsilon * rad) * Math.sin(lambda * rad);
+      const x_ra = Math.cos(lambda * rad);
+      const alpha = Math.atan2(y_ra, x_ra);
+
+      // Giờ thiên văn Greenwich (GMST) tính theo độ
+      let GMST = (280.46061837 + 360.98564736629 * (JD - 2451545.0)) % 360;
+      if (GMST < 0) GMST += 360;
+
+      // Giờ thiên văn địa phương tại kinh độ 105.620330° E
+      let LMST = (GMST + CEMETERY_GEO.lon) % 360;
+      if (LMST < 0) LMST += 360;
+
+      // Góc giờ mặt trời (Hour Angle)
+      let H = (LMST - alpha * deg) % 360;
+      if (H < 0) H += 360;
+      if (H > 180) H -= 360; // Dải [-180°, +180°]
+
+      const H_rad = H * rad;
+      const lat_rad = CEMETERY_GEO.lat * rad;
+
+      // Góc nâng của Mặt Trời (Elevation / Altitude)
+      const sinAlt = Math.sin(lat_rad) * Math.sin(delta) + Math.cos(lat_rad) * Math.cos(delta) * Math.cos(H_rad);
+      const alt_rad = Math.asin(sinAlt);
+      const elevation = alt_rad * deg;
+
+      // Phương vị địa lý thực tế so với chính Bắc (0°=Bắc, 90°=Đông, 108°=Cổng lăng, 180°=Nam, 270°=Tây)
+      const cosAlt = Math.cos(alt_rad);
+      let azimuthGeo = 0;
+      if (Math.abs(cosAlt) > 0.0001) {
+        const sinAz = -Math.cos(delta) * Math.sin(H_rad) / cosAlt;
+        const cosAz = (Math.sin(delta) - Math.sin(lat_rad) * sinAlt) / (Math.cos(lat_rad) * cosAlt);
+        let az = Math.atan2(sinAz, cosAz) * deg;
+        if (az < 0) az += 360;
+        azimuthGeo = az;
+      }
+
+      // Phương vị quay trong hệ tọa độ 3D của mô hình:
+      // Trong mô hình 3D, hướng cổng là 0° (+Z). Cổng nghĩa trang thực tế quay 108° (Đông chếch Nam 18°).
+      // Khi Mặt Trời ở phương vị địa lý 108°, nó chiếu thẳng qua cổng vào lăng -> azimuthModel = 0°.
+      const azimuthModel = (azimuthGeo - CEMETERY_GEO.gateAzimuth + 360) % 360;
+
+      return {
+        elevation,
+        azimuthGeo,
+        azimuthModel,
+        isDay: elevation > 0.5
+      };
+    }
+
     function syncSolarHUD() {
       const sliderAz = document.getElementById('sliderAzimuth');
       const sliderEl = document.getElementById('sliderElevation');
@@ -2681,25 +2783,27 @@
       if (sliderAz) sliderAz.value = Math.round(celestialState.azimuth);
       if (sliderEl) sliderEl.value = Math.round(celestialState.elevation);
 
-      // Tính tên phương vị la bàn
-      const az = celestialState.azimuth;
-      let dirName = 'Bắc';
-      if (az >= 0 && az <= 10) dirName = 'Trước Cổng (Đông Chếch Nam 5°)';
-      else if (az > 10 && az < 67.5) dirName = 'Đông Bắc';
-      else if (az >= 67.5 && az < 112.5) dirName = 'Đông';
-      else if (az >= 112.5 && az < 157.5) dirName = 'Đông Nam';
-      else if (az >= 157.5 && az < 202.5) dirName = 'Nam';
-      else if (az >= 202.5 && az < 247.5) dirName = 'Tây Nam';
-      else if (az >= 247.5 && az < 292.5) dirName = 'Tây';
-      else if (az >= 292.5 && az < 337.5) dirName = 'Tây Bắc';
+      // Tính phương vị địa lý thực tế từ góc mô hình 3D
+      const geoAz = (celestialState.azimuth + CEMETERY_GEO.gateAzimuth) % 360;
+      let dirName = 'Chính Bắc';
+      if (geoAz >= 337.5 || geoAz < 22.5) dirName = 'Chính Bắc';
+      else if (geoAz >= 22.5 && geoAz < 67.5) dirName = 'Đông Bắc';
+      else if (geoAz >= 67.5 && geoAz < 112.5) {
+        dirName = Math.abs(geoAz - 108) <= 4 ? 'Cổng Lăng (Đông Chếch Nam 18°)' : 'Chính Đông';
+      }
+      else if (geoAz >= 112.5 && geoAz < 157.5) dirName = 'Đông Nam';
+      else if (geoAz >= 157.5 && geoAz < 202.5) dirName = 'Chính Nam';
+      else if (geoAz >= 202.5 && geoAz < 247.5) dirName = 'Tây Nam';
+      else if (geoAz >= 247.5 && geoAz < 292.5) dirName = 'Chính Tây';
+      else if (geoAz >= 292.5 && geoAz < 337.5) dirName = 'Tây Bắc';
 
-      if (valAz) valAz.textContent = `${Math.round(az)}° (${dirName})`;
+      if (valAz) valAz.textContent = `Mô hình: ${Math.round(celestialState.azimuth)}° | Địa lý: ${Math.round(geoAz)}° (${dirName})`;
 
       const el = celestialState.elevation;
       let shadowDesc = 'Bóng Vừa';
-      if (el < 18) shadowDesc = 'Bóng Cực Dài';
+      if (el < 18) shadowDesc = 'Bóng Rất Dài (Bình minh/Hoàng hôn)';
       else if (el < 35) shadowDesc = 'Bóng Dài';
-      else if (el > 70) shadowDesc = 'Gần Đứng Bóng';
+      else if (el > 65) shadowDesc = 'Gần Đứng Bóng';
       if (valEl) valEl.textContent = `${Math.round(el)}° (${shadowDesc})`;
     }
 
@@ -2715,17 +2819,20 @@
         if (btnNight) btnNight.classList.remove('active', 'night');
         if (iconHeader) iconHeader.textContent = '☀️';
         if (titleHeader) titleHeader.textContent = 'MẶT TRỜI & ĐỔ BÓNG 3D';
-        showToast('☀️ Chế độ Ban Ngày: Mô phỏng ánh nắng & bóng đổ tự nhiên');
+        showToast('☀️ Chế độ Ban Ngày: Mô phỏng ánh nắng & bóng đổ tự nhiên theo toạ độ GPS');
       } else {
-        if (btnNight) { btnNight.classList.add('active', 'night'); }
+        if (btnNight) btnNight.classList.add('active', 'night');
         if (btnDay) btnDay.classList.remove('active');
         if (iconHeader) iconHeader.textContent = '🌙';
         if (titleHeader) titleHeader.textContent = 'ÁNH ĐÊM (HƯỚNG 9H SÁNG)';
-        
-        // Ban đêm: Lấy hướng đèn chiếu theo hướng mặt trời lúc 9 giờ sáng (Azimuth: 15°, Elevation: 52°)
-        celestialState.azimuth = 15;
-        celestialState.elevation = 52;
-        showToast('🌙 Ban đêm: Đã bật ánh đèn kiến trúc theo hướng mặt trời 9h sáng');
+
+        // Ban đêm: Lấy hướng đèn chiếu theo hướng mặt trời lúc 9 giờ sáng
+        const d9 = new Date();
+        d9.setHours(9, 0, 0, 0);
+        const s9 = calculateRealSolarPosition(d9);
+        celestialState.azimuth = s9.azimuthModel;
+        celestialState.elevation = Math.max(12, s9.elevation);
+        showToast('🌙 Ban đêm: Bật ánh đèn kiến trúc theo hướng mặt trời 9h sáng');
       }
       updateCelestialPosition();
     }
@@ -2734,31 +2841,28 @@
 
     // =====================================================================
     // CẬP NHẬT BÓNG MẶT TRỜI THEO THỜI GIAN THỰC (MẶC ĐỊNH)
-    // Ban ngày: Theo vị trí thực tế của mặt trời
+    // Tự động tính toán theo toạ độ GPS 20.414585°N, 105.620330°E
+    // Cổng hướng Đông chếch Nam 18°
     // Ban đêm: Ánh đèn chiếu theo hướng mặt trời lúc 9 giờ sáng
     // =====================================================================
     function applyRealTimeSunAndShadow(isInit = false) {
       const now = new Date();
       const hours = now.getHours();
       const minutes = now.getMinutes();
-      const timeDec = hours + minutes / 60.0;
       const timeStr = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
 
-      const sunrise = 5.75; // 05:45 Sáng
-      const sunset = 17.75;  // 17:45 Chiều
+      const solar = calculateRealSolarPosition(now);
 
       const btnDay = document.getElementById('btnTabDay');
       const btnNight = document.getElementById('btnTabNight');
       const iconHeader = document.getElementById('solarIconHeader');
       const titleHeader = document.getElementById('solarTitleHeader');
 
-      if (timeDec >= sunrise && timeDec <= sunset) {
-        // Ban ngày
+      if (solar.isDay) {
+        // Ban ngày: Theo vị trí thực tế của mặt trời
         celestialState.mode = 'day';
-        const progress = (timeDec - sunrise) / (sunset - sunrise); // 0.0 -> 1.0
-        // Hướng mọc Đông trước cổng (5°), trưa đỉnh đầu (~95°), lặn Tây sau lăng (~185°)
-        celestialState.azimuth = 5 + progress * 180;
-        celestialState.elevation = Math.max(8, Math.sin(progress * Math.PI) * 72);
+        celestialState.azimuth = solar.azimuthModel;
+        celestialState.elevation = Math.max(6, solar.elevation);
 
         if (btnDay) btnDay.classList.add('active');
         if (btnNight) btnNight.classList.remove('active', 'night');
@@ -2767,9 +2871,10 @@
       } else {
         // Ban đêm: Lấy ánh đèn theo hướng mặt trời lúc 9 giờ sáng
         celestialState.mode = 'night';
-        // Hướng mặt trời lúc 9h sáng (Trước cổng lăng azimuth: 15°, elevation: 52°)
-        celestialState.azimuth = 15;
-        celestialState.elevation = 52;
+        const d9 = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 9, 0, 0);
+        const solar9am = calculateRealSolarPosition(d9);
+        celestialState.azimuth = solar9am.azimuthModel;
+        celestialState.elevation = Math.max(12, solar9am.elevation);
 
         if (btnNight) btnNight.classList.add('active', 'night');
         if (btnDay) btnDay.classList.remove('active');
@@ -2785,29 +2890,44 @@
       if (realChip) realChip.classList.add('active');
 
       if (isInit) {
-        console.log(`[RealTimeSun] Khởi động bóng mặt trời thời gian thực: ${timeStr}, Mode: ${celestialState.mode}, Azimuth: ${celestialState.azimuth.toFixed(1)}°, Elevation: ${celestialState.elevation.toFixed(1)}°`);
+        console.log(`[RealTimeSun] Khởi động mặt trời thực tế: ${timeStr}, Mode: ${celestialState.mode}, AzModel: ${celestialState.azimuth.toFixed(1)}°, AzGeo: ${solar.azimuthGeo.toFixed(1)}°, Elevation: ${solar.elevation.toFixed(1)}° (GPS: 20.4146N, 105.6203E, Cổng 108°)`);
       }
     }
 
     function resetToRealTimeSun() {
       isManualSolarOverride = false;
       applyRealTimeSunAndShadow(false);
-      showToast('⏰ Đã cập nhật bóng mặt trời theo thời gian thực tế');
+      showToast('⏰ Đã đồng bộ bóng mặt trời theo thời gian thực tế tại toạ độ nghĩa trang');
     }
 
-    function applyPresetTime(az, el, timeStr) {
+    function applyPresetTime(targetHour, targetMin, timeStr) {
       isManualSolarOverride = true;
-      celestialState.azimuth = az;
-      celestialState.elevation = el;
-      if (timeStr === '21:00') setCelestialMode('night');
-      else setCelestialMode('day');
+      const d = new Date();
+      d.setHours(targetHour, targetMin, 0, 0);
+      const solar = calculateRealSolarPosition(d);
+
+      if (timeStr === '21:00') {
+        // 21h đêm: Đèn kiến trúc theo hướng 9h sáng
+        const d9 = new Date();
+        d9.setHours(9, 0, 0, 0);
+        const s9 = calculateRealSolarPosition(d9);
+        celestialState.mode = 'night';
+        celestialState.azimuth = s9.azimuthModel;
+        celestialState.elevation = Math.max(12, s9.elevation);
+        setCelestialMode('night');
+      } else {
+        celestialState.mode = 'day';
+        celestialState.azimuth = solar.azimuthModel;
+        celestialState.elevation = Math.max(6, solar.elevation);
+        setCelestialMode('day');
+      }
 
       document.querySelectorAll('.time-chip-btn').forEach(b => b.classList.remove('active'));
       const foundBtn = Array.from(document.querySelectorAll('.time-chip-btn')).find(b => b.textContent.includes(timeStr.slice(0, 2)));
       if (foundBtn) foundBtn.classList.add('active');
 
       updateCelestialPosition();
-      showToast(`🕒 Đã chuyển sang thời điểm ${timeStr}`);
+      showToast(`🕒 Chuyển thời điểm ${timeStr} (Góc chiếu thực tế: ${Math.round(celestialState.elevation)}°)`);
     }
 
     function onSolarSliderInput() {
@@ -3110,285 +3230,324 @@
     // Tạo Canvas Texture Độ Phân Giải Cao Cho Từng Bức Tường
     function createHeritageCanvasTexture(wallType) {
       const cvs = document.createElement('canvas');
-      cvs.width = 2048;
+      cvs.width = 4096;  // Độ phân giải siêu nét Ultra-HD 4K cho hiển thị chữ từ xa
       cvs.height = 1024;
       const ctx = cvs.getContext('2d');
 
       // 1. Nền Tường Màu Xanh Xám Đá Trầm (Deep Slate Green-Gray) - Tối ưu độ tương phản tối đa cho chữ viết
       const bgGrad = ctx.createLinearGradient(0, 0, 0, cvs.height);
-      bgGrad.addColorStop(0, '#1b2729');   // Xanh xám đá trên cùng
-      bgGrad.addColorStop(0.5, '#26373a'); // Xanh xám đá sáng hơn ở giữa
-      bgGrad.addColorStop(1, '#182325');   // Xanh xám đá dưới chân
+      bgGrad.addColorStop(0, '#152022');
+      bgGrad.addColorStop(0.5, '#203033');
+      bgGrad.addColorStop(1, '#111b1d');
       ctx.fillStyle = bgGrad;
       ctx.fillRect(0, 0, cvs.width, cvs.height);
 
-      // Khung viền chỉ vàng hoàng kim cổ điển
+      // Khung viền chỉ vàng hoàng kim cổ điển kép trang trọng
       ctx.strokeStyle = '#d4af37';
-      ctx.lineWidth = 14;
-      ctx.strokeRect(30, 30, cvs.width - 60, cvs.height - 60);
+      ctx.lineWidth = 16;
+      ctx.strokeRect(32, 32, cvs.width - 64, cvs.height - 64);
 
-      ctx.strokeStyle = 'rgba(212, 175, 55, 0.45)';
-      ctx.lineWidth = 4;
-      ctx.strokeRect(46, 46, cvs.width - 92, cvs.height - 92);
+      ctx.strokeStyle = 'rgba(245, 158, 11, 0.55)';
+      ctx.lineWidth = 5;
+      ctx.strokeRect(54, 54, cvs.width - 108, cvs.height - 108);
 
-      // 4 góc hoa văn góc
-      function drawCornerOrn(cx, cy) {
+      // Họa tiết góc triện cổ truyền thống (Greek Fret Corner Ornaments)
+      function drawTraditionalCorner(cx, cy, flipX, flipY) {
         ctx.save();
         ctx.translate(cx, cy);
-        ctx.fillStyle = '#d4af37';
-        ctx.fillRect(-15, -15, 30, 30);
+        ctx.scale(flipX, flipY);
+        ctx.fillStyle = '#ffd700';
+        ctx.fillRect(0, 0, 50, 10);
+        ctx.fillRect(0, 0, 10, 50);
+        ctx.fillRect(20, 20, 30, 8);
+        ctx.fillRect(20, 20, 8, 30);
         ctx.restore();
       }
-      drawCornerOrn(46, 46);
-      drawCornerOrn(cvs.width - 46, 46);
-      drawCornerOrn(46, cvs.height - 46);
-      drawCornerOrn(cvs.width - 46, cvs.height - 46);
+      drawTraditionalCorner(64, 64, 1, 1);
+      drawTraditionalCorner(cvs.width - 64, 64, -1, 1);
+      drawTraditionalCorner(64, cvs.height - 64, 1, -1);
+      drawTraditionalCorner(cvs.width - 64, cvs.height - 64, -1, -1);
 
-      // Vẽ nội dung theo từng bức tường
+      // Con Dấu Triện Đỏ Cổ Truyền Thống (Imperial Red Seal Stamp)
+      function drawTraditionalSeal(x, y, text1, text2) {
+        ctx.save();
+        ctx.fillStyle = '#991b1b'; // Đỏ son chu sa cổ
+        ctx.fillRect(x - 65, y - 45, 130, 90);
+        ctx.strokeStyle = '#fef08a';
+        ctx.lineWidth = 3;
+        ctx.strokeRect(x - 61, y - 41, 122, 82);
+        ctx.fillStyle = '#fef08a';
+        ctx.font = 'bold 22px "Cinzel", "Times New Roman", serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(text1, x, y - 8);
+        ctx.fillText(text2, x, y + 25);
+        ctx.restore();
+      }
+
+      // Vẽ nội dung theo từng bức tường với cỡ chữ lớn và độ tương phản cao
       if (wallType === 'north') {
         // TƯỜNG BẮC: PHẢ ĐỒ 11 THẾ HỆ HỌ ĐỖ
-        ctx.fillStyle = '#b91c1c';
-        ctx.fillRect(cvs.width / 2 - 420, 65, 840, 75);
-        ctx.strokeStyle = '#fef08a';
-        ctx.lineWidth = 4;
-        ctx.strokeRect(cvs.width / 2 - 420, 65, 840, 75);
+        // Tiêu đề chính trang trọng
+        ctx.fillStyle = '#831843'; // Đỏ tía hoàng gia
+        ctx.fillRect(cvs.width / 2 - 800, 60, 1600, 95);
+        ctx.strokeStyle = '#ffd700';
+        ctx.lineWidth = 5;
+        ctx.strokeRect(cvs.width / 2 - 800, 60, 1600, 95);
 
         ctx.fillStyle = '#fffbeb';
-        ctx.font = 'bold 42px "Cinzel", serif, Arial';
+        ctx.font = 'bold 54px "Cinzel", "Times New Roman", serif';
         ctx.textAlign = 'center';
-        ctx.fillText('PHẢ ĐỒ HỌ ĐỖ · BÁCH NIÊN GIA TỘC', cvs.width / 2, 118);
+        ctx.fillText('✦ PHẢ ĐỒ HỌ ĐỖ · BÁCH NIÊN GIA TỘC ✦', cvs.width / 2, 126);
+
+        drawTraditionalSeal(cvs.width / 2 - 880, 107, 'ĐỖ TỘC', 'GIA BẢO');
+        drawTraditionalSeal(cvs.width / 2 + 880, 107, 'VẠN CỔ', 'TRƯỜNG TỒN');
 
         ctx.fillStyle = '#38bdf8';
-        ctx.font = 'italic bold 26px Arial, sans-serif';
-        ctx.fillText('Hạc Bổng - Yên Đồng - Ninh Bình (Thôn Thôi Ngôi, Ý Yên, Nam Định)', cvs.width / 2, 175);
+        ctx.font = 'italic bold 32px Arial, sans-serif';
+        ctx.fillText('Nguyên Quán: Thôn Thôi Ngôi, Yên Trị, Ý Yên, Nam Định — Nay: Hạc Bổng, Yên Đồng, Ninh Bình', cvs.width / 2, 192);
 
-        // Hai câu đối
-        ctx.fillStyle = '#831843';
-        ctx.fillRect(80, 200, 420, 60);
-        ctx.fillStyle = '#fef08a';
-        ctx.font = 'bold 22px Arial, sans-serif';
-        ctx.fillText('Phước Đức Ông Bà Lưu Hậu Thế', 290, 238);
-
-        ctx.fillStyle = '#831843';
-        ctx.fillRect(cvs.width - 500, 200, 420, 60);
-        ctx.fillStyle = '#fef08a';
-        ctx.fillText('Hiếu Hiền Con Cháu Rạng Gia Phong', cvs.width - 290, 238);
-
-        // Cụ Thủy Tổ Box
-        ctx.fillStyle = '#78350f';
-        ctx.fillRect(cvs.width / 2 - 320, 200, 640, 75);
+        // Hai câu đối son thiếp vàng
+        ctx.fillStyle = '#7c2d12';
+        ctx.fillRect(160, 220, 780, 70);
         ctx.strokeStyle = '#ffd700';
-        ctx.lineWidth = 3;
-        ctx.strokeRect(cvs.width / 2 - 320, 200, 640, 75);
+        ctx.lineWidth = 2.5;
+        ctx.strokeRect(160, 220, 780, 70);
+        ctx.fillStyle = '#fef08a';
+        ctx.font = 'bold 30px Arial, sans-serif';
+        ctx.fillText('Phước Đức Ông Bà Lưu Hậu Thế', 550, 265);
+
+        ctx.fillStyle = '#7c2d12';
+        ctx.fillRect(cvs.width - 940, 220, 780, 70);
+        ctx.strokeStyle = '#ffd700';
+        ctx.lineWidth = 2.5;
+        ctx.strokeRect(cvs.width - 940, 220, 780, 70);
+        ctx.fillStyle = '#fef08a';
+        ctx.fillText('Hiếu Hiền Con Cháu Rạng Gia Phong', cvs.width - 550, 265);
+
+        // Hộp Thuỷ Tổ trang nghiêm trung tâm
+        ctx.fillStyle = '#b45309';
+        ctx.fillRect(cvs.width / 2 - 620, 220, 1240, 80);
+        ctx.strokeStyle = '#ffd700';
+        ctx.lineWidth = 4;
+        ctx.strokeRect(cvs.width / 2 - 620, 220, 1240, 80);
 
         ctx.fillStyle = '#ffd700';
-        ctx.font = 'bold 28px Arial, sans-serif';
-        ctx.fillText('CỤ TỔ ĐỖ PHÚC QUẢNG & CỤ BÀ', cvs.width / 2, 238);
+        ctx.font = 'bold 36px Arial, sans-serif';
+        ctx.fillText('CỤ TỔ ĐỖ PHÚC QUẢNG & CỤ BÀ', cvs.width / 2, 262);
         ctx.fillStyle = '#fef3c7';
-        ctx.font = '18px Arial, sans-serif';
-        ctx.fillText('Thuỷ Tổ Đời I · Kỵ Cụ Tổ 12/10 · Kỵ Cụ Bà 12/3', cvs.width / 2, 264);
+        ctx.font = 'bold 23px Arial, sans-serif';
+        ctx.fillText('Thuỷ Tổ Đời I · Kỵ Cụ Tổ: 12/10 Âm Lịch · Kỵ Cụ Bà: 12/3 Âm Lịch', cvs.width / 2, 290);
 
-        // Các thế hệ tiếp theo
+        // Các thế hệ tiếp theo (Thẻ hiển thị to, rõ nét từ khoảng cách xa)
         const gens = [
-          'Đời II: Đỗ Kim Vàng  |  Đỗ Kim Châu  |  Đỗ Kim Toàn (Nhánh chính)',
-          'Đời III: Đỗ Kim Trưởng  |  Đỗ Kim Tuần  |  Đỗ Kim Hứng  |  Đỗ Bá Chiên  |  Đỗ Kim Tụy',
-          'Đời IV: Cụ Đỗ Văn Trợ (Chính thất Vũ Thị Cố · Thứ thất Vũ Thị Tẻo)',
-          'Đời V: Đỗ Văn Do  |  Cụ Đỗ Văn Thư (Người biên chép gia phả 15/02 Kỷ Mão 1879)',
-          'Đời VI: Cụ Đỗ Văn Quán (Bà Vũ Thị Luật - Nguồn phát sinh ba nhánh lớn)',
-          'Đời VII (Ba Nhánh): [7.1] Đỗ Văn Chân  ·  [7.2] Đỗ Văn Phách  ·  [7.3] Đỗ Văn San (Phú Thọ)',
-          'Đời VIII: Nhánh Ông Lê (Đỗ Văn Lê)  ·  Nhánh Ông Cừ (Đỗ Văn Cừ)  ·  Nhánh Ông Xa  ·  Liệt sĩ Đỗ Ngọc Bích'
+          'Đời II: Đỗ Kim Vàng   |   Đỗ Kim Châu   |   Đỗ Kim Toàn (Nhánh chính)',
+          'Đời III: Đỗ Kim Trưởng   |   Đỗ Kim Tuần   |   Đỗ Kim Hứng   |   Đỗ Bá Chiên   |   Đỗ Kim Tụy',
+          'Đời IV: Cụ Đỗ Văn Trợ (Chính thất Vũ Thị Cố  ·  Thứ thất Vũ Thị Tẻo)',
+          'Đời V: Đỗ Văn Do   |   Cụ Đỗ Văn Thư (Biên chép gia phả 15/02 Kỷ Mão 1879)',
+          'Đời VI: Cụ Đỗ Văn Quán (Bà Vũ Thị Luật — Khởi phát ba nhánh lớn)',
+          'Đời VII (Ba Nhánh Lớn): [7.1] Đỗ Văn Chân   ·   [7.2] Đỗ Văn Phách   ·   [7.3] Đỗ Văn San (Phú Thọ)',
+          'Đời VIII: Nhánh Cụ Lê (Đỗ Văn Lê)   ·   Nhánh Cụ Cừ (Đỗ Văn Cừ)   ·   Nhánh Cụ Xa   ·   Liệt sĩ Đỗ Ngọc Bích'
         ];
 
-        let startY = 320;
+        let startY = 325;
         gens.forEach((g, idx) => {
-          // Hộp nền xanh xám kính mờ tương phản cao với viền vàng kim
-          ctx.fillStyle = idx === 5 ? 'rgba(212, 175, 55, 0.22)' : 'rgba(255, 255, 255, 0.08)';
-          ctx.fillRect(100, startY, cvs.width - 200, 48);
-          ctx.strokeStyle = idx === 5 ? '#ffd700' : 'rgba(212, 175, 55, 0.55)';
-          ctx.lineWidth = idx === 5 ? 2.5 : 1.5;
-          ctx.strokeRect(100, startY, cvs.width - 200, 48);
+          ctx.fillStyle = idx === 5 ? 'rgba(212, 175, 55, 0.28)' : 'rgba(255, 255, 255, 0.09)';
+          ctx.fillRect(160, startY, cvs.width - 320, 62);
+          ctx.strokeStyle = idx === 5 ? '#ffd700' : 'rgba(212, 175, 55, 0.65)';
+          ctx.lineWidth = idx === 5 ? 3 : 1.8;
+          ctx.strokeRect(160, startY, cvs.width - 320, 62);
 
-          // Chữ vàng chanh nổi bật cho đời VII (3 nhánh) hoặc chữ trắng tinh khôi siêu sáng
           ctx.fillStyle = idx === 5 ? '#ffd700' : (idx === 3 ? '#fef08a' : '#ffffff');
-          ctx.font = idx === 5 ? 'bold 23px Arial, sans-serif' : 'bold 22px Arial, sans-serif';
+          ctx.font = idx === 5 ? 'bold 30px Arial, sans-serif' : 'bold 28px Arial, sans-serif';
           ctx.textAlign = 'center';
-          ctx.fillText(g, cvs.width / 2, startY + 32);
-          startY += 62;
+          ctx.fillText(g, cvs.width / 2, startY + 41);
+          startY += 74;
         });
 
-        // Hậu duệ đời IX - XI & Chữ ký
+        // Hậu duệ đời IX - XI & Chữ ký cập nhật
         ctx.fillStyle = '#67e8f9';
-        ctx.font = 'italic bold 21px Arial, sans-serif';
-        ctx.fillText('Đời IX - XI: Đỗ Quốc Đính, Đỗ Văn Thìn, Đỗ Minh Thanh, Đỗ Văn Năm, Đỗ Văn Hiểu, Đỗ Văn Vinh, Đỗ Tiến Mạnh, Đỗ Minh Tuấn...', cvs.width / 2, startY + 40);
+        ctx.font = 'italic bold 28px Arial, sans-serif';
+        ctx.fillText('Đời IX - XI: Đỗ Quốc Đính, Đỗ Văn Thìn, Đỗ Minh Thanh, Đỗ Văn Năm, Đỗ Văn Hiểu, Đỗ Văn Vinh, Đỗ Tiến Mạnh, Đỗ Minh Tuấn...', cvs.width / 2, startY + 44);
 
         ctx.fillStyle = '#ffd700';
-        ctx.font = 'bold 23px Arial, sans-serif';
-        ctx.fillText('✦ CẬP NHẬT GIA PHẢ: ĐỖ VĂN THÌN – ĐỜI X – THÁNG 9/2026 ✦', cvs.width / 2, startY + 90);
+        ctx.font = 'bold 30px Arial, sans-serif';
+        ctx.fillText('✦ CẬP NHẬT GIA PHẢ: ĐỖ VĂN THÌN – ĐỜI X – THÁNG 9/2026 ✦', cvs.width / 2, startY + 98);
 
         // Nút bấm gợi ý zoom
         ctx.fillStyle = '#d97706';
-        ctx.fillRect(cvs.width / 2 - 240, cvs.height - 95, 480, 52);
+        ctx.fillRect(cvs.width / 2 - 320, cvs.height - 98, 640, 56);
         ctx.fillStyle = '#ffffff';
-        ctx.font = 'bold 20px Arial, sans-serif';
-        ctx.fillText('🔍 BẤM ĐỂ PHÓNG TO / ĐỌC TOÀN MÀN HÌNH', cvs.width / 2, cvs.height - 62);
+        ctx.font = 'bold 24px Arial, sans-serif';
+        ctx.fillText('🔍 BẤM VÀO TƯỜNG ĐỂ PHÓNG TO / ĐỌC TOÀN BỘ CHI TIẾT', cvs.width / 2, cvs.height - 62);
 
       } else if (wallType === 'west') {
-        // TƯỜNG TÂY: LỊCH SỬ & NGÀY KỴ 12 THÁNG
+        // TƯỜNG TÂY: LỊCH SỬ DÒNG TỘC & BẢNG KỴ NHẬT 12 THÁNG
         ctx.fillStyle = '#065f46';
-        ctx.fillRect(cvs.width / 2 - 450, 65, 900, 75);
+        ctx.fillRect(cvs.width / 2 - 850, 60, 1700, 95);
         ctx.strokeStyle = '#ffd700';
-        ctx.lineWidth = 4;
-        ctx.strokeRect(cvs.width / 2 - 450, 65, 900, 75);
+        ctx.lineWidth = 5;
+        ctx.strokeRect(cvs.width / 2 - 850, 60, 1700, 95);
 
         ctx.fillStyle = '#fffbeb';
-        ctx.font = 'bold 36px "Cinzel", serif, Arial';
+        ctx.font = 'bold 50px "Cinzel", "Times New Roman", serif';
         ctx.textAlign = 'center';
-        ctx.fillText('LỊCH SỬ DÒNG TỘC & BẢNG KỴ NHẬT 12 THÁNG', cvs.width / 2, 118);
+        ctx.fillText('✦ LỊCH SỬ DÒNG TỘC & BẢNG KỴ NHẬT 12 THÁNG ✦', cvs.width / 2, 126);
+
+        drawTraditionalSeal(cvs.width / 2 - 930, 107, 'KỴ NHẬT', 'GIA PHẢ');
+        drawTraditionalSeal(cvs.width / 2 + 930, 107, 'PHỤNG', 'TỔ ĐƯỜNG');
 
         ctx.fillStyle = '#e2e8f0';
-        ctx.font = 'italic 22px Arial, sans-serif';
-        ctx.fillText('Thôn Thôi Ngôi, Yên Trị, Ý Yên, Nam Định (nay Hạc Bổng, Yên Đồng, Ninh Bình) · Hai Bà Cô Tổ Hồng Hoa & Bạch Hoa', cvs.width / 2, 175);
+        ctx.font = 'italic bold 30px Arial, sans-serif';
+        ctx.fillText('Thôn Thôi Ngôi, Yên Trị, Ý Yên, Nam Định (nay Hạc Bổng, Yên Đồng, Ninh Bình) · Hai Bà Cô Tổ Hồng Hoa & Bạch Hoa', cvs.width / 2, 192);
 
-        // Bảng ngày kỵ tóm tắt
         const kys = [
-          'Tháng 02: 06/2 Bà Đệ (Nhánh San)  |  08/2 Cụ Đỗ Văn Thư (Đời V)  |  13/2 Bà Vũ Thị Luật',
-          'Tháng 03: 08/3 Cụ Bà Vũ Thị Cố  |  09/3 Cụ Đỗ Kim Hứng & Cụ Đỗ Văn Trợ  |  12/3 CỤ BÀ THỦY TỔ',
+          'Tháng 02: 06/2 Bà Đệ (Nhánh San)   |   08/2 Cụ Đỗ Văn Thư (Đời V)   |   13/2 Bà Vũ Thị Luật',
+          'Tháng 03: 08/3 Cụ Bà Vũ Thị Cố   |   09/3 Cụ Đỗ Kim Hứng & Cụ Đỗ Văn Trợ   |   12/3 CỤ BÀ THỦY TỔ ĐỖ TỘC',
           'Tháng 04: 10/4 Cụ Bà Vũ Thị Nhớn (Phu nhân Cụ Đỗ Văn Cừ [8.2])',
-          'Tháng 05: 04/5 Cụ Đỗ Kim Toàn  |  11/5 Bà Vũ Thị Thép  |  15/5 Cụ Đỗ Kim Hứng  |  18/5 Cụ Bà Hiệu',
-          'Tháng 07: 16/7 Bà Vũ Thị Du (Phu nhân Cụ Đỗ Văn San - Phú Thọ)',
-          'Tháng 09: 14/9 Cụ Đỗ Văn Chân (Đời VII, Thọ >70)  |  22/9 Cụ Đỗ Văn San (Phú Thọ)',
-          'Tháng 10: 03/10 Bà Vũ Thị Nhạc  |  12/10 CỤ TỔ ĐỖ PHÚC QUẢNG  |  14/10 Bà Đỗ Thị Hiên  |  23/10 Cụ Bà Vũ Thị Tẻo',
-          'Tháng 11 & 12: 08/11 Ông Đỗ Văn Năm  |  01/12 Ông Đỗ Văn Cừ [8.2]  |  10/12 Cụ Đỗ Văn Quán [6.1]'
+          'Tháng 05: 04/5 Cụ Đỗ Kim Toàn   |   11/5 Bà Vũ Thị Thép   |   15/5 Cụ Đỗ Kim Hứng   |   18/5 Cụ Bà Hiệu',
+          'Tháng 07: 16/7 Bà Vũ Thị Du (Phu nhân Cụ Đỗ Văn San — Phú Thọ)',
+          'Tháng 09: 14/9 Cụ Đỗ Văn Chân (Đời VII, Thọ >70)   |   22/9 Cụ Đỗ Văn San (Phú Thọ)',
+          'Tháng 10: 03/10 Bà Vũ Thị Nhạc   |   12/10 CỤ TỔ ĐỖ PHÚC QUẢNG   |   14/10 Bà Đỗ Thị Hiên   |   23/10 Cụ Bà Vũ Thị Tẻo',
+          'Tháng 11 & 12: 08/11 Ông Đỗ Văn Năm   |   01/12 Ông Đỗ Văn Cừ [8.2]   |   10/12 Cụ Đỗ Văn Quán [6.1]'
         ];
 
-        let startY = 220;
+        let startY = 225;
         kys.forEach((k, idx) => {
-          ctx.fillStyle = idx === 6 ? 'rgba(212, 175, 55, 0.22)' : (idx % 2 === 0 ? 'rgba(255, 255, 255, 0.08)' : 'rgba(18, 230, 184, 0.08)');
-          ctx.fillRect(100, startY, cvs.width - 200, 56);
-          ctx.strokeStyle = idx === 6 ? '#ffd700' : 'rgba(212, 175, 55, 0.5)';
-          ctx.lineWidth = idx === 6 ? 2.5 : 1.5;
-          ctx.strokeRect(100, startY, cvs.width - 200, 56);
+          ctx.fillStyle = idx === 6 ? 'rgba(212, 175, 55, 0.28)' : (idx % 2 === 0 ? 'rgba(255, 255, 255, 0.09)' : 'rgba(16, 185, 129, 0.12)');
+          ctx.fillRect(160, startY, cvs.width - 320, 68);
+          ctx.strokeStyle = idx === 6 ? '#ffd700' : 'rgba(212, 175, 55, 0.6)';
+          ctx.lineWidth = idx === 6 ? 3 : 1.8;
+          ctx.strokeRect(160, startY, cvs.width - 320, 68);
 
-          // Chữ tháng kỵ vàng tươi hoặc trắng tinh khôi, chữ Thủy Tổ vàng kim rực rỡ
           ctx.fillStyle = idx === 6 ? '#ffd700' : '#ffffff';
-          ctx.font = idx === 6 ? 'bold 23px Arial, sans-serif' : 'bold 22px Arial, sans-serif';
-          ctx.fillText(k, cvs.width / 2, startY + 36);
-          startY += 72;
+          ctx.font = idx === 6 ? 'bold 31px Arial, sans-serif' : 'bold 29px Arial, sans-serif';
+          ctx.fillText(k, cvs.width / 2, startY + 44);
+          startY += 82;
         });
 
         // Nút bấm gợi ý zoom
         ctx.fillStyle = '#059669';
-        ctx.fillRect(cvs.width / 2 - 240, cvs.height - 95, 480, 52);
+        ctx.fillRect(cvs.width / 2 - 320, cvs.height - 98, 640, 56);
         ctx.fillStyle = '#ffffff';
-        ctx.font = 'bold 20px Arial, sans-serif';
-        ctx.fillText('🔍 BẤM ĐỂ PHÓNG TO / ĐỌC CHI TIẾT', cvs.width / 2, cvs.height - 62);
+        ctx.font = 'bold 24px Arial, sans-serif';
+        ctx.fillText('🔍 BẤM VÀO TƯỜNG ĐỂ PHÓNG TO / XEM BẢNG KỴ NHẬT', cvs.width / 2, cvs.height - 62);
 
       } else if (wallType === 'east') {
-        // TƯỜNG ĐÔNG: BẢN VẼ MẶT BẰNG & KỸ THUẬT 29 MỘ
+        // TƯỜNG ĐÔNG: BẢN VẼ MẶT BẰNG & QUY CHUẨN KỸ THUẬT 29 MỘ
         ctx.fillStyle = '#1e3a8a';
-        ctx.fillRect(cvs.width / 2 - 500, 65, 1000, 75);
+        ctx.fillRect(cvs.width / 2 - 950, 60, 1900, 95);
         ctx.strokeStyle = '#38bdf8';
-        ctx.lineWidth = 4;
-        ctx.strokeRect(cvs.width / 2 - 500, 65, 1000, 75);
+        ctx.lineWidth = 5;
+        ctx.strokeRect(cvs.width / 2 - 950, 60, 1900, 95);
 
         ctx.fillStyle = '#fffbeb';
-        ctx.font = 'bold 36px "Cinzel", serif, Arial';
+        ctx.font = 'bold 50px "Cinzel", "Times New Roman", serif';
         ctx.textAlign = 'center';
-        ctx.fillText('BẢN VẼ MẶT BẰNG QUY HOẠCH & QUY CHUẨN KỸ THUẬT', cvs.width / 2, 118);
+        ctx.fillText('✦ BẢN VẼ MẶT BẰNG QUY HOẠCH & QUY CHUẨN KỸ THUẬT ✦', cvs.width / 2, 126);
+
+        drawTraditionalSeal(cvs.width / 2 - 1030, 107, 'QUY HOẠCH', 'CHUẨN CAD');
+        drawTraditionalSeal(cvs.width / 2 + 1030, 107, 'KỸ THUẬT', 'KIÊN CỐ');
 
         ctx.fillStyle = '#38bdf8';
-        ctx.font = 'italic bold 23px Arial, sans-serif';
-        ctx.fillText('Khuôn Viên: 7.35m × 11.00m (80.85 m²) · Phân Vị 29 Ngôi Mộ Đá & Kết Cấu Móng BTCT', cvs.width / 2, 175);
+        ctx.font = 'italic bold 32px Arial, sans-serif';
+        ctx.fillText('Khuôn Viên: 7.35m × 11.00m (80.85 m²) · Phân Vị 29 Ngôi Mộ Đá & Kết Cấu Móng BTCT', cvs.width / 2, 192);
 
         const specs = [
-          '• Phủ bì khuôn viên: 7.35 m × 11.00 m  |  Lọt lòng: 6.95 m × 10.60 m (Tường đá bao dày 20 cm).',
-          '• Móng sau lăng: Rộng 40 cm  |  Móng 2 bên hông: Rộng 25 cm  |  Móng trước cổng: Rộng 30 cm.',
+          '• Phủ bì khuôn viên: 7.35 m × 11.00 m   |   Lọt lòng: 6.95 m × 10.60 m (Tường đá bao dày 20 cm).',
+          '• Móng sau lăng: Rộng 40 cm   |   Móng 2 bên hông: Rộng 25 cm   |   Móng trước cổng: Rộng 30 cm.',
           '• Móng mộ đá: Căn cứ kích thước đế đá và mỗi chiều cộng thêm 16 cm (vỉa hè móng rộng 8 cm mỗi bên).',
           '• Đại Lăng Thờ Đá: Chiều dài 5.20 m, phần giữa lồi ra 107 cm, dài phủ bì 1.50 m. Móng phần lồi: 1.30 m × 1.65 m.',
-          '• Cuốn Thư Đá: 40 cm × 167 cm (Cung Quý Tử, Hỷ Sự) chạm long phụng trấn trạch.',
-          '• Hố móng âm: Đào sâu 0.8 m đến 1.1 m, xây tường gạch xi măng vữa cát, đậy tấm đan bê tông phẳng.',
+          '• Cuốn Thư Đá: 40 cm × 167 cm (Cung Quý Tử, Hỷ Sự) chạm long phụng trấn trạch xua tà khí.',
+          '• Hố móng âm: Đào sâu 0.8 m đến 1.1 m, xây tường gạch xi măng vữa cát, đậy tấm đan bê tông phẳng chịu lực.',
           '• Dầm giằng BTCT: Dày 20 cm, 3 cây thép phi 10-12 chịu lực chống lún nứt công trình đá nặng hàng chục tấn.'
         ];
 
-        let startY = 220;
+        let startY = 225;
         specs.forEach((s) => {
-          ctx.fillStyle = 'rgba(255, 255, 255, 0.08)';
-          ctx.fillRect(100, startY, cvs.width - 200, 56);
-          ctx.strokeStyle = 'rgba(56, 189, 248, 0.55)';
-          ctx.lineWidth = 1.5;
-          ctx.strokeRect(100, startY, cvs.width - 200, 56);
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.09)';
+          ctx.fillRect(160, startY, cvs.width - 320, 68);
+          ctx.strokeStyle = 'rgba(56, 189, 248, 0.65)';
+          ctx.lineWidth = 1.8;
+          ctx.strokeRect(160, startY, cvs.width - 320, 68);
 
-          // Chữ trắng ngà nổi bần bật trên nền xanh xám
           ctx.fillStyle = '#ffffff';
-          ctx.font = 'bold 21px Arial, sans-serif';
+          ctx.font = 'bold 28px Arial, sans-serif';
           ctx.textAlign = 'left';
-          ctx.fillText(s, 130, startY + 36);
-          startY += 72;
+          ctx.fillText(s, 200, startY + 44);
+          startY += 82;
         });
 
         // Nút bấm gợi ý zoom
         ctx.fillStyle = '#0284c7';
-        ctx.fillRect(cvs.width / 2 - 240, cvs.height - 95, 480, 52);
+        ctx.fillRect(cvs.width / 2 - 320, cvs.height - 98, 640, 56);
         ctx.fillStyle = '#ffffff';
-        ctx.font = 'bold 20px Arial, sans-serif';
+        ctx.font = 'bold 24px Arial, sans-serif';
         ctx.textAlign = 'center';
-        ctx.fillText('🔍 BẤM ĐỂ PHÓNG TO / XEM BẢN VẼ CAD', cvs.width / 2, cvs.height - 62);
+        ctx.fillText('🔍 BẤM VÀO TƯỜNG ĐỂ PHÓNG TO / XEM BẢN VẼ CAD', cvs.width / 2, cvs.height - 62);
 
       } else if (wallType === 'south') {
         // TƯỜNG NAM: KIẾN TRÚC ĐÁ & PHONG THỦY THƯỚC LỖ BAN
         ctx.fillStyle = '#7c2d12';
-        ctx.fillRect(cvs.width / 2 - 500, 65, 1000, 75);
+        ctx.fillRect(cvs.width / 2 - 950, 60, 1900, 95);
         ctx.strokeStyle = '#fbbf24';
-        ctx.lineWidth = 4;
-        ctx.strokeRect(cvs.width / 2 - 500, 65, 1000, 75);
+        ctx.lineWidth = 5;
+        ctx.strokeRect(cvs.width / 2 - 950, 60, 1900, 95);
 
         ctx.fillStyle = '#fffbeb';
-        ctx.font = 'bold 34px "Cinzel", serif, Arial';
+        ctx.font = 'bold 48px "Cinzel", "Times New Roman", serif';
         ctx.textAlign = 'center';
-        ctx.fillText('ĐIÊU KHẮC ĐÁ MỸ NGHỆ & PHONG THỦY THƯỚC LỖ BAN', cvs.width / 2, 118);
+        ctx.fillText('✦ ĐIÊU KHẮC ĐÁ MỸ NGHỆ & PHONG THỦY THƯỚC LỖ BAN ✦', cvs.width / 2, 126);
+
+        drawTraditionalSeal(cvs.width / 2 - 1030, 107, 'PHONG THỦY', 'CÁT TƯỜNG');
+        drawTraditionalSeal(cvs.width / 2 + 1030, 107, 'LỖ BAN', 'ÂM TRẠCH');
 
         ctx.fillStyle = '#fde68a';
-        ctx.font = 'italic bold 23px Arial, sans-serif';
-        ctx.fillText('Thước Lỗ Ban 38.8cm Âm Phần · Đá Xanh Rêu Tự Nhiên Nguyên Khối Ninh Vân (Ninh Bình)', cvs.width / 2, 175);
+        ctx.font = 'italic bold 32px Arial, sans-serif';
+        ctx.fillText('Thước Lỗ Ban 38.8cm Âm Phần · Đá Xanh Rêu Tự Nhiên Nguyên Khối Ninh Vân (Ninh Bình)', cvs.width / 2, 192);
 
         const fengshuis = [
           '• Thế Đất Tọa Sơn Hướng Thủy: Lưng tựa vách núi đá sừng sững uy nghi, mặt nghinh hướng Đông đón ánh dương vĩnh hằng.',
-          '• Hướng Cổng: Cổng chính hướng Đông chếch Nam 5° đón trọn sinh khí và phúc lộc cát lành trường tồn.',
-          '• Kích thước Đại Lăng 5.20 m: Rơi vào cung ĐẠI CÁT, THIÊN KHÔI (Thước Lỗ Ban 38.8 cm).',
-          '• Mộ Song Thân Ông Bà (1.47 m × 0.89 m): Cung LỤC HỢP, THÊM ĐINH, VƯỢNG TÀI.',
-          '• Mộ Con (1.27 m × 0.81 m): Cung TIẾN BẢO, ĐĂNG KHOA.',
-          '• Cuốn Thư Đá (1.67 m): Cung QUÝ TỬ, HỶ SỰ.',
-          '• Đá xanh rêu Ninh Vân: Chạm trổ mái đao rồng phượng, búp sen trụ cổng, bình phong tứ quý trường tồn cùng thời gian.'
+          '• Hướng Cổng: Cổng chính hướng Đông chếch Nam 18° (Phương vị 108°) đón trọn sinh khí, vượng tài và phúc lộc cát lành trường tồn.',
+          '• Kích thước Đại Lăng 5.20 m: Rơi vào cung ĐẠI CÁT, THIÊN KHÔI (Thước Lỗ Ban 38.8 cm âm phần chuẩn phong thủy).',
+          '• Mộ Song Thân Ông Bà (1.47 m × 0.89 m): Cung LỤC HỢP, THÊM ĐINH, VƯỢNG TÀI trường cửu.',
+          '• Mộ Con (1.27 m × 0.81 m): Cung TIẾN BẢO, ĐĂNG KHOA đại cát hanh thông.',
+          '• Cuốn Thư Đá (1.67 m): Cung QUÝ TỬ, HỶ SỰ trấn yểm bình phong xua tan tà khí.',
+          '• Đá xanh rêu Ninh Vân: Chạm trổ mái đao rồng phượng, búp sen trụ cổng, bình phong tứ quý trường tồn cùng ngàn năm.'
         ];
 
-        let startY = 220;
+        let startY = 225;
         fengshuis.forEach((f) => {
-          ctx.fillStyle = 'rgba(255, 255, 255, 0.08)';
-          ctx.fillRect(100, startY, cvs.width - 200, 56);
-          ctx.strokeStyle = 'rgba(245, 158, 11, 0.55)';
-          ctx.lineWidth = 1.5;
-          ctx.strokeRect(100, startY, cvs.width - 200, 56);
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.09)';
+          ctx.fillRect(160, startY, cvs.width - 320, 68);
+          ctx.strokeStyle = 'rgba(245, 158, 11, 0.65)';
+          ctx.lineWidth = 1.8;
+          ctx.strokeRect(160, startY, cvs.width - 320, 68);
 
-          // Chữ trắng tinh và vàng kim nổi bật
           ctx.fillStyle = '#ffffff';
-          ctx.font = 'bold 21px Arial, sans-serif';
+          ctx.font = 'bold 28px Arial, sans-serif';
           ctx.textAlign = 'left';
-          ctx.fillText(f, 130, startY + 36);
-          startY += 72;
+          ctx.fillText(f, 200, startY + 44);
+          startY += 82;
         });
 
         // Nút bấm gợi ý zoom
         ctx.fillStyle = '#b45309';
-        ctx.fillRect(cvs.width / 2 - 240, cvs.height - 95, 480, 52);
+        ctx.fillRect(cvs.width / 2 - 320, cvs.height - 98, 640, 56);
         ctx.fillStyle = '#ffffff';
-        ctx.font = 'bold 20px Arial, sans-serif';
+        ctx.font = 'bold 24px Arial, sans-serif';
         ctx.textAlign = 'center';
-        ctx.fillText('🔍 BẤM ĐỂ PHÓNG TO / ĐỌC PHONG THỦY', cvs.width / 2, cvs.height - 62);
+        ctx.fillText('🔍 BẤM VÀO TƯỜNG ĐỂ PHÓNG TO / ĐỌC PHONG THỦY CHI TIẾT', cvs.width / 2, cvs.height - 62);
       }
 
       const tex = new THREE.CanvasTexture(cvs);
-      tex.anisotropy = renderer.capabilities.getMaxAnisotropy ? renderer.capabilities.getMaxAnisotropy() : 8;
-      tex.needsUpdate = true;
+      if (renderer && renderer.capabilities && renderer.capabilities.getMaxAnisotropy) {
+        tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+      } else {
+        tex.anisotropy = 16;
+      }
+      tex.generateMipmaps = true;
+      tex.minFilter = THREE.LinearMipmapLinearFilter;
+      tex.magFilter = THREE.LinearFilter;
       return tex;
     }
 
@@ -3487,12 +3646,15 @@
         corniceMesh.castShadow = true;
         wallGroup.add(corniceMesh);
 
-        // 4. Bảng Tranh Triển Lãm áp Texture Canvas độ phân giải cao
+        // 4. Bảng Tranh Triển Lãm áp Texture Canvas Ultra-HD 4096x1024 với Emissive Map giúp chữ rực sáng rõ từ xa
         const tex = createHeritageCanvasTexture(cfg.typeKey);
         const panelMat = new THREE.MeshStandardMaterial({
           map: tex,
-          roughness: 0.28,
-          metalness: 0.05
+          roughness: 0.35,
+          metalness: 0.05,
+          emissive: new THREE.Color(0xffffff),
+          emissiveMap: tex,
+          emissiveIntensity: 0.38 // Giúp chữ tự phát sáng dịu, đứng từ xa hoặc ngược sáng vẫn đọc cực rõ!
         });
 
         const panelW = Math.min(cfg.w - 2.5, 26.0);
