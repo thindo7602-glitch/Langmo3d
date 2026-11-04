@@ -8,7 +8,7 @@
   <!-- FONTS -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,600&family=Cinzel:wght@700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,600&family=Cinzel:wght@700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&family=Noto+Serif:ital,wght@0,700;0,900;1,700&family=Playfair+Display:ital,wght@0,700;0,900;1,700;1,900&family=Plus+Jakarta+Sans:wght@500;600;700;800;900&display=swap" rel="stylesheet">
 
   <!-- 3D LIBRARIES (THREE.JS, ORBITCONTROLS, TWEEN) -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -15112,6 +15112,269 @@
       return roofGroup;
     }
 
+    // 5.4.1 ĐẠI BIA THỜ ĐÁ KHẮC CHỮ VÀNG 'LĂNG MỘ ĐỖ GIA TỘC'
+    // =====================================================================
+    let sanctuarySteleTexture = null;
+    let sanctuarySteleCanvas = null;
+
+    function createSanctuarySteleTexture() {
+      const cvs = document.createElement('canvas');
+      cvs.width = 1024;
+      cvs.height = 1800;
+      sanctuarySteleCanvas = cvs;
+      const ctx = cvs.getContext('2d');
+
+      function renderSteleContent() {
+        // 1. NỀN ĐÁ XANH ĐEN CẨM THẠCH GRANITE MÀI BÓNG MỜ
+        const bgGrad = ctx.createLinearGradient(0, 0, 1024, 1800);
+        bgGrad.addColorStop(0.0, '#0f1719');
+        bgGrad.addColorStop(0.3, '#172528');
+        bgGrad.addColorStop(0.7, '#131f22');
+        bgGrad.addColorStop(1.0, '#0a1012');
+        ctx.fillStyle = bgGrad;
+        ctx.fillRect(0, 0, 1024, 1800);
+
+        // Vân đá tự nhiên (natural marble/granite veins)
+        ctx.save();
+        ctx.globalAlpha = 0.07;
+        for (let i = 0; i < 48; i++) {
+          ctx.strokeStyle = i % 2 === 0 ? '#5eead4' : '#cbd5e1';
+          ctx.lineWidth = 1 + (i % 4);
+          ctx.beginPath();
+          let sx = (i * 43) % 1024;
+          ctx.moveTo(sx, 0);
+          ctx.bezierCurveTo(
+            sx + 160 * Math.sin(i * 0.8), 550,
+            sx - 130 * Math.cos(i * 0.9), 1150,
+            sx + 90 * Math.sin(i * 1.5), 1800
+          );
+          ctx.stroke();
+        }
+        // Hạt khoáng sa thạch lấp lánh nhẹ
+        for (let j = 0; j < 9000; j++) {
+          const rx = Math.random() * 1024;
+          const ry = Math.random() * 1800;
+          ctx.fillStyle = Math.random() > 0.5 ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.15)';
+          ctx.fillRect(rx, ry, 2, 2);
+        }
+        ctx.restore();
+
+        // 2. KHUNG VIỀN ĐÔI NGHỆ THUẬT HOÀNG GIA CHẠM KHẮC ĐỒNG VÀNG
+        ctx.save();
+        // Viền ngoài
+        ctx.strokeStyle = '#b8860b';
+        ctx.lineWidth = 8;
+        ctx.strokeRect(38, 38, 948, 1724);
+
+        // Viền trong thanh nhã
+        ctx.strokeStyle = 'rgba(230, 202, 101, 0.85)';
+        ctx.lineWidth = 3;
+        ctx.strokeRect(52, 52, 920, 1696);
+
+        // 4 Góc Hồi Văn Triện Cổ / Góc Hoa Văn Thước Lỗ Ban
+        const drawCornerFret = (cx, cy, flipX, flipY) => {
+          ctx.save();
+          ctx.translate(cx, cy);
+          ctx.scale(flipX, flipY);
+          ctx.strokeStyle = '#d4af37';
+          ctx.lineWidth = 3.5;
+          ctx.beginPath();
+          ctx.moveTo(0, 50);
+          ctx.lineTo(0, 0);
+          ctx.lineTo(50, 0);
+          ctx.lineTo(50, 22);
+          ctx.lineTo(22, 22);
+          ctx.lineTo(22, 50);
+          ctx.stroke();
+
+          // Điểm nhấn hoa văn góc
+          ctx.fillStyle = '#fef08a';
+          ctx.beginPath();
+          ctx.arc(11, 11, 4.5, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        };
+        drawCornerFret(62, 62, 1, 1);
+        drawCornerFret(962, 62, -1, 1);
+        drawCornerFret(62, 1738, 1, -1);
+        drawCornerFret(962, 1738, -1, -1);
+        ctx.restore();
+
+        // 3. TRÁN BIA: HỌA TIẾT MẶT NGUYỆT TRIỀU DƯƠNG & VÂN MÂY CÁT TƯỜNG
+        ctx.save();
+        const crestY = 165;
+        // Mặt Nguyệt Triều Dương tỏa ánh hoàng kim
+        const sunGrad = ctx.createRadialGradient(512, crestY, 6, 512, crestY, 48);
+        sunGrad.addColorStop(0, '#fffbeb');
+        sunGrad.addColorStop(0.35, '#fbbf24');
+        sunGrad.addColorStop(0.75, '#d97706');
+        sunGrad.addColorStop(1, 'rgba(180, 83, 9, 0)');
+        ctx.fillStyle = sunGrad;
+        ctx.beginPath();
+        ctx.arc(512, crestY, 48, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Cánh mây uốn lượn phong thủy 2 bên
+        ctx.strokeStyle = '#dfb54d';
+        ctx.lineWidth = 3.5;
+        ctx.fillStyle = 'rgba(217, 119, 6, 0.22)';
+        // Cánh mây tả (trái)
+        ctx.beginPath();
+        ctx.moveTo(450, crestY);
+        ctx.bezierCurveTo(410, crestY - 35, 330, crestY - 20, 310, crestY + 12);
+        ctx.bezierCurveTo(340, crestY + 28, 380, crestY + 6, 420, crestY + 16);
+        ctx.bezierCurveTo(435, crestY + 20, 450, crestY + 10, 455, crestY);
+        ctx.stroke();
+        ctx.fill();
+
+        // Cánh mây hữu (phải)
+        ctx.beginPath();
+        ctx.moveTo(574, crestY);
+        ctx.bezierCurveTo(614, crestY - 35, 694, crestY - 20, 714, crestY + 12);
+        ctx.bezierCurveTo(684, crestY + 28, 644, crestY + 6, 604, crestY + 16);
+        ctx.bezierCurveTo(589, crestY + 20, 574, crestY + 10, 569, crestY);
+        ctx.stroke();
+        ctx.fill();
+
+        // Chuỗi ngọc liên châu trang trí trán bia
+        for (let b = -4; b <= 4; b++) {
+          if (b === 0) continue;
+          ctx.fillStyle = '#fde68a';
+          ctx.beginPath();
+          ctx.arc(512 + b * 22, crestY + 56, 3.5, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.restore();
+
+        // 4. CHÂN ĐẾ BIA: PHÙ ĐIÊU ĐÀI SEN TAM CẤP NÂNG ĐỠ THANH TỊNH
+        ctx.save();
+        const lotusBaseY = 1630;
+        ctx.strokeStyle = '#d4af37';
+        ctx.lineWidth = 3.5;
+        ctx.fillStyle = 'rgba(180, 83, 9, 0.28)';
+
+        // Cánh sen chính giữa
+        ctx.beginPath();
+        ctx.moveTo(512, lotusBaseY - 48);
+        ctx.bezierCurveTo(478, lotusBaseY - 22, 468, lotusBaseY + 2, 512, lotusBaseY + 16);
+        ctx.bezierCurveTo(556, lotusBaseY + 2, 546, lotusBaseY - 22, 512, lotusBaseY - 48);
+        ctx.stroke();
+        ctx.fill();
+
+        // Các cánh sen tả hữu 2 bên
+        [-1, 1].forEach(dir => {
+          ctx.beginPath();
+          ctx.moveTo(512 + dir * 36, lotusBaseY - 38);
+          ctx.bezierCurveTo(512 + dir * 68, lotusBaseY - 18, 512 + dir * 62, lotusBaseY + 6, 512 + dir * 30, lotusBaseY + 14);
+          ctx.stroke();
+          ctx.fill();
+
+          ctx.beginPath();
+          ctx.moveTo(512 + dir * 70, lotusBaseY - 26);
+          ctx.bezierCurveTo(512 + dir * 110, lotusBaseY - 6, 512 + dir * 98, lotusBaseY + 10, 512 + dir * 56, lotusBaseY + 16);
+          ctx.stroke();
+          ctx.fill();
+
+          // Sóng nước hải ba chân đế
+          ctx.beginPath();
+          ctx.moveTo(512 + dir * 20, lotusBaseY + 32);
+          ctx.lineTo(512 + dir * 270, lotusBaseY + 32);
+          ctx.lineWidth = 4;
+          ctx.strokeStyle = '#b8860b';
+          ctx.stroke();
+        });
+        ctx.restore();
+
+        // 5. NỘI DUNG CHÍNH: DÒNG CHỮ KHẮC TRÊN ĐÁ THEO HÀNG DỌC, MỖI CHỮ 1 HÀNG
+        // 'Lăng mộ Đỗ Gia Tộc theo hàng dọc, mỗi chữ 1 hàng, chữ to đậm hoành tráng và màu nổi vừa phải dạng khắc trên đá, chữ nghệ thuật'
+        const words = ['LĂNG', 'MỘ', 'ĐỖ', 'GIA', 'TỘC'];
+        const startY = 350;
+        const stepY = 255;
+        const fontSize = 160;
+
+        words.forEach((word, idx) => {
+          const cy = startY + idx * stepY;
+
+          ctx.save();
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          // Phông chữ nghệ thuật hoàng gia to đậm hoành tráng
+          ctx.font = '900 ' + fontSize + 'px "Playfair Display", "Noto Serif", "Cinzel", "Times New Roman", serif';
+
+          // A. BÓNG ĐỔ RÃNH ĐỤC SÂU (Deep Inner Chisel Cavity Shadow)
+          ctx.shadowColor = 'rgba(0, 0, 0, 0.96)';
+          ctx.shadowBlur = 14;
+          ctx.shadowOffsetX = 5;
+          ctx.shadowOffsetY = 7;
+          ctx.fillStyle = '#05080a';
+          ctx.fillText(word, 512, cy);
+
+          // B. VIỀN RÃNH ĐÁ VÁT SÂU ĐỤC CHÌM (Chiseled Groove Stroke)
+          ctx.shadowColor = 'transparent';
+          ctx.lineWidth = 14;
+          ctx.strokeStyle = '#080d0f';
+          ctx.strokeText(word, 512 + 2, cy + 2);
+
+          // C. VÁT SÁNG ÁNH KIM Ở MÉP DƯỚI NÉT CHỮ (Bevel Sunlight Highlight)
+          ctx.lineWidth = 5;
+          ctx.strokeStyle = 'rgba(255, 245, 205, 0.55)';
+          ctx.strokeText(word, 512 - 1.5, cy - 1.5);
+
+          // D. LỚP THẾP VÀNG SA THẠCH CỔ ĐIỂN CHÂN THẬT (Màu nổi vừa phải dạng chạm khắc thếp vàng trên đá)
+          const goldGrad = ctx.createLinearGradient(280, cy - 80, 744, cy + 80);
+          goldGrad.addColorStop(0.0, '#b8860b'); // Dark Goldenrod
+          goldGrad.addColorStop(0.2, '#d4af37'); // Antique Gold
+          goldGrad.addColorStop(0.45, '#fae19c'); // Mạ vàng nhũ sáng (tạo hiệu ứng gờ nổi)
+          goldGrad.addColorStop(0.7, '#c59b27'); // Vàng kim sa thạch
+          goldGrad.addColorStop(1.0, '#8c6514'); // Đồng cổ trầm mặc
+          ctx.fillStyle = goldGrad;
+          ctx.fillText(word, 512, cy);
+
+          // E. VIỀN MẠ KIM TINH XẢO SẮC NÉT (Outer Gold Trim)
+          ctx.lineWidth = 2.5;
+          ctx.strokeStyle = 'rgba(255, 248, 220, 0.75)';
+          ctx.strokeText(word, 512, cy);
+
+          // Họa tiết dấu chấm kim cương phong thủy ở giữa các từ (tạo nhịp điệu nghệ thuật)
+          if (idx < words.length - 1) {
+            const dotY = cy + stepY / 2;
+            ctx.fillStyle = '#d4af37';
+            ctx.beginPath();
+            ctx.arc(512, dotY, 4.5, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Hai gạch chỉ vàng hai bên chấm tròn
+            ctx.strokeStyle = 'rgba(212, 175, 55, 0.5)';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(468, dotY);
+            ctx.lineTo(495, dotY);
+            ctx.moveTo(529, dotY);
+            ctx.lineTo(556, dotY);
+            ctx.stroke();
+          }
+
+          ctx.restore();
+        });
+      }
+
+      renderSteleContent();
+
+      sanctuarySteleTexture = new THREE.CanvasTexture(cvs);
+      sanctuarySteleTexture.anisotropy = 16;
+      sanctuarySteleTexture.generateMipmaps = true;
+
+      // Đảm bảo font chữ đã tải hoàn chỉnh từ Google Fonts thì tự re-render và cập nhật texture
+      if (document.fonts) {
+        document.fonts.ready.then(() => {
+          renderSteleContent();
+          sanctuarySteleTexture.needsUpdate = true;
+        });
+      }
+
+      return sanctuarySteleTexture;
+    }
+
     // 5.5 LĂNG THỜ ĐÁ CHÍNH & CUỐN THƯ
     function buildStoneSanctuaryAndScreen() {
       const langThoGroup = new THREE.Group();
@@ -15161,22 +15424,78 @@
       langThoGroup.add(createDragonPillar(-0.55, centerZ + 0.38));
       langThoGroup.add(createDragonPillar(0.55, centerZ + 0.38));
 
-      // LÒNG KHÁM THỜ & BÀN HƯƠNG ÁN ĐÁ
-      const chamberBack = new THREE.Mesh(new THREE.BoxGeometry(1.36, 1.15, 0.20), materials.stonePolished);
-      chamberBack.position.set(0, 0.42 + 0.575, centerZ - 0.40);
+      // LÒNG KHÁM THỜ & ĐẠI BIA THỜ ĐÁ GIA TỘC: 'LĂNG MỘ ĐỖ GIA TỘC'
+      // =====================================================================
+      // Vách lưng sau của lòng khám thờ
+      const chamberBack = new THREE.Mesh(new THREE.BoxGeometry(1.36, 1.25, 0.20), materials.stonePolished);
+      chamberBack.position.set(0, 0.42 + 0.625, centerZ - 0.40);
+      chamberBack.castShadow = true;
+      chamberBack.receiveShadow = true;
       langThoGroup.add(chamberBack);
 
-      const tablet = new THREE.Mesh(new THREE.PlaneGeometry(0.45, 0.70), materials.goldTrim);
-      tablet.position.set(0, 0.42 + 0.65, centerZ - 0.29);
-      langThoGroup.add(tablet);
+      // 1. Chân bệ đài sen đỡ bia đá trong khám thờ
+      const steleBase = new THREE.Mesh(new THREE.BoxGeometry(0.70, 0.10, 0.16), materials.stoneSatin);
+      steleBase.position.set(0, 0.42 + 0.38 + 0.05, centerZ - 0.29);
+      steleBase.castShadow = true;
+      steleBase.receiveShadow = true;
+      langThoGroup.add(steleBase);
 
-      const altar = new THREE.Mesh(new THREE.BoxGeometry(0.85, 0.38, 0.42), materials.stonePolished);
-      altar.position.set(0, 0.42 + 0.19, centerZ - 0.10);
+      // 2. Thân khối bia đá xanh nguyên khối uy nghi
+      const steleBody = new THREE.Mesh(new THREE.BoxGeometry(0.60, 0.96, 0.08), materials.stonePolished);
+      steleBody.position.set(0, 0.42 + 0.38 + 0.10 + 0.48, centerZ - 0.29);
+      steleBody.castShadow = true;
+      steleBody.receiveShadow = true;
+      langThoGroup.add(steleBody);
+
+      // 3. Trán bia đá giật cấp chạm vầng nguyệt hoàng gia
+      const steleCrown = new THREE.Mesh(new THREE.BoxGeometry(0.52, 0.08, 0.09), materials.stonePolished);
+      steleCrown.position.set(0, 0.42 + 0.38 + 0.10 + 0.96 + 0.04, centerZ - 0.29);
+      steleCrown.castShadow = true;
+      langThoGroup.add(steleCrown);
+
+      const steleFinial = new THREE.Mesh(new THREE.SphereGeometry(0.065, 16, 16), materials.goldTrim);
+      steleFinial.position.set(0, 0.42 + 0.38 + 0.10 + 0.96 + 0.10, centerZ - 0.29);
+      langThoGroup.add(steleFinial);
+
+      // 4. MẶT BIA ĐÁ CHẠM KHẮC CHỮ VÀNG NGHỆ THUẬT: 'LĂNG MỘ ĐỖ GIA TỘC'
+      const steleTex = createSanctuarySteleTexture();
+      const steleMaterial = new THREE.MeshStandardMaterial({
+        map: steleTex,
+        roughness: 0.25,
+        metalness: 0.18,
+        envMap: envTexture,
+        envMapIntensity: 0.85
+      });
+      const steleFace = new THREE.Mesh(new THREE.PlaneGeometry(0.56, 0.94), steleMaterial);
+      steleFace.position.set(0, 0.42 + 0.38 + 0.10 + 0.48, centerZ - 0.29 + 0.041);
+      steleFace.receiveShadow = true;
+      steleFace.userData = {
+        type: 'langtho', id: 'langThoStele',
+        name: 'ĐẠI BIA THỜ ĐÁ GIA TỘC',
+        detail: 'Khắc dòng chữ: LĂNG MỘ ĐỖ GIA TỘC theo hàng dọc, chữ to đậm hoành tráng, chạm khắc chìm dát vàng sa thạch cổ truyền'
+      };
+      langThoGroup.add(steleFace);
+
+      // BÀN HƯƠNG ÁN ĐÁ TRONG KHÁM THỜ
+      const altar = new THREE.Mesh(new THREE.BoxGeometry(0.88, 0.38, 0.40), materials.stonePolished);
+      altar.position.set(0, 0.42 + 0.19, centerZ - 0.08);
+      altar.castShadow = true;
+      altar.receiveShadow = true;
       langThoGroup.add(altar);
 
-      const incense = new THREE.Mesh(new THREE.CylinderGeometry(0.10, 0.08, 0.18, 16), materials.goldTrim);
-      incense.position.set(0, 0.42 + 0.38 + 0.09, centerZ - 0.10);
+      // Bát hương mạ vàng kim chính giữa bàn thờ
+      const incense = new THREE.Mesh(new THREE.CylinderGeometry(0.10, 0.08, 0.18, 20), materials.goldTrim);
+      incense.position.set(0, 0.42 + 0.38 + 0.09, centerZ - 0.08);
+      incense.castShadow = true;
       langThoGroup.add(incense);
+
+      // Đôi lộc bình đá ngọc hai bên bàn hương án
+      [-0.34, 0.34].forEach(x => {
+        const vase = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.07, 0.22, 16), materials.stoneSatin);
+        vase.position.set(x, 0.42 + 0.38 + 0.11, centerZ - 0.08);
+        vase.castShadow = true;
+        langThoGroup.add(vase);
+      });
 
       // CỬA VÕNG TRÁN KHÁM: LƯỠNG LONG CHẦU NGUYỆT
       const lintel = new THREE.Mesh(new THREE.BoxGeometry(1.42, 0.22, 0.15), materials.stonePolished);
@@ -15750,7 +16069,7 @@
         statusEl.innerHTML = '<span style="color:#34d399; font-weight:800;">ĐÁ XANH NINH BÌNH</span>';
         typeEl.textContent = 'LONG ĐÌNH';
         document.getElementById('inspectObjCoords').textContent = 'Trục Giữa X=367.5, Y=5.0 cm';
-        document.getElementById('inspectStoneSize').textContent = '520 × 107 × 340 cm (3 Mái Đao Cong)';
+        document.getElementById('inspectStoneSize').textContent = '520 × 107 × 340 cm (Khắc đại bia: LĂNG MỘ ĐỖ GIA TỘC)';
         document.getElementById('inspectFoundationSize').textContent = '165 × 130 × 60 cm (Lồi)';
         document.getElementById('inspectFengShui').textContent = 'Cung Quý Tử 107cm (Vương Giả)';
         document.getElementById('inspectStoneWeight').textContent = '~8.50 Tấn (Chạm rồng tinh xảo)';
