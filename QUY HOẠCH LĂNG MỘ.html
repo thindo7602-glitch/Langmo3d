@@ -6081,6 +6081,18 @@
     </div>
 
     <div class="solar-body">
+      <!-- THÔNG TIN ĐỊA LÝ & HƯỚNG CỔNG PHONG THỦY THỜI GIAN THỰC -->
+      <div style="display:flex; flex-direction:column; gap:4px; margin-bottom:10px; padding:6px 10px; background:rgba(15,23,42,0.65); border:1px solid rgba(56,189,248,0.3); border-radius:8px; font-size:11px; color:#e2e8f0;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span style="color:#38bdf8; font-weight:700;">📍 GPS Thực Tế:</span>
+          <span style="font-family:monospace; color:#fef08a;">20°24'52"B, 105°37'13"Đ (45m)</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span style="color:#34d399; font-weight:700;">⛩️ Hướng Cổng:</span>
+          <span style="color:#6ee7b7; font-weight:600;">Đông chếch Nam 8° (PV 98° Đ)</span>
+        </div>
+      </div>
+
       <!-- CHUYỂN CHẾ ĐỘ NGÀY / ĐÊM -->
       <div class="solar-mode-tabs">
         <button class="solar-tab-btn active" id="btnTabDay" onclick="setCelestialMode('day')">
@@ -14094,13 +14106,14 @@
 
     // =====================================================================
     // HỆ THỐNG MÔ PHỎNG MẶT TRỜI THỜI GIAN THỰC CHUẨN THIÊN VĂN (NOAA)
-    // Toạ độ GPS Nghĩa trang: 20.414585° N, 105.620330° E
-    // Cổng lăng: Hướng Đông chếch Nam 18° (Phương vị địa lý 108° so với chính Bắc)
+    // Toạ độ GPS Nghĩa trang: 20°24'52" B, 105°37'13" Đ (20.4144295° N, 105.6201926° E)
+    // Cổng lăng: Hướng Đông chếch Nam 8° (Phương vị địa lý 98.0° Đ so với chính Bắc)
     // =====================================================================
     const CEMETERY_GEO = {
-      lat: 20.414585,      // Vĩ độ Bắc
-      lon: 105.620330,     // Kinh độ Đông
-      gateAzimuth: 108.0   // Cổng hướng Đông chếch Nam 18° (90° + 18° = 108°)
+      lat: 20.4144295,     // Vĩ độ Bắc (20°24'51.95" B) - Google Maps & La bàn thực địa
+      lon: 105.6201926,    // Kinh độ Đông (105°37'12.69" Đ)
+      altitude: 45.0,      // Cao độ 45m (La bàn iPhone thực địa)
+      gateAzimuth: 98.0    // Cổng hướng Đông chếch Nam 8° (90° + 8° = 98.0°)
     };
 
     function calculateRealSolarPosition(date) {
@@ -14174,16 +14187,16 @@
 
       const geoAz = (celestialState.azimuth + CEMETERY_GEO.gateAzimuth) % 360;
       let dirName = 'Chính Bắc';
-      if (geoAz >= 337.5 || geoAz < 22.5) dirName = 'Chính Bắc';
-      else if (geoAz >= 22.5 && geoAz < 67.5) dirName = 'Đông Bắc';
+      if (geoAz >= 337.5 || geoAz < 22.5) dirName = 'Chính Bắc (0°)';
+      else if (geoAz >= 22.5 && geoAz < 67.5) dirName = 'Đông Bắc (45°)';
       else if (geoAz >= 67.5 && geoAz < 112.5) {
-        dirName = Math.abs(geoAz - 108) <= 4 ? 'Cổng Lăng (Đông Chếch Nam 18°)' : 'Chính Đông';
+        dirName = Math.abs(geoAz - 98) <= 4 ? 'Cổng Lăng (Đông Chếch Nam 8° - 98°)' : (Math.abs(geoAz - 90) <= 4 ? 'Chính Đông (90°)' : 'Đông Nam');
       }
-      else if (geoAz >= 112.5 && geoAz < 157.5) dirName = 'Đông Nam';
-      else if (geoAz >= 157.5 && geoAz < 202.5) dirName = 'Chính Nam';
-      else if (geoAz >= 202.5 && geoAz < 247.5) dirName = 'Tây Nam';
-      else if (geoAz >= 247.5 && geoAz < 292.5) dirName = 'Chính Tây';
-      else if (geoAz >= 292.5 && geoAz < 337.5) dirName = 'Tây Bắc';
+      else if (geoAz >= 112.5 && geoAz < 157.5) dirName = 'Đông Nam (135°)';
+      else if (geoAz >= 157.5 && geoAz < 202.5) dirName = 'Chính Nam (180°)';
+      else if (geoAz >= 202.5 && geoAz < 247.5) dirName = 'Tây Nam (225°)';
+      else if (geoAz >= 247.5 && geoAz < 292.5) dirName = 'Chính Tây (270°)';
+      else if (geoAz >= 292.5 && geoAz < 337.5) dirName = 'Tây Bắc (315°)';
 
       if (valAz) valAz.textContent = `Mô hình: ${Math.round(celestialState.azimuth)}° | Địa lý: ${Math.round(geoAz)}° (${dirName})`;
 

@@ -1787,12 +1787,12 @@
       <!-- THÔNG TIN ĐỊA LÝ & HƯỚNG CỔNG PHONG THỦY THỜI GIAN THỰC -->
       <div style="display:flex; flex-direction:column; gap:4px; margin-bottom:10px; padding:6px 10px; background:rgba(15,23,42,0.65); border:1px solid rgba(56,189,248,0.3); border-radius:8px; font-size:11px; color:#e2e8f0;">
         <div style="display:flex; justify-content:space-between; align-items:center;">
-          <span style="color:#38bdf8; font-weight:700;">📍 GPS Nghĩa Trang:</span>
-          <span style="font-family:monospace; color:#fef08a;">20.4146°N, 105.6203°E</span>
+          <span style="color:#38bdf8; font-weight:700;">📍 GPS Thực Tế:</span>
+          <span style="font-family:monospace; color:#fef08a;">20°24'52"B, 105°37'13"Đ (45m)</span>
         </div>
         <div style="display:flex; justify-content:space-between; align-items:center;">
-          <span style="color:#34d399; font-weight:700;">⛩️ Cổng Nghĩa Trang:</span>
-          <span style="color:#6ee7b7; font-weight:600;">Đông chếch Nam 18° (PV 108°)</span>
+          <span style="color:#34d399; font-weight:700;">⛩️ Hướng Cổng:</span>
+          <span style="color:#6ee7b7; font-weight:600;">Đông chếch Nam 8° (PV 98° Đ)</span>
         </div>
       </div>
 
@@ -1821,9 +1821,9 @@
       <div class="solar-slider-row">
         <div class="solar-slider-header">
           <span>🧭 Hướng Nắng (Phương Vị)</span>
-          <span class="solar-slider-val" id="valAzimuth">5° (Trước Cổng - Đông Chếch Nam 5°)</span>
+          <span class="solar-slider-val" id="valAzimuth">0° (Trước Cổng - Đông Chếch Nam 8°)</span>
         </div>
-        <input type="range" class="solar-range-input" id="sliderAzimuth" min="0" max="360" value="5" oninput="onSolarSliderInput()">
+        <input type="range" class="solar-range-input" id="sliderAzimuth" min="0" max="360" value="0" oninput="onSolarSliderInput()">
       </div>
 
       <!-- THANH TRƯỢT ĐỘ CAO (BÓNG NGẮN/DÀI) -->
@@ -2300,7 +2300,7 @@
 
                 <!-- Cổng vào -->
                 <rect x="280" y="1080" width="175" height="20" fill="#10b981"/>
-                <text x="367.5" y="1065" fill="#10b981" font-size="18" font-weight="bold" text-anchor="middle">LỐI VÀO CỔNG CHÍNH ĐÔNG (CHẾCH NAM 5°)</text>
+                <text x="367.5" y="1065" fill="#10b981" font-size="18" font-weight="bold" text-anchor="middle">LỐI VÀO CỔNG CHÍNH ĐÔNG (CHẾCH NAM 8°)</text>
               </svg>
             </div>
 
@@ -2346,7 +2346,7 @@
               • <strong>1.47 m × 0.89 m (Mộ Hai Ông Bà):</strong> Rơi vào cung <em>Lục Hợp, Thêm Đinh, Vượng Tài</em>.<br>
               • <strong>1.27 m × 0.81 m (Mộ Con):</strong> Rơi vào cung <em>Tiến Bảo, Đăng Khoa</em>.<br>
               • <strong>1.67 m (Cuốn Thư):</strong> Rơi vào cung <em>Quý Tử, Hỷ Sự</em>.<br>
-              • <strong>Hướng lăng:</strong> Tọa Tây nhìn Đông chếch Nam 5° — Thế "Tọa Sơn Hướng Thủy", lưng tựa vách núi đá sừng sững uy nghi, mặt đón ánh bình minh ấm áp chiếu rọi vĩnh hằng.</p>
+              • <strong>Hướng lăng:</strong> Tọa Tây nhìn Đông chếch Nam 8° (Phương vị 98° Đ) — Thế "Tọa Sơn Hướng Thủy", lưng tựa vách núi đá sừng sững uy nghi, mặt đón ánh bình minh ấm áp chiếu rọi vĩnh hằng.</p>
             </div>
           </div>
         </div>
@@ -2490,13 +2490,13 @@
     lights.sun.shadow.mapSize.width = 2048;
     lights.sun.shadow.mapSize.height = 2048;
     lights.sun.shadow.camera.near = 0.5;
-    lights.sun.shadow.camera.far = 50;
-    lights.sun.shadow.camera.left = -11;
-    lights.sun.shadow.camera.right = 11;
-    lights.sun.shadow.camera.top = 11;
-    lights.sun.shadow.camera.bottom = -11;
+    lights.sun.shadow.camera.far = 65;
+    lights.sun.shadow.camera.left = -14;
+    lights.sun.shadow.camera.right = 14;
+    lights.sun.shadow.camera.top = 14;
+    lights.sun.shadow.camera.bottom = -14;
     lights.sun.shadow.bias = -0.0002;
-    lights.sun.shadow.radius = 2.5;
+    lights.sun.shadow.radius = 2.0;
     scene.add(lights.sun);
 
     // Fill light tạo ánh sáng phụ mềm mại
@@ -2533,7 +2533,7 @@
     // =====================================================================
     const celestialState = {
       mode: 'day', // 'day' | 'night'
-      azimuth: 5, // 5 độ: Mặt trời trên đầu phía trước cổng lăng (Cổng lăng gần chính Đông, chếch Nam 5 độ)
+      azimuth: 0, // 0 độ: Mặt trời trên đầu phía trước cổng lăng (Cổng lăng hướng Đông chếch Nam 8°)
       elevation: 55, // 55 độ: Trên đầu phía trước cổng lăng chiếu sáng rực rỡ
       radius: 25, // Bán kính thiên cầu
       isDragging: false,
@@ -2651,13 +2651,14 @@
 
     // =====================================================================
     // HỆ THỐNG MÔ PHỎNG MẶT TRỜI THỜI GIAN THỰC CHUẨN THIÊN VĂN (NOAA)
-    // Toạ độ GPS Nghĩa trang: 20.414585° N, 105.620330° E
-    // Cổng lăng: Hướng Đông chếch Nam 18° (Phương vị địa lý 108° so với chính Bắc)
+    // Toạ độ GPS Nghĩa trang: 20°24'52" B, 105°37'13" Đ (20.4144295° N, 105.6201926° E)
+    // Cổng lăng: Hướng Đông chếch Nam 8° (Phương vị địa lý 98.0° Đ so với chính Bắc)
     // =====================================================================
     const CEMETERY_GEO = {
-      lat: 20.414585,      // Vĩ độ Bắc
-      lon: 105.620330,     // Kinh độ Đông
-      gateAzimuth: 108.0   // Cổng hướng Đông chếch Nam 18° (90° + 18° = 108°)
+      lat: 20.4144295,     // Vĩ độ Bắc (20°24'51.95" B) - Google Maps & La bàn thực địa
+      lon: 105.6201926,    // Kinh độ Đông (105°37'12.69" Đ)
+      altitude: 45.0,      // Cao độ 45m so với mực nước biển
+      gateAzimuth: 98.0    // Cổng hướng Đông chếch Nam 8° (90° + 8° = 98.0°)
     };
 
     /**
@@ -2715,7 +2716,7 @@
       const alt_rad = Math.asin(sinAlt);
       const elevation = alt_rad * deg;
 
-      // Phương vị địa lý thực tế so với chính Bắc (0°=Bắc, 90°=Đông, 108°=Cổng lăng, 180°=Nam, 270°=Tây)
+      // Phương vị địa lý thực tế so với chính Bắc (0°=Bắc, 90°=Đông, 98°=Cổng lăng, 180°=Nam, 270°=Tây)
       const cosAlt = Math.cos(alt_rad);
       let azimuthGeo = 0;
       if (Math.abs(cosAlt) > 0.0001) {
@@ -2727,8 +2728,8 @@
       }
 
       // Phương vị quay trong hệ tọa độ 3D của mô hình:
-      // Trong mô hình 3D, hướng cổng là 0° (+Z). Cổng nghĩa trang thực tế quay 108° (Đông chếch Nam 18°).
-      // Khi Mặt Trời ở phương vị địa lý 108°, nó chiếu thẳng qua cổng vào lăng -> azimuthModel = 0°.
+      // Trong mô hình 3D, hướng cổng là 0° (+Z). Cổng nghĩa trang thực tế quay 98° (Đông chếch Nam 8°).
+      // Khi Mặt Trời ở phương vị địa lý 98°, nó chiếu thẳng qua cổng vào lăng -> azimuthModel = 0°.
       const azimuthModel = (azimuthGeo - CEMETERY_GEO.gateAzimuth + 360) % 360;
 
       return {
@@ -2751,16 +2752,16 @@
       // Tính phương vị địa lý thực tế từ góc mô hình 3D
       const geoAz = (celestialState.azimuth + CEMETERY_GEO.gateAzimuth) % 360;
       let dirName = 'Chính Bắc';
-      if (geoAz >= 337.5 || geoAz < 22.5) dirName = 'Chính Bắc';
-      else if (geoAz >= 22.5 && geoAz < 67.5) dirName = 'Đông Bắc';
+      if (geoAz >= 337.5 || geoAz < 22.5) dirName = 'Chính Bắc (0°)';
+      else if (geoAz >= 22.5 && geoAz < 67.5) dirName = 'Đông Bắc (45°)';
       else if (geoAz >= 67.5 && geoAz < 112.5) {
-        dirName = Math.abs(geoAz - 108) <= 4 ? 'Cổng Lăng (Đông Chếch Nam 18°)' : 'Chính Đông';
+        dirName = Math.abs(geoAz - 98) <= 4 ? 'Cổng Lăng (Đông Chếch Nam 8° - 98°)' : (Math.abs(geoAz - 90) <= 4 ? 'Chính Đông (90°)' : 'Đông Nam');
       }
-      else if (geoAz >= 112.5 && geoAz < 157.5) dirName = 'Đông Nam';
-      else if (geoAz >= 157.5 && geoAz < 202.5) dirName = 'Chính Nam';
-      else if (geoAz >= 202.5 && geoAz < 247.5) dirName = 'Tây Nam';
-      else if (geoAz >= 247.5 && geoAz < 292.5) dirName = 'Chính Tây';
-      else if (geoAz >= 292.5 && geoAz < 337.5) dirName = 'Tây Bắc';
+      else if (geoAz >= 112.5 && geoAz < 157.5) dirName = 'Đông Nam (135°)';
+      else if (geoAz >= 157.5 && geoAz < 202.5) dirName = 'Chính Nam (180°)';
+      else if (geoAz >= 202.5 && geoAz < 247.5) dirName = 'Tây Nam (225°)';
+      else if (geoAz >= 247.5 && geoAz < 292.5) dirName = 'Chính Tây (270°)';
+      else if (geoAz >= 292.5 && geoAz < 337.5) dirName = 'Tây Bắc (315°)';
 
       if (valAz) valAz.textContent = `Mô hình: ${Math.round(celestialState.azimuth)}° | Địa lý: ${Math.round(geoAz)}° (${dirName})`;
 
@@ -2806,8 +2807,8 @@
 
     // =====================================================================
     // CẬP NHẬT BÓNG MẶT TRỜI THEO THỜI GIAN THỰC (MẶC ĐỊNH)
-    // Tự động tính toán theo toạ độ GPS 20.414585°N, 105.620330°E
-    // Cổng hướng Đông chếch Nam 18°
+    // Tự động tính toán theo toạ độ GPS 20°24'52"B, 105°37'13"Đ (20.414430°N, 105.620193°E)
+    // Cổng hướng Đông chếch Nam 8° (Phương vị 98.0° Đ)
     // Ban đêm: Ánh đèn chiếu theo hướng mặt trời lúc 9 giờ sáng
     // =====================================================================
     function applyRealTimeSunAndShadow(isInit = false) {
@@ -2855,7 +2856,7 @@
       if (realChip) realChip.classList.add('active');
 
       if (isInit) {
-        console.log(`[RealTimeSun] Khởi động mặt trời thực tế: ${timeStr}, Mode: ${celestialState.mode}, AzModel: ${celestialState.azimuth.toFixed(1)}°, AzGeo: ${solar.azimuthGeo.toFixed(1)}°, Elevation: ${solar.elevation.toFixed(1)}° (GPS: 20.4146N, 105.6203E, Cổng 108°)`);
+        console.log(`[RealTimeSun] Khởi động mặt trời thực tế: ${timeStr}, Mode: ${celestialState.mode}, AzModel: ${celestialState.azimuth.toFixed(1)}°, AzGeo: ${solar.azimuthGeo.toFixed(1)}°, Elevation: ${solar.elevation.toFixed(1)}° (GPS: 20°24'52"B, 105°37'13"Đ, Cổng 98° Đ)`);
       }
     }
 
@@ -3472,7 +3473,7 @@
 
         const fengshuis = [
           '• Thế Đất Tọa Sơn Hướng Thủy: Lưng tựa vách núi đá sừng sững uy nghi, mặt nghinh hướng Đông đón ánh dương vĩnh hằng.',
-          '• Hướng Cổng: Cổng chính hướng Đông chếch Nam 18° (Phương vị 108°) đón trọn sinh khí, vượng tài và phúc lộc cát lành trường tồn.',
+          '• Hướng Cổng: Cổng chính hướng Đông chếch Nam 8° (Phương vị 98° Đ) đón trọn sinh khí, vượng tài và phúc lộc cát lành trường tồn.',
           '• Kích thước Đại Lăng 5.20 m: Rơi vào cung ĐẠI CÁT, THIÊN KHÔI (Thước Lỗ Ban 38.8 cm âm phần chuẩn phong thủy).',
           '• Mộ Song Thân Ông Bà (1.47 m × 0.89 m): Cung LỤC HỢP, THÊM ĐINH, VƯỢNG TÀI trường cửu.',
           '• Mộ Con (1.27 m × 0.81 m): Cung TIẾN BẢO, ĐĂNG KHOA đại cát hanh thông.',
@@ -3546,12 +3547,12 @@
         metalness: 0.15
       });
 
-      // Cấu hình 4 bức tường (Bắc, Nam, Tây, Đông)
+      // Cấu hình 4 bức tường Di sản theo phương vị thực tế (Cổng 98° Đông chếch Nam 8°)
       const wallConfigs = [
         {
           id: 'wall_north',
           typeKey: 'north',
-          name: 'TƯỜNG BẮC: PHẢ ĐỒ 11 THẾ HỆ HỌ ĐỖ',
+          name: 'TƯỜNG HẬU / TÂY (TÂY CHẾCH BẮC 8°): PHẢ ĐỒ 11 THẾ HỆ HỌ ĐỖ',
           x: 0, y: 2.85, z: -17.0,
           w: 32.0, h: 5.7, d: 0.45,
           rotY: 0
@@ -3559,7 +3560,7 @@
         {
           id: 'wall_south',
           typeKey: 'south',
-          name: 'TƯỜNG NAM: KIẾN TRÚC ĐÁ & PHONG THỦY THƯỚC LỖ BAN',
+          name: 'TƯỜNG TIỀN / ĐÔNG (ĐÔNG CHẾCH NAM 8°): KIẾN TRÚC ĐÁ & PHONG THỦY THƯỚC LỖ BAN',
           x: 0, y: 2.85, z: 17.0,
           w: 32.0, h: 5.7, d: 0.45,
           rotY: Math.PI
@@ -3567,7 +3568,7 @@
         {
           id: 'wall_west',
           typeKey: 'west',
-          name: 'TƯỜNG TÂY: LỊCH SỬ DÒNG TỘC & BẢNG KỴ NHẬT 12 THÁNG',
+          name: 'TƯỜNG TẢ / BẮC (BẮC CHẾCH ĐÔNG 8°): LỊCH SỬ DÒNG TỘC & BẢNG KỴ NHẬT 12 THÁNG',
           x: -15.5, y: 2.85, z: 0,
           w: 34.0, h: 5.7, d: 0.45,
           rotY: Math.PI / 2
@@ -3575,7 +3576,7 @@
         {
           id: 'wall_east',
           typeKey: 'east',
-          name: 'TƯỜNG ĐÔNG: BẢN VẼ MẶT BẰNG QUY HOẠCH & KỸ THUẬT 29 MỘ',
+          name: 'TƯỜNG HỮU / NAM (NAM CHẾCH TÂY 8°): BẢN VẼ MẶT BẰNG QUY HOẠCH & KỸ THUẬT 29 MỘ',
           x: 15.5, y: 2.85, z: 0,
           w: 34.0, h: 5.7, d: 0.45,
           rotY: -Math.PI / 2
