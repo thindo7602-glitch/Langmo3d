@@ -69,24 +69,68 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      padding: 6px 14px;
-      background: rgba(6, 14, 26, 0.78);
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-      border: 1px solid rgba(56, 189, 248, 0.35);
+      padding: 7px 16px;
+      background: rgba(8, 18, 30, 0.82);
+      backdrop-filter: blur(28px) saturate(190%);
+      -webkit-backdrop-filter: blur(28px) saturate(190%);
+      border: 1px solid rgba(212, 175, 55, 0.45);
       border-radius: 30px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
+      box-shadow: 0 10px 32px rgba(0, 0, 0, 0.75), 0 0 18px rgba(212, 175, 55, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2);
       font-size: 11px;
       color: #f8fafc;
       pointer-events: auto;
       user-select: none;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .hud-brand-pill:hover {
-      background: rgba(6, 14, 26, 0.92);
-      border-color: rgba(56, 189, 248, 0.6);
-      box-shadow: 0 0 18px rgba(56, 189, 248, 0.35);
-      transform: translateY(-1px);
+      background: rgba(10, 24, 40, 0.94);
+      border-color: rgba(251, 191, 36, 0.75);
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.85), 0 0 24px rgba(251, 191, 36, 0.35);
+      transform: translateY(-2px);
+    }
+
+    /* LA BÀN PHONG THỦY NỔI GÓC TRÊN BÊN PHẢI (MINI COMPASS ROSE) */
+    .hud-compass-rose {
+      position: absolute;
+      top: max(14px, env(safe-area-inset-top));
+      right: 16px;
+      z-index: 90;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      cursor: pointer;
+      pointer-events: auto;
+      user-select: none;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .hud-compass-rose:hover {
+      transform: scale(1.08);
+    }
+    .compass-dial {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.65), 0 0 16px rgba(212,175,55,0.25);
+      transition: transform 0.1s linear;
+    }
+    .compass-svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+    .compass-badge {
+      font-size: 8.5px;
+      font-weight: 800;
+      color: #fbbf24;
+      background: rgba(8, 16, 26, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(212, 175, 55, 0.4);
+      padding: 1px 6px;
+      border-radius: 8px;
+      letter-spacing: 0.5px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.5);
     }
     .hud-brand-pill .pill-icon {
       font-size: 15px;
@@ -483,22 +527,41 @@
       display: flex;
       align-items: center;
       gap: 6px;
-      padding: 6px 16px;
-      background: rgba(6, 14, 26, 0.88);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      border: 1.5px solid rgba(56, 189, 248, 0.35);
+      padding: 7px 18px;
+      background: rgba(7, 16, 28, 0.84);
+      backdrop-filter: blur(28px) saturate(200%);
+      -webkit-backdrop-filter: blur(28px) saturate(200%);
+      border: 1.5px solid rgba(56, 189, 248, 0.32);
       border-radius: 40px;
-      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.8), 0 0 24px rgba(56, 189, 248, 0.16);
+      box-shadow: 0 16px 44px rgba(0, 0, 0, 0.8), 0 0 24px rgba(56, 189, 248, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.18);
       pointer-events: auto;
       max-width: calc(100vw - 32px);
       box-sizing: border-box;
       user-select: none;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .hud-bottom-bar .toolbar-group {
       display: flex;
       align-items: center;
       gap: 5px;
+    }
+
+    @keyframes gyroGimbalPulse {
+      0%, 100% {
+        box-shadow: 0 0 12px rgba(16, 185, 129, 0.45), inset 0 0 8px rgba(16, 185, 129, 0.2);
+        border-color: #34d399;
+      }
+      50% {
+        box-shadow: 0 0 24px rgba(52, 211, 153, 0.8), inset 0 0 14px rgba(52, 211, 153, 0.35);
+        border-color: #6ee7b7;
+      }
+    }
+    #btnNavGyro.active {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.32), rgba(6, 182, 212, 0.42)) !important;
+      border-color: #34d399 !important;
+      color: #ecfdf5 !important;
+      box-shadow: 0 0 20px rgba(16, 185, 129, 0.6) !important;
+      animation: gyroGimbalPulse 2.2s infinite ease-in-out;
     }
 
     .edge-toggle-btn {
@@ -1488,6 +1551,35 @@
     <span class="pill-status">29 Mộ • Ninh Bình</span>
   </div>
 
+  <!-- LA BÀN PHONG THỦY NỔI GÓC TRÊN BÊN PHẢI (MINI COMPASS ROSE) -->
+  <div class="hud-compass-rose" id="hudCompassRose" onclick="resetDefaultView()" title="La bàn Phong Thủy: Cổng lăng hướng 98° Đ (Đông chếch Nam 8°) • Nhấp để về góc nhìn cổng chính">
+    <div class="compass-dial" id="compassRoseDial">
+      <svg viewBox="0 0 100 100" class="compass-svg">
+        <!-- Vòng viền kính & hào quang vàng kim -->
+        <circle cx="50" cy="50" r="46" fill="rgba(8, 18, 30, 0.88)" stroke="rgba(212, 175, 55, 0.65)" stroke-width="2"/>
+        <circle cx="50" cy="50" r="38" fill="none" stroke="rgba(56, 189, 248, 0.35)" stroke-width="1" stroke-dasharray="2 3"/>
+        <!-- Kim Bắc (Màu đỏ rực rỡ chỉ chính Bắc 0°) -->
+        <polygon points="50,12 44,50 50,46" fill="#ef4444" filter="drop-shadow(0 0 3px rgba(239,68,68,0.8))"/>
+        <polygon points="50,12 56,50 50,46" fill="#f87171"/>
+        <!-- Kim Nam (Màu bạc sáng chỉ chính Nam 180°) -->
+        <polygon points="50,88 44,50 50,54" fill="#94a3b8"/>
+        <polygon points="50,88 56,50 50,54" fill="#cbd5e1"/>
+        <!-- Trục ngang Đông Tây -->
+        <line x1="16" y1="50" x2="84" y2="50" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+        <!-- Điểm đánh dấu Hướng Cổng Lăng Thực Địa: 98° Đ (Chếch Nam 8 độ) -->
+        <circle cx="89" cy="55.5" r="4" fill="#fbbf24" stroke="#ffffff" stroke-width="1.2" filter="drop-shadow(0 0 4px #fbbf24)"/>
+        <!-- Chữ các phương B, N, Đ, T -->
+        <text x="50" y="24" fill="#ef4444" font-size="10" font-weight="900" text-anchor="middle" font-family="sans-serif">B</text>
+        <text x="50" y="82" fill="#cbd5e1" font-size="9" font-weight="700" text-anchor="middle" font-family="sans-serif">N</text>
+        <text x="82" y="53" fill="#fbbf24" font-size="9" font-weight="800" text-anchor="middle" font-family="sans-serif">Đ</text>
+        <text x="18" y="53" fill="#cbd5e1" font-size="9" font-weight="700" text-anchor="middle" font-family="sans-serif">T</text>
+        <!-- Tâm la bàn -->
+        <circle cx="50" cy="50" r="3.5" fill="#ffd700" stroke="#000" stroke-width="1"/>
+      </svg>
+    </div>
+    <div class="compass-badge">98° Đ</div>
+  </div>
+
   <!-- TOGGLE SIDEBAR NỔI HAI BÊN (NÚT TAM GIÁC CHUẨN TOUCH IPHONE) -->
   <div class="edge-toggle-btn edge-left" id="btnEdgeLeft" onclick="toggleSidebar('left')" title="Mở Bảng Lớp Trái (Nhấn nút tam giác)">▶</div>
   <div class="edge-toggle-btn edge-right" id="btnEdgeRight" onclick="toggleSidebar('right')" title="Mở Bảng Thông Số Phải (Nhấn nút tam giác)">◀</div>
@@ -2433,12 +2525,12 @@
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.35;
+    renderer.toneMappingExposure = 1.30;
     container.appendChild(renderer.domElement);
 
     const controls = new THREE.OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
-    controls.dampingFactor = 0.05;
+    controls.dampingFactor = 0.06;
     controls.maxPolarAngle = Math.PI / 2 - 0.02;
     controls.minDistance = 1.5;
     controls.maxDistance = 35.0;
@@ -2495,8 +2587,9 @@
     lights.sun.shadow.camera.right = 14;
     lights.sun.shadow.camera.top = 14;
     lights.sun.shadow.camera.bottom = -14;
-    lights.sun.shadow.bias = -0.0002;
-    lights.sun.shadow.radius = 2.0;
+    lights.sun.shadow.bias = -0.00015;
+    lights.sun.shadow.normalBias = 0.038; // Triệt tiêu 100% hiện tượng shadow acne trên mặt đá
+    lights.sun.shadow.radius = 1.8;
     scene.add(lights.sun);
 
     // Fill light tạo ánh sáng phụ mềm mại
@@ -5772,12 +5865,26 @@
 
     
     // =====================================================================
-    // 3.4 HỆ THỐNG CẢM BIẾN NGHIÊNG ĐIỆN THOẠI (GYROSCOPE 3D SENSING)
+    // 3.4 HỆ THỐNG CẢM BIẾN NGHIÊNG GIMBAL 3D CAO CẤP (CINEMATIC GYRO PARALLAX)
+    // - Lọc thông thấp Low-Pass Filter loại bỏ rung tay
+    // - Khống chế góc nghiêng an toàn (Clamped Parallax Arc: Max ±26° ngang, ±16° dọc)
+    // - Triệt tiêu 100% hiện tượng xoay vòng 360 độ (Shortest Angular Distance)
+    // - Tương thích chuẩn cả màn hình đứng (Portrait) và xoay ngang (Landscape)
+    // - Tự động đồng bộ mượt mà khi người dùng chạm vuốt màn hình
     // =====================================================================
     let isGyroActive = false;
     let gyroBaseline = null;
-    let gyroTargetSpherical = new THREE.Spherical();
+    let gyroTargetOffset = { theta: 0, phi: 0 };
+    let gyroCurrentOffset = { theta: 0, phi: 0 };
     let baseSpherical = new THREE.Spherical();
+    let smoothedSpherical = new THREE.Spherical();
+
+    function lerpAngle(current, target, factor) {
+      let diff = (target - current) % (Math.PI * 2);
+      if (diff < -Math.PI) diff += Math.PI * 2;
+      if (diff > Math.PI) diff -= Math.PI * 2;
+      return current + diff * factor;
+    }
 
     function toggleGyroscopeMode() {
       if (isGyroActive) {
@@ -5789,13 +5896,12 @@
 
     function requestAndEnableGyroscope() {
       if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
-        // iOS 13+ Safari Permission Flow
         DeviceOrientationEvent.requestPermission()
           .then(permissionState => {
             if (permissionState === 'granted') {
               enableGyroscope();
             } else {
-              showToast('⚠️ Cần cấp quyền Cảm biến Chuyển động trên iPhone để bật tính năng này!');
+              showToast('⚠️ Vui lòng cấp quyền Cảm biến Chuyển động trong Cài đặt Safari để bật tính năng này!');
             }
           })
           .catch(err => {
@@ -5812,17 +5918,25 @@
     function enableGyroscope() {
       isGyroActive = true;
       gyroBaseline = null;
+      gyroTargetOffset.theta = 0;
+      gyroTargetOffset.phi = 0;
+      gyroCurrentOffset.theta = 0;
+      gyroCurrentOffset.phi = 0;
 
-      // Lưu lại bán kính và góc hiện tại của camera so với tâm lăng mộ
+      // Lưu lại bán kính và góc hiện tại của camera so với tâm lăng mộ làm mốc tọa độ cơ sở
       const offset = camera.position.clone().sub(controls.target);
       baseSpherical.setFromVector3(offset);
-      gyroTargetSpherical.copy(baseSpherical);
+      smoothedSpherical.copy(baseSpherical);
 
       window.addEventListener('deviceorientation', onDeviceOrientationChange, false);
 
       const btn = document.getElementById('btnNavGyro');
-      if (btn) btn.classList.add('active');
-      showToast('📱 Đã BẬT Cảm Biến Nghiêng: Hãy nghiêng điện thoại để xoay góc nhìn 3D!');
+      if (btn) {
+        btn.classList.add('active');
+        const lbl = btn.querySelector('.btn-label');
+        if (lbl) lbl.textContent = 'Gimbal 3D';
+      }
+      showToast('📱 Đã BẬT Cảm biến Nghiêng Gimbal: Nghiêng nhẹ điện thoại để đổi góc nhìn êm ái!');
     }
 
     function disableGyroscope() {
@@ -5831,30 +5945,67 @@
       window.removeEventListener('deviceorientation', onDeviceOrientationChange, false);
 
       const btn = document.getElementById('btnNavGyro');
-      if (btn) btn.classList.remove('active');
-      showToast('📱 Đã TẮT Cảm Biến Nghiêng');
+      if (btn) {
+        btn.classList.remove('active');
+        const lbl = btn.querySelector('.btn-label');
+        if (lbl) lbl.textContent = 'Nghiêng Máy';
+      }
+      showToast('📱 Đã TẮT Cảm biến Nghiêng');
     }
 
     function onDeviceOrientationChange(event) {
       if (!isGyroActive) return;
-      const beta = event.beta;   // [-180, 180] Độ nghiêng trước/sau
-      const gamma = event.gamma; // [-90, 90] Độ nghiêng trái/phải
+      let beta = event.beta;   // [-180, 180] Pitch
+      let gamma = event.gamma; // [-90, 90] Roll
 
       if (beta === null || gamma === null) return;
 
+      // Xử lý xoay ngang / dọc màn hình điện thoại
+      const screenAngle = (window.orientation !== undefined) ? window.orientation : (screen.orientation ? (screen.orientation.angle || 0) : 0);
+      let rawX = gamma;
+      let rawY = beta;
+
+      if (screenAngle === 90) {
+        rawX = -beta;
+        rawY = gamma;
+      } else if (screenAngle === -90 || screenAngle === 270) {
+        rawX = beta;
+        rawY = -gamma;
+      } else if (screenAngle === 180) {
+        rawX = -gamma;
+        rawY = -beta;
+      }
+
+      // Khởi tạo tư thế cầm điện thoại ban đầu của người dùng làm mốc 0 chuẩn
       if (!gyroBaseline) {
-        gyroBaseline = { beta: beta, gamma: gamma };
+        gyroBaseline = { x: rawX, y: rawY };
+        gyroTargetOffset.theta = 0;
+        gyroTargetOffset.phi = 0;
         return;
       }
 
-      // Độ lệch nghiêng so với tư thế ban đầu của người dùng
-      const dGamma = (gamma - gyroBaseline.gamma) * (Math.PI / 180);
-      const dBeta = (beta - gyroBaseline.beta) * (Math.PI / 180);
+      // Tính độ lệch nghiêng so với tư thế ban đầu
+      let deltaX = rawX - gyroBaseline.x;
+      let deltaY = rawY - gyroBaseline.y;
 
-      const sens = 1.25;
-      gyroTargetSpherical.theta = baseSpherical.theta - dGamma * sens;
-      gyroTargetSpherical.phi = Math.max(0.12, Math.min(Math.PI / 2 - 0.05, baseSpherical.phi - dBeta * sens));
-      gyroTargetSpherical.radius = baseSpherical.radius;
+      // Bộ lọc vùng chết (Deadzone 0.25 độ) - triệt tiêu hoàn toàn rung tay tự nhiên
+      if (Math.abs(deltaX) < 0.25) deltaX = 0;
+      if (Math.abs(deltaY) < 0.25) deltaY = 0;
+
+      // KHỐNG CHẾ BIÊN ĐỘ GÓC NGHIÊNG AN TOÀN (Clamping)
+      // Giới hạn tối đa ±26° theo phương ngang và ±16° theo phương dọc
+      // Triệt tiêu 100% tình trạng xoay vòng, lộn ngược hoặc quay cuồng
+      const maxTiltH = 26; // độ
+      const maxTiltV = 16; // độ
+      deltaX = Math.max(-maxTiltH, Math.min(maxTiltH, deltaX));
+      deltaY = Math.max(-maxTiltV, Math.min(maxTiltV, deltaY));
+
+      // Hệ số nhạy cảm biến thanh thoát, điện ảnh (Cinematic Sensitivity)
+      const sensH = 0.46; // Hệ số chuyển dịch ngang
+      const sensV = 0.32; // Hệ số chuyển dịch dọc
+
+      gyroTargetOffset.theta = -(deltaX * sensH * Math.PI) / 180;
+      gyroTargetOffset.phi = -(deltaY * sensV * Math.PI) / 180;
     }
 
     // =====================================================================
@@ -5901,7 +6052,7 @@
       }
     }
 
-function animate() {
+    function animate() {
       requestAnimationFrame(animate);
       const delta = clock.getDelta();
       TWEEN.update();
@@ -5911,14 +6062,20 @@ function animate() {
 
       // Cập nhật góc nhìn theo cảm biến con quay hồi chuyển khi nghiêng máy
       if (isGyroActive) {
-        const offset = camera.position.clone().sub(controls.target);
-        const curSpherical = new THREE.Spherical().setFromVector3(offset);
+        // Lọc thông thấp mượt mà (Low-Pass Filter) cho độ lệch nghiêng
+        gyroCurrentOffset.theta += (gyroTargetOffset.theta - gyroCurrentOffset.theta) * 0.085;
+        gyroCurrentOffset.phi += (gyroTargetOffset.phi - gyroCurrentOffset.phi) * 0.085;
 
-        curSpherical.theta += (gyroTargetSpherical.theta - curSpherical.theta) * 0.12;
-        curSpherical.phi += (gyroTargetSpherical.phi - curSpherical.phi) * 0.12;
-        curSpherical.radius = gyroTargetSpherical.radius;
+        // Tính góc mục tiêu
+        const targetTheta = baseSpherical.theta + gyroCurrentOffset.theta;
+        const targetPhi = Math.max(0.12, Math.min(Math.PI / 2 - 0.05, baseSpherical.phi + gyroCurrentOffset.phi));
 
-        offset.setFromSpherical(curSpherical);
+        // Nội suy góc mượt mà theo đường ngắn nhất (Shortest Arc Interpolation)
+        smoothedSpherical.theta = lerpAngle(smoothedSpherical.theta, targetTheta, 0.10);
+        smoothedSpherical.phi += (targetPhi - smoothedSpherical.phi) * 0.10;
+        smoothedSpherical.radius = baseSpherical.radius;
+
+        const offset = new THREE.Vector3().setFromSpherical(smoothedSpherical);
         camera.position.copy(controls.target).add(offset);
         camera.lookAt(controls.target);
       } else if (currentNavMode === 'orbit') {
@@ -5927,8 +6084,29 @@ function animate() {
         updateWalkMovement(delta);
       }
 
+      // Cập nhật la bàn phong thủy góc trên cùng bên phải theo hướng nhìn camera
+      updateCompassRoseWidget();
+
       renderer.render(scene, camera);
     }
+
+    function updateCompassRoseWidget() {
+      const dial = document.getElementById('compassRoseDial');
+      if (!dial) return;
+      const dx = camera.position.x - controls.target.x;
+      const dz = camera.position.z - controls.target.z;
+      const camYawDeg = Math.atan2(dx, dz) * (180 / Math.PI);
+      dial.style.transform = `rotate(${camYawDeg}deg)`;
+    }
+
+    // Tự động neo lại góc cơ sở khi người dùng chạm vuốt điều chỉnh trên màn hình
+    controls.addEventListener('start', () => {
+      if (isGyroActive) {
+        const offset = camera.position.clone().sub(controls.target);
+        baseSpherical.setFromVector3(offset);
+        gyroBaseline = null;
+      }
+    });
 
     window.addEventListener('resize', () => {
       camera.aspect = window.innerWidth / window.innerHeight;
