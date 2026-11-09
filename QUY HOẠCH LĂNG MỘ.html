@@ -6759,9 +6759,22 @@
       //                Cách Hàng 5 đúng 63cm (Cung Vượng Đinh), cách rào đá trước 85cm (Cung Tiến Bảo).
       // - MỘ BÉ GÓC DƯỚI TRÁI: 50×80cm (X = 40.0, Y = 980.0..1060.0cm), cách rào đá trái 15cm, cách rào trước 15cm.
       // =====================================================================
+      // =====================================================================
+      // MẪU QUY HOẠCH CHUẨN MỰC CHUYÊN GIA: 7.35m × 11.00m (32 NGÔI MỘ)
+      // - HÀNG 1 (6 MỘ): 01, 02, BÀ, ÔNG, 05, 06 (Dóng phẳng chân Y = 339cm)
+      // - HÀNG 2 (6 MỘ): 07, 08, 09, 10, 11, 12 (Cách Hàng 1 đúng 30cm đá)
+      // - HÀNG 3 (6 MỘ): 13, 14, 15, 16, 17, 18 (Toàn bộ 61×107cm, cách Hàng 2 đúng 30cm đá)
+      // - HÀNG 4 (6 MỘ): 19, 20, 21, 22, 23, 24 (Toàn bộ 61×107cm, cách Hàng 3 đúng 30cm đá)
+      // - HÀNG 5 (5 MỘ):
+      //     + Cặp trái: Mộ 25 (X=60), Mộ 26 (X=131)
+      //     + Cặp giữa: Mộ 27 (X=301.5), Mộ 28 (X=372.5) dưới Mộ 21 & Mộ 22
+      //     + Ngôi bên phải: Mộ 29 (X=614, Y=800) ở hàng dọc bên phải giữa Mộ 24 và Mộ 31
+      // - HÀNG 6 (3 MỘ):
+      //     + Cặp bên phải hàng dưới: Mộ 30 (X=543), Mộ 31 (X=614)
+      //     + Mộ bé góc trái cửa vào: Kích thước 47×89cm, cách tường trái 8cm, cách tường trước 8cm.
+      // =====================================================================
       const PRESET_735_1100_PDF2026 = [
         // HÀNG 1 (6 MỘ): Sân lễ bái trước lăng rộng đúng 80cm (Y = 112..192). Chân hàng phẳng dóng Y = 339cm
-        // Khe mép đá cặp 1-2, Bà-Ông, 5-6 đều đúng 10cm; Tường rào 2 bên cách 15cm; 2 Trục Thần Đạo rộng đúng 61.5cm tối ưu!
         { id: 'm1_01', name: 'MỘ 01', row: 1, type: 'con', x: 40.0, y: 212.0, width: 81, height: 127, locked: false },
         { id: 'm1_02', name: 'MỘ 02', row: 1, type: 'con', x: 131.0, y: 212.0, width: 81, height: 127, locked: false },
         { id: 'm1_03', name: 'MỘ BÀ', row: 1, type: 'ongba', x: 273.5, y: 192.0, width: 89, height: 147, locked: false },
@@ -6793,14 +6806,20 @@
         { id: 'm4_23', name: 'MỘ 23', row: 4, type: 'chau', x: 543.0, y: 663.0, width: 61, height: 107, locked: false },
         { id: 'm4_24', name: 'MỘ 24', row: 4, type: 'chau', x: 614.0, y: 663.0, width: 61, height: 107, locked: false },
 
-        // HÀNG 5 (4 MỘ): Toàn bộ 61x107cm. Cách Hàng 4 đúng 30cm đá (Y = 800..907cm). Để trống sau cuốn thư (khoảng mở 351cm)
+        // HÀNG 5 (5 MỘ): Cách Hàng 4 đúng 30cm đá (Y = 800..907cm).
         { id: 'm5_25', name: 'MỘ 25', row: 5, type: 'chau', x: 60.0, y: 800.0, width: 61, height: 107, locked: false },
         { id: 'm5_26', name: 'MỘ 26', row: 5, type: 'chau', x: 131.0, y: 800.0, width: 61, height: 107, locked: false },
-        { id: 'm5_27', name: 'MỘ 27', row: 5, type: 'chau', x: 543.0, y: 800.0, width: 61, height: 107, locked: false },
-        { id: 'm5_28', name: 'MỘ 28', row: 5, type: 'chau', x: 614.0, y: 800.0, width: 61, height: 107, locked: false },
+        { id: 'm5_27', name: 'MỘ 27', row: 5, type: 'chau', x: 301.5, y: 800.0, width: 61, height: 107, locked: false },
+        { id: 'm5_28', name: 'MỘ 28', row: 5, type: 'chau', x: 372.5, y: 800.0, width: 61, height: 107, locked: false },
+        // Ngôi mộ mới thêm vào giữa Mộ 24 và Mộ 31 ở hàng dọc bên phải (cách Mộ 24 đúng 30cm, cách Mộ 31 đúng 30cm)
+        { id: 'm5_29', name: 'MỘ 29', row: 5, type: 'chau', x: 614.0, y: 800.0, width: 61, height: 107, locked: false },
 
-        // MỘ BÉ GÓC DƯỚI BÊN TRÁI (MỘ THỨ 29): 50×80cm (Móng 70×100cm), cách rào đá trái 15cm, cách rào trước 15cm
-        { id: 'm_nho_goc', name: 'MỘ BÉ', row: 6, type: 'monho', x: 40.0, y: 980.0, width: 50, height: 80, locked: false }
+        // HÀNG 6 (3 MỘ): Cặp mộ bên phải chuyển xuống hàng dưới + Mộ bé ở góc trái cửa vào
+        { id: 'm6_30', name: 'MỘ 30', row: 6, type: 'chau', x: 543.0, y: 937.0, width: 61, height: 107, locked: false },
+        { id: 'm6_31', name: 'MỘ 31', row: 6, type: 'chau', x: 614.0, y: 937.0, width: 61, height: 107, locked: false },
+
+        // MỘ BÉ GÓC DƯỚI BÊN TRÁI CỬA VÀO: Kích thước 47×89cm, cách tường trái 8cm (X = 25+8 = 33.0cm), cách tường trước 8cm (Y = 1075-8-89 = 978.0cm)
+        { id: 'm_nho_goc', name: 'MỘ BÉ', row: 6, type: 'monho', x: 33.0, y: 978.0, width: 47, height: 89, locked: false }
       ];
 
     const PRESET_735_1100 = PRESET_735_1100_PDF2026;

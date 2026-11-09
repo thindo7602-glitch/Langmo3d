@@ -3784,6 +3784,18 @@
       <div class="divider"></div>
 
       <!-- DỰ TOÁN KHỐI LƯỢNG -->
+      <!-- BẬT/TẮT NHÃN CHỮ TRÊN BẢN VẼ (MẶC ĐỊNH ẨN, NHẤN VÀO MỘ MỚI HIỆN NHÃN) -->
+      <button class="btn" id="btnToggleAllLabels" onclick="toggleAllLabels()" title="Mặc định ẩn nhãn chữ trên các ngôi mộ. Nhấp vào đây để bật/tắt toàn bộ nhãn, hoặc nhấp vào từng ngôi mộ để xem nhãn của mộ đó." style="font-weight:700;">
+        🏷️ Nhãn Chữ (Tắt)
+      </button>
+
+      <!-- LIÊN KẾT SANG TRANG 3D THỰC TẾ ẢO -->
+      <a href="https://thindo7602-glitch.github.io/Langmo3d/" target="_blank" class="btn btn-emerald" style="text-decoration:none; display:inline-flex; align-items:center; gap:5px; font-weight:800; background:linear-gradient(135deg, #059669 0%, #047857 100%); border:1px solid #34d399; color:#fff;" title="Mở trang Thực Tế Ảo 3D Không Gian Lăng Mộ">
+        🏛️ Xem 3D
+      </a>
+
+      <div class="divider"></div>
+
       <button class="btn btn-cyan" onclick="openCoordinatesTableModal()" title="Bảng tra cứu tọa độ định vị chi tiết 32 ngôi mộ" style="font-weight:700;">
         🎯 Tọa Độ CAD
       </button>
@@ -5297,6 +5309,7 @@
     let mongOffset = 10; // Móng mộ căn cứ vào đá: thêm 20cm so với tổng chiều đá (mỗi mép ngoài đá 10cm) // Móng mộ mỗi chiều cộng thêm so với đá là 20cm (mỗi bên mở rộng 10cm)
     let showStoneGraves = true; // Tùy chọn hiển thị lớp mộ đá khối
     let showGraveCoords = false; // Tùy chọn hiển thị tọa độ X-Y trên thân mộ
+    let showAllLabels = false; // MẶC ĐỊNH ẨN NHÃN CHỮ; CHỈ HIỆN NHÃN KHI NHẤP VÀO ĐỐI TƯỢNG (THEO YÊU CẦU)
     let isFoundationMode = false; // Chế độ mặt bằng móng thi công
     let isDraggingLangTho = false;
     let langThoOriginalPos = { x: (735 - 520) / 2, y: 5 };
@@ -6380,6 +6393,7 @@
               fill="none" stroke="rgba(251, 191, 36, 0.45)" stroke-width="0.8" rx="2" pointer-events="none"/>
             
             <!-- Chữ nhãn cuốn thư rõ ràng, không tràn -->
+            ${(showAllLabels || isSel) ? `
             <text id="text_cuonThu" x="${daX + daW/2}" y="${daY + 13}"
               fill="#ffffff" font-size="9.5" font-weight="800" text-anchor="middle" letter-spacing="0.4" pointer-events="none">
               CUỐN THƯ ĐÁ (${daW}×${daH})
@@ -6387,7 +6401,7 @@
             <text id="text_cuonThu_sub" x="${daX + daW/2}" y="${daY + 28}"
               fill="#fbbf24" font-size="7.5" font-family="'Consolas', monospace" font-weight="700" text-anchor="middle" pointer-events="none">
               Móng: ${mongW}×${mongH} | Vượng Đinh
-            </text>
+            </text>` : ''}
           </g>
         `;
 
@@ -6531,6 +6545,20 @@
     }
 
     // VẼ CÁC NGÔI MỘ (HỖ TRỢ MÓNG +20CM VÀ CHẾ ĐỘ MÓNG THI CÔNG)
+    
+    function toggleAllLabels() {
+      showAllLabels = !showAllLabels;
+      const btn = document.getElementById('btnToggleAllLabels');
+      if (btn) {
+        btn.textContent = showAllLabels ? '🏷️ Nhãn Chữ (Bật)' : '🏷️ Nhãn Chữ (Tắt)';
+        btn.style.color = showAllLabels ? '#38bdf8' : '';
+        btn.style.borderColor = showAllLabels ? '#38bdf8' : '';
+      }
+      renderGraves();
+      renderCuonThu();
+      showToast(showAllLabels ? 'Đã hiển thị tất cả nhãn chữ trên các ngôi mộ' : 'Đã ẩn nhãn chữ (nhấn vào từng ngôi mộ để xem nhãn)');
+    }
+
     function renderGraves() {
       const mongG = document.getElementById('mongAmLayer');
       const graveG = document.getElementById('gravesLayer');
@@ -6601,6 +6629,7 @@
             <title>Mộ: ${g.name} (${g.width}×${g.height}cm) - Móng: ${mongW}×${mongH}cm</title>
             <rect id="rect_${g.id}" x="${g.x}" y="${g.y}" width="${g.width}" height="${g.height}"
               fill="${fill}" stroke="${stroke}" stroke-width="${strokeWidth}" rx="3"/>
+            ${(showAllLabels || isSelected) ? `
             <text id="text_name_${g.id}" x="${g.x + g.width/2}" y="${g.width <= 55 ? (g.y + 20) : (g.y + 25)}"
               fill="${g.type === 'ongba' ? '#34d399' : (isCon81 ? '#fef08a' : (g.type === 'cho' ? '#c084fc' : '#ffffff'))}"
               font-size="${g.width <= 55 ? 7.5 : (g.width < 75 ? 9.5 : 10.5)}" font-weight="800" text-anchor="middle" pointer-events="none">
@@ -6620,6 +6649,7 @@
               fill="#38bdf8" font-size="${g.width <= 55 ? 6.8 : 8.2}" font-family="'Consolas', monospace" font-weight="800" text-anchor="middle" pointer-events="none">
               X:${g.x.toFixed(0)}, Y:${g.y.toFixed(0)}
             </text>` : ''}
+          ` : ''}
           </g>
         `;
 
@@ -8983,6 +9013,19 @@
     });
 
     viewport.addEventListener('click', (evt) => {
+      // Khi nhấp vào vùng trống ngoài đối tượng, bỏ chọn để ẩn nhãn chữ (giữ bản vẽ gọn sạch)
+      if (!isMeasureMode && !isDragging) {
+        const t = evt.target;
+        if (t === viewport || t.id === 'cad-svg' || t.id === 'cad-viewport-g' || t.id === 'gridLayer' || t.id === 'siteLayer' || t.id === 'siteBackground') {
+          if (selectedGraveId !== null) {
+            selectedGraveId = null;
+            renderGraves();
+            renderCuonThu();
+            renderActiveGuides();
+            updateSidebarInspector();
+          }
+        }
+      }
       if (!isMeasureMode || isDraggingMeasureHandle || justFinishedMeasureDrag) return;
       const pt = getSvgCoordinates(evt);
 
@@ -9863,6 +9906,8 @@
       const prevFoundationMode = isFoundationMode;
       const prevShowStoneGraves = showStoneGraves;
       const prevShowGraveCoords = showGraveCoords;
+      const prevShowAllLabels = showAllLabels;
+      showAllLabels = true; // In PDF luôn hiển thị đầy đủ nhãn
 
       // 2. CẤU HÌNH XUẤT PDF KỸ THUẬT: sạch, đủ thông số, theo hiện trạng
       showGraveCoords = false;       // Không in tọa độ trên từng mộ (tránh chồng chữ)
@@ -9954,6 +9999,9 @@
         isFoundationMode = prevFoundationMode;
         showStoneGraves = prevShowStoneGraves;
         showGraveCoords = prevShowGraveCoords;
+      showAllLabels = prevShowAllLabels;
+      renderGraves();
+      renderCuonThu();
         applyViewBox();
         renderAll();
       }
