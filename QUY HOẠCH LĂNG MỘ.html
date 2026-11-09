@@ -5443,7 +5443,7 @@
           <button class="btn" type="button" onclick="quickApplyGraveName('CÔ BẢY')">Cô Bảy</button>
           <button class="btn" type="button" onclick="quickApplyGraveName('MỘ BÀ')">Mộ Bà</button>
             <button class="btn" type="button" onclick="quickApplyGraveName('MỘ ÔNG')">Mộ Ông</button>
-          <button class="btn" type="button" onclick="quickApplyGraveName('MỘ BÉ')">Mộ Bé</button>
+          <button class="btn" type="button" onclick="quickApplyGraveName('MỘ NHỎ')">Mộ Nhỏ</button>
         </div>
       </div>
       <div class="modal-footer">
@@ -6757,7 +6757,7 @@
       // - HÀNG 5 (4 mộ): 61×107cm, cách Hàng 4 đúng 30cm đá (Y = 800..907cm). Để trống ở giữa 351cm sau cuốn thư.
       // - CUỐN THƯ ĐÁ: Đá 147×20cm (Y = 970..990cm) trên Móng 167×40cm (Y = 960..1000cm).
       //                Cách Hàng 5 đúng 63cm (Cung Vượng Đinh), cách rào đá trước 85cm (Cung Tiến Bảo).
-      // - MỘ BÉ GÓC DƯỚI TRÁI: 50×80cm (X = 40.0, Y = 980.0..1060.0cm), cách rào đá trái 15cm, cách rào trước 15cm.
+      // - MỘ NHỎ GÓC DƯỚI TRÁI: 50×80cm (X = 40.0, Y = 980.0..1060.0cm), cách rào đá trái 15cm, cách rào trước 15cm.
       // =====================================================================
       // =====================================================================
       // MẪU QUY HOẠCH CHUẨN MỰC CHUYÊN GIA: 7.35m × 11.00m (32 NGÔI MỘ)
@@ -6818,8 +6818,8 @@
         { id: 'm6_30', name: 'MỘ 30', row: 6, type: 'chau', x: 543.0, y: 937.0, width: 61, height: 107, locked: false },
         { id: 'm6_31', name: 'MỘ 31', row: 6, type: 'chau', x: 614.0, y: 937.0, width: 61, height: 107, locked: false },
 
-        // MỘ BÉ GÓC DƯỚI BÊN TRÁI CỬA VÀO: Kích thước 47×89cm, cách tường trái 8cm (X = 25+8 = 33.0cm), cách tường trước 8cm (Y = 1075-8-89 = 978.0cm)
-        { id: 'm_nho_goc', name: 'MỘ BÉ', row: 6, type: 'monho', x: 33.0, y: 978.0, width: 47, height: 89, locked: false }
+        // MỘ NHỎ GÓC DƯỚI BÊN TRÁI CỬA VÀO: Kích thước 47×89cm, cách tường trái 8cm (X = 25+8 = 33.0cm), cách tường trước 8cm (Y = 1075-8-89 = 978.0cm)
+        { id: 'm_nho_goc', name: 'MỘ NHỎ', row: 6, type: 'monho', x: 33.0, y: 978.0, width: 47, height: 89, locked: false }
       ];
 
     const PRESET_735_1100 = PRESET_735_1100_PDF2026;
@@ -8081,7 +8081,7 @@
           html += drawDimensionSegment(25, 50, 107.5, 50, 'Cách Lăng: 82.5cm', 'horizontal', '#fbbf24');
           html += drawDimensionSegment(25, 260, 39.0, 260, 'Cách Mộ 01: 14.0cm', 'horizontal', '#38bdf8');
           html += drawDimensionSegment(20, 574, 61.0, 574, 'Cách Mộ H3: 41.0cm', 'horizontal', '#38bdf8');
-          html += drawDimensionSegment(20, 1030, 30.0, 1030, 'Cách Mộ Bé: 10.0cm', 'horizontal', '#10b981');
+          html += drawDimensionSegment(20, 1030, 30.0, 1030, 'Cách Mộ Nhỏ: 10.0cm', 'horizontal', '#10b981');
           html += drawDimensionSegment(25, 990, cuonThu.x, 990, `Cách Cuốn Thư: ${(cuonThu.x - 25).toFixed(1)}cm`, 'horizontal', '#10b981');
 
           if (dL) dL.textContent = 'Bề dày: 20.0 cm';
@@ -11440,12 +11440,12 @@
             2. <strong>Hai Trục Thần Đạo song hành:</strong> Bố trí 2 Trục Thần Đạo song hành hai bên (Trục Tả ven Mộ 02 & Mộ Bà; Trục Hữu ven Mộ Ông & Mộ 05) với bề rộng đồng nhất đúng <strong>61.5cm xuyên suốt</strong> từ Lăng thờ chính qua 5 hàng mộ ra đến Cuốn thư đá. Đảm bảo thông khí âm dương và tạo lối đi lại rộng rãi, trang trọng, tôn kính khi gia quyến vào dâng hương.
           </p>
           <p>
-            3. <strong>Bố cục 5 Hàng Mộ phân cấp và Mộ Bé:</strong>
+            3. <strong>Bố cục 5 Hàng Mộ phân cấp và Mộ Nhỏ:</strong>
             <br>- <em>Hàng 1 (Hàng Tiên Tổ):</em> Đặt Mộ Bà (${graves.find(x=>x.id==='m1_03')?.width || 89}×${graves.find(x=>x.id==='m1_03')?.height || 147}cm) và Mộ Ông (${graves.find(x=>x.id==='m1_04')?.width || 89}×${graves.find(x=>x.id==='m1_04')?.height || 147}cm) có kích thước bề thế nhất, đầu mộ cách Lăng thờ chính đúng 80cm tạo khoảng sân tế lễ tôn nghiêm.
             <br>- <em>Hàng 2:</em> Gồm 6 ngôi mộ, trong đó Mộ 11 và Mộ 12 cách Mộ 17 và Mộ 18 (Hàng 3) đúng 30cm đá.
             <br>- <em>Hàng 3, 4:</em> Mỗi hàng gồm 6 ngôi mộ con cháu quy cách đồng bộ 61×107cm (Cung Quý Tử & Hoạnh Tài), các hàng cách nhau đúng 30cm theo phương dọc.
             <br>- <em>Hàng 5:</em> Bố trí 4 ngôi mộ dạt đều sang hai bên, chừa khoảng sân minh đường trung tâm 294cm sau cuốn thư đá.
-            <br>- <em>Mộ Bé góc cổng trái:</em> Kích thước 50×81cm chuẩn cung Đỏ Lỗ Ban 38.8cm (Cung Vượng & Cung Đinh), cách tường trái 10cm.
+            <br>- <em>Mộ Nhỏ góc cổng trái:</em> Kích thước 50×81cm chuẩn cung Đỏ Lỗ Ban 38.8cm (Cung Vượng & Cung Đinh), cách tường trái 10cm.
             <br>- <em>Hệ thống móng mộ:</em> Tăng 20cm so với đá cho tất cả các ngôi mộ (vỉa móng 10cm mỗi bên).
             <br>- <em>Mặt tiền đằng cổng:</em> Bố trí 2 cột chính (30×30cm) và 2 cột phụ (25×25cm), bỏ bớt 2 trụ cột giữa.
           </p>
@@ -12445,9 +12445,9 @@
         id: 'mo_be_tam_linh',
         cat: 'phongthuy',
         catLabel: '☯️ Phong Thủy Âm Trạch',
-        title: 'Ý Nghĩa Tâm Linh Mộ Bé Góc (50×81cm)',
+        title: 'Ý Nghĩa Tâm Linh Mộ Nhỏ Góc (50×81cm)',
         desc: 'Ngôi mộ thứ 29 (50×81cm) đặt tại góc Tả tiền giáp tường trước và tường trái. Cả 2 kích thước đều vào cung Cát đỏ Thước Lỗ Ban 38.8cm: 50cm cung <b>Vượng</b> (Thêm Phúc) và 81cm cung <b>Đinh</b> (Đăng Khoa).',
-        btnText: '🔍 Soi Mộ Bé Góc Tả',
+        btnText: '🔍 Soi Mộ Nhỏ Góc Tả',
         action: 'selectGrave(\'m_nho_goc\')'
       },
       {
@@ -12475,7 +12475,7 @@
         cat: 'mong',
         catLabel: '🏗️ Móng Bê Tông Cốt Thép',
         title: 'Móng Mộ Tăng 20cm So Với Đá Cho Tất Cả Mộ',
-        desc: 'Móng bê tông mở rộng <b>+20cm</b> so với đá (vỉa móng 10cm mỗi bên). Mộ 61×107cm $\rightarrow$ móng <b>81×127cm</b>; Mộ 81×127cm $\rightarrow$ móng <b>101×147cm</b>; Mộ Ông Bà $\rightarrow$ móng <b>109×167cm</b>; Mộ Bé 50×81cm $\rightarrow$ móng <b>70×101cm</b>.',
+        desc: 'Móng bê tông mở rộng <b>+20cm</b> so với đá (vỉa móng 10cm mỗi bên). Mộ 61×107cm $\rightarrow$ móng <b>81×127cm</b>; Mộ 81×127cm $\rightarrow$ móng <b>101×147cm</b>; Mộ Ông Bà $\rightarrow$ móng <b>109×167cm</b>; Mộ Nhỏ 50×81cm $\rightarrow$ móng <b>70×101cm</b>.',
         btnText: '🏗️ Bật Mặt Bằng Móng',
         action: 'toggleFoundationPlanMode()'
       },
@@ -13399,7 +13399,7 @@
           • 107cm: Cung <b>Quý Tử</b> (Sinh quý tử hiển vinh).
         </div>
         <div class="clippy-modal-item">
-          <strong>🔵 Mộ Bé Góc Dưới Tả (50 × 81cm):</strong><br>
+          <strong>🔵 Mộ Nhỏ Góc Dưới Tả (50 × 81cm):</strong><br>
           • 50cm: Cung <b>Vượng</b> (Thêm Phúc, Hỷ Sự).<br>
           • 81cm: Cung <b>Đinh</b> (Đăng Khoa, Tiến Bảo). Cả 2 kích thước đều chuẩn số đỏ Lỗ Ban 38.8cm!
         </div>
@@ -13836,7 +13836,7 @@
       { id: 'm5_27', name: 'MỘ 27', row: 5, type: 'chau', x: 543.0, y: 800.0, width: 61, height: 107, depth: 65, fengshui: 'Quý Tử' },
       { id: 'm5_28', name: 'MỘ 28', row: 5, type: 'chau', x: 614.0, y: 800.0, width: 61, height: 107, depth: 65, fengshui: 'Quan Lộc' },
 
-      { id: 'm_nho_goc', name: 'MỘ BÉ', row: 6, type: 'monho', x: 40.0, y: 980.0, width: 50, height: 80, depth: 52, fengshui: 'Đăng Khoa' }
+      { id: 'm_nho_goc', name: 'MỘ NHỎ', row: 6, type: 'monho', x: 40.0, y: 980.0, width: 50, height: 80, depth: 52, fengshui: 'Đăng Khoa' }
     ];
 
     var PRESET_735_1100 = [
@@ -13873,7 +13873,7 @@
       { id: 'm5_27', name: 'MỘ 27', row: 5, type: 'chau', x: 510.0, y: 795.0, width: 61, height: 107, depth: 65, fengshui: 'Quý Tử' },
       { id: 'm5_28', name: 'MỘ 28', row: 5, type: 'chau', x: 612.5, y: 795.0, width: 61, height: 107, depth: 65, fengshui: 'Quan Lộc' },
 
-      { id: 'm_nho_goc', name: 'MỘ BÉ', row: 6, type: 'monho', x: 30.0, y: 990.0, width: 50, height: 80, depth: 52, fengshui: 'Đăng Khoa' }
+      { id: 'm_nho_goc', name: 'MỘ NHỎ', row: 6, type: 'monho', x: 30.0, y: 990.0, width: 50, height: 80, depth: 52, fengshui: 'Đăng Khoa' }
     ];
 
     const COMPLETED_GRAVE_IDS = ['m1_03', 'm1_04', 'm2_08'];
@@ -15619,7 +15619,7 @@
 
     // =====================================================================
     // 5.6 29 NGÔI MỘ: TỈ LỆ CHUẨN XÁC 100% THEO KÍCH THƯỚC ĐÁ (KHÔNG TÍNH MÓNG)
-    // Căn cứ số đo đá: Mộ Ông Bà (89×147cm), Mộ Con (81×127cm), Mộ Cháu (61×107cm), Mộ Bé (50×80cm)
+    // Căn cứ số đo đá: Mộ Ông Bà (89×147cm), Mộ Con (81×127cm), Mộ Cháu (61×107cm), Mộ Nhỏ (50×80cm)
     // Móng mộ là phần âm ngầm dưới nền, thân mộ đá trên mặt đất có kích thước đế đúng 100% kích thước đá
     // =====================================================================
     let isRenderAllFullTombs = false;

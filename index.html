@@ -1624,7 +1624,7 @@
 
         <div class="layer-group">
           <div class="layer-item">
-            <div class="layer-item-left"><span class="icon">🪦</span><span>3 Mộ Đã Hoàn Thiện</span></div>
+            <div class="layer-item-left"><span class="icon">🪦</span><span>2 Mộ Đã Hoàn Thiện (Ông Bà)</span></div>
             <label class="switch">
               <input type="checkbox" id="layerToggleCompletedGraves" checked onchange="toggleLayer('completedGraves', this.checked)">
               <span class="slider"></span>
@@ -1632,7 +1632,7 @@
           </div>
 
           <div class="layer-item">
-            <div class="layer-item-left"><span class="icon">📐</span><span>29 Vị Trí Mộ Quy Hoạch</span></div>
+            <div class="layer-item-left"><span class="icon">📐</span><span>30 Vị Trí Mộ Quy Hoạch</span></div>
             <label class="switch">
               <input type="checkbox" id="layerTogglePlannedGraves" checked onchange="toggleLayer('plannedGraves', this.checked)">
               <span class="slider"></span>
@@ -1711,8 +1711,8 @@
           <button class="cam-btn" id="btnCamGrandparents" onclick="setCameraPreset('grandparents')">
             <span>🪦</span> Mộ Ông & Bà
           </button>
-          <button class="cam-btn" id="btnCamGrave08" onclick="setCameraPreset('grave08')">
-            <span>🪦</span> Mộ 08 (Đã Xây)
+          <button class="cam-btn" id="btnCamGraveNho" onclick="setCameraPreset('graveNho')">
+            <span>🪦</span> Mộ Nhỏ (Góc Cổng)
           </button>
           <button class="cam-btn" id="btnCamScreen" onclick="setCameraPreset('screen')">
             <span>📜</span> Cuốn Thư Phúc
@@ -1772,7 +1772,7 @@
         </div>
         <div class="prop-row">
           <span class="prop-label">Mộ đã hoàn thiện (3):</span>
-          <span class="prop-value" style="color:var(--accent-gold);">Mộ Ông, Mộ Bà, Mộ 08</span>
+          <span class="prop-value" style="color:var(--accent-gold);">Mộ Ông, Mộ Bà</span>
         </div>
         <div class="prop-row">
           <span class="prop-label">Mộ quy hoạch (26):</span>
@@ -1843,6 +1843,12 @@
             <div class="compass-cell cell-right" id="clearanceRight">Thần Đạo 61.5cm →</div>
             <div class="compass-cell cell-bottom" id="clearanceBottom">↓ Hàng 2: 30cm</div>
           </div>
+        </div>
+
+        <div id="boxToggleCompletion" style="margin-top:8px; display:none;">
+          <button id="btnToggleCompletion" class="btn" style="width:100%; justify-content:center; font-weight:800; padding:8px 10px;" onclick="toggleGraveCompletion()">
+            <span>⭐</span> <span id="labelToggleCompletion">Chuyển thành Mộ Hoàn Thiện</span>
+          </button>
         </div>
 
         <div style="display:flex; gap:6px; margin-top:8px;">
@@ -2449,6 +2455,14 @@
     </div>
   </div>
 
+  
+  <!-- FLOATING QUICK TOGGLE KHI CHỌN MỘ TRÊN MÀN HÌNH 3D -->
+  <div id="floatingGraveAction" style="position:fixed; bottom:75px; left:50%; transform:translateX(-50%); z-index:99999; display:none; flex-direction:column; align-items:center; gap:6px; pointer-events:auto;">
+    <button id="btnFloatingToggle" onclick="toggleGraveCompletion()" style="padding:8px 16px; border-radius:24px; font-weight:800; font-size:12.5px; border:1px solid #fbbf24; background:rgba(15, 23, 42, 0.95); backdrop-filter:blur(10px); color:#fbbf24; box-shadow:0 6px 20px rgba(0,0,0,0.6), 0 0 15px rgba(245,158,11,0.35); cursor:pointer; display:flex; align-items:center; gap:8px;">
+      <span>⭐</span> <span id="labelFloatingToggle">Chuyển thành Mộ Hoàn Thiện</span>
+    </button>
+  </div>
+
   <div class="toast-notify" id="toastNotify">Thông báo</div>
 
   <!-- JAVASCRIPT THREE.JS ENGINE -->
@@ -2502,19 +2516,23 @@
       // Cặp bên phải hàng dưới chuyển xuống (Y = 937..1044cm)
       { id: 'm6_30', name: 'MỘ 30', row: 6, type: 'chau', x: 543.0, y: 937.0, width: 61, height: 107, depth: 65, fengshui: 'Quý Tử' },
       { id: 'm6_31', name: 'MỘ 31', row: 6, type: 'chau', x: 614.0, y: 937.0, width: 61, height: 107, depth: 65, fengshui: 'Quan Lộc' },
-      // Mộ Bé góc trái cửa vào (47×89cm, cách tường trái 8cm, cách tường trước 8cm)
-      { id: 'm_nho_goc', name: 'MỘ BÉ', row: 6, type: 'monho', x: 33.0, y: 978.0, width: 47, height: 89, depth: 55, fengshui: 'Đăng Khoa' }
+      // Mộ Nhỏ góc trái cửa vào (47×89cm, cách tường trái 8cm, cách tường trước 8cm)
+      { id: 'm_nho_goc', name: 'MỘ NHỎ', row: 6, type: 'monho', x: 33.0, y: 978.0, width: 47, height: 89, depth: 55, fengshui: 'Đăng Khoa' }
     ];
 
     const PRESET_735_1100 = PRESET_735_1100_PDF2026;
 
-    const COMPLETED_GRAVE_IDS = ['m1_03', 'm1_04', 'm2_08'];
+    let completedGraveIds = ['m1_03', 'm1_04']; // CHỈ CÒN MỘ 2 ÔNG BÀ HOÀN THIỆN THEO YÊU CẦU
     function isCompletedGrave(id) {
-      return COMPLETED_GRAVE_IDS.includes(id);
+      return completedGraveIds.includes(id);
     }
 
     let currentGraves = JSON.parse(JSON.stringify(PRESET_735_1100_PDF2026));
     let selectedObject3D = null;
+      const floatAction = document.getElementById('floatingGraveAction');
+      if (floatAction) floatAction.style.display = 'none';
+      const boxToggle = document.getElementById('boxToggleCompletion');
+      if (boxToggle) boxToggle.style.display = 'none';
     let isXRayMode = false;
     let isOnlyCompletedMode = false;
     let isAllLabelsVisible = false;
@@ -5095,7 +5113,7 @@
 
     // =====================================================================
     // 5.6 32 NGÔI MỘ: TỈ LỆ CHUẨN XÁC 100% THEO KÍCH THƯỚC ĐÁ (KHÔNG TÍNH MÓNG)
-    // Căn cứ số đo đá: Mộ Ông Bà (89×147cm), Mộ Con (81×127cm), Mộ Cháu (61×107cm), Mộ Bé (50×80cm)
+    // Căn cứ số đo đá: Mộ Ông Bà (89×147cm), Mộ Con (81×127cm), Mộ Cháu (61×107cm), Mộ Nhỏ (50×80cm)
     // Móng mộ là phần âm ngầm dưới nền, thân mộ đá trên mặt đất có kích thước đế đúng 100% kích thước đá
     // =====================================================================
     let isRenderAllFullTombs = false;
@@ -5257,6 +5275,61 @@
     }
 
     // CHUYỂN ĐỔI CHẾ ĐỘ XEM 29 MỘ ĐÁ KHỐI 3D / BỆ ĐỊNH VỊ QUY HOẠCH
+    
+    // HÀM CHUYỂN ĐỔI GIỮA MỘ QUY HOẠCH VÀ MỘ HOÀN THIỆN
+    function toggleGraveCompletion(graveId) {
+      if (!graveId) {
+        if (selectedObject3D && selectedObject3D.userData && selectedObject3D.userData.id) {
+          graveId = selectedObject3D.userData.id;
+        } else {
+          graveId = 'm_nho_goc';
+        }
+      }
+
+      if (completedGraveIds.includes(graveId)) {
+        completedGraveIds = completedGraveIds.filter(id => id !== graveId);
+      } else {
+        completedGraveIds.push(graveId);
+      }
+
+      // Xóa và dựng lại các layer mộ
+      while(layerGroups.completedGraves.children.length > 0) {
+        const obj = layerGroups.completedGraves.children[0];
+        layerGroups.completedGraves.remove(obj);
+        if (obj.geometry) obj.geometry.dispose();
+      }
+      while(layerGroups.plannedGraves.children.length > 0) {
+        const obj = layerGroups.plannedGraves.children[0];
+        layerGroups.plannedGraves.remove(obj);
+        if (obj.geometry) obj.geometry.dispose();
+      }
+      while(layerGroups.labels.children.length > 0) {
+        const obj = layerGroups.labels.children[0];
+        layerGroups.labels.remove(obj);
+        if (obj.material) obj.material.dispose();
+      }
+
+      buildAllGraves();
+      populateGraveQuickList();
+
+      const isNowCompleted = completedGraveIds.includes(graveId);
+      const targetGrave = currentGraves.find(g => g.id === graveId);
+      const gName = targetGrave ? targetGrave.name : graveId;
+
+      // Tìm lại mesh vừa dựng để duy trì chọn và góc nhìn
+      const searchGroup = isNowCompleted ? layerGroups.completedGraves : layerGroups.plannedGraves;
+      let newMesh = null;
+      searchGroup.children.forEach(grp => {
+        if (grp.userData.id === graveId) newMesh = grp;
+      });
+
+      if (newMesh) {
+        selectObject(newMesh);
+      }
+
+      showToast(isNowCompleted ? ('⭐ Đã chuyển ' + gName + ' thành Mộ Hoàn Thiện đá khối!') : ('📐 Đã chuyển ' + gName + ' về Mộ Quy Hoạch!'));
+    }
+
     function toggleAllTombs3DMode() {
       isRenderAllFullTombs = !isRenderAllFullTombs;
       const btn = document.getElementById('btnToggleAllTombs');
@@ -5566,6 +5639,35 @@
 
         calculateGraveClearance4Way(uData);
 
+        // Cập nhật nút chuyển đổi trạng thái Hoàn thiện / Quy hoạch
+        const boxToggle = document.getElementById('boxToggleCompletion');
+        const btnToggle = document.getElementById('btnToggleCompletion');
+        const labelToggle = document.getElementById('labelToggleCompletion');
+        const floatAction = document.getElementById('floatingGraveAction');
+        const floatBtn = document.getElementById('btnFloatingToggle');
+        const floatLabel = document.getElementById('labelFloatingToggle');
+
+        if (boxToggle) boxToggle.style.display = 'block';
+        if (floatAction) floatAction.style.display = 'flex';
+
+        const isNho = (uData.id === 'm_nho_goc');
+        const compText = isComp ? (isNho ? 'Đổi Mộ Nhỏ Về Mộ Quy Hoạch' : 'Đổi Về Mộ Quy Hoạch') : (isNho ? 'Chọn Mộ Nhỏ Là Mộ Hoàn Thiện' : 'Chuyển Thành Mộ Hoàn Thiện');
+        const compIcon = isComp ? '📐' : '⭐';
+
+        if (labelToggle) labelToggle.textContent = compText;
+        if (floatLabel) floatLabel.textContent = compText;
+
+        if (btnToggle) {
+          btnToggle.className = isComp ? 'btn' : 'btn btn-gold';
+          btnToggle.style.color = isComp ? '#38bdf8' : '#fff';
+          btnToggle.style.borderColor = isComp ? '#38bdf8' : '#f59e0b';
+        }
+        if (floatBtn) {
+          floatBtn.style.color = isComp ? '#38bdf8' : '#fbbf24';
+          floatBtn.style.borderColor = isComp ? '#38bdf8' : '#fbbf24';
+          floatBtn.innerHTML = '<span>' + compIcon + '</span> <span>' + compText + '</span>';
+        }
+
         // KÍCH HOẠT THƯỚC ĐO 3D LIỀN KỀ TRỰC TIẾP TRÊN CANVAS
         renderInteractive3DClearances(uData);
       } else if (uData.type === 'langtho') {
@@ -5829,7 +5931,7 @@
         layerGroups.labels.children.forEach(s => {
           if (!s.userData.isCompleted) s.visible = false;
         });
-        showToast('🌟 Chế độ Hiện Trạng: Chỉ hiển thị Mộ Ông, Mộ Bà, Mộ 08 đã hoàn thiện');
+        showToast('🌟 Chế độ Hiện Trạng: Chỉ hiển thị Mộ Ông, Mộ Bà đã hoàn thiện');
       } else {
         btn.classList.remove('active');
         icon.textContent = '🏛️';
