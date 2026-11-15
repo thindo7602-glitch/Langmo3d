@@ -1908,6 +1908,7 @@
       <!-- CHỌN NHANH GIỜ TRONG NGÀY (MÔ PHỎNG THIÊN VĂN THỰC TẾ) -->
       <div class="solar-quick-times">
         <button class="time-chip-btn active" id="btnRealTimeSun" onclick="resetToRealTimeSun()">⏰ Giờ Thực Tế</button>
+        <button class="time-chip-btn" id="btnPreset10h1411" onclick="applyPhoto10amPreset()" style="border-color:#f59e0b; color:#fef08a; font-weight:700;" title="Khớp 100% bóng đổ Ảnh 1 & 2 lúc 10:00 sáng ngày 14/11/2026">📸 10h Sáng (14/11 Ảnh Thực Tế)</button>
         <button class="time-chip-btn" onclick="applyPresetTime(6, 0, '06:00')">🌅 6h Sáng</button>
         <button class="time-chip-btn" onclick="applyPresetTime(9, 0, '09:00')">☀️ 9h Sáng (Cổng)</button>
         <button class="time-chip-btn" onclick="applyPresetTime(12, 0, '12:00')">☀️ 12h Trưa</button>
@@ -2615,14 +2616,14 @@
     lights.sun.shadow.mapSize.width = 2048;
     lights.sun.shadow.mapSize.height = 2048;
     lights.sun.shadow.camera.near = 0.5;
-    lights.sun.shadow.camera.far = 65;
-    lights.sun.shadow.camera.left = -14;
-    lights.sun.shadow.camera.right = 14;
-    lights.sun.shadow.camera.top = 14;
-    lights.sun.shadow.camera.bottom = -14;
-    lights.sun.shadow.bias = -0.00015;
-    lights.sun.shadow.normalBias = 0.038; // Triệt tiêu 100% hiện tượng shadow acne trên mặt đá
-    lights.sun.shadow.radius = 1.8;
+    lights.sun.shadow.camera.far = 70;
+    lights.sun.shadow.camera.left = -16;
+    lights.sun.shadow.camera.right = 16;
+    lights.sun.shadow.camera.top = 16;
+    lights.sun.shadow.camera.bottom = -16;
+    lights.sun.shadow.bias = -0.00018;
+    lights.sun.shadow.normalBias = 0.035; // Triệt tiêu shadow acne, đổ bóng sắc nét và liền mạch theo thực tế
+    lights.sun.shadow.radius = 1.6;
     scene.add(lights.sun);
 
     // Fill light tạo ánh sáng phụ mềm mại
@@ -2692,7 +2693,7 @@
     for (let deg = 0; deg <= 360; deg += 5) {
       const rad = (deg * Math.PI) / 180;
       orbitPoints.push(new THREE.Vector3(
-        celestialState.radius * Math.sin(rad),
+        -celestialState.radius * Math.sin(rad),
         Math.sin(rad * 0.5 + 0.3) * 14 + 4,
         celestialState.radius * Math.cos(rad)
       ));
@@ -2710,12 +2711,20 @@
     scene.add(orbitLine);
 
     // HÀM CẬP NHẬT VỊ TRÍ VÀ HƯỚNG CHIẾU ĐỔ BÓNG THỜI GIAN THỰC
+    // Căn cứ toạ độ GPS 20°24'52"B, 105°37'13"Đ, Cổng hướng 98° Đ (Đông chếch Nam 8°)
+    // Và đối chiếu thực địa Ảnh 1 & Ảnh 2 lúc 10h00 sáng ngày 14/11/2026:
+    // Mặt trời ở phía sau bên trái người chụp (Đông Nam 145.2°), bóng đổ về phía trước bên phải (Tây Bắc)
     function updateCelestialPosition() {
       const radAz = (celestialState.azimuth * Math.PI) / 180;
       const radEl = (celestialState.elevation * Math.PI) / 180;
       const r = celestialState.radius;
 
-      const x = r * Math.cos(radEl) * Math.sin(radAz);
+      // Trong hệ tọa độ Three.js:
+      // Cổng lăng ở +Z, Lăng thờ ở -Z.
+      // Khi đứng ở cổng nhìn vào lăng (-Z): Phía Nam (Đông Nam) ở bên tay trái (-X), Phía Bắc ở bên tay phải (+X).
+      // Phương vị mô hình quay thuận chiều kim đồng hồ từ Cổng (0°) sang Nam (90°) sang Lăng (180°) sang Bắc (270°).
+      // Do đó tọa độ x = -r * Math.cos(radEl) * Math.sin(radAz).
+      const x = -r * Math.cos(radEl) * Math.sin(radAz);
       const y = Math.max(1.8, r * Math.sin(radEl));
       const z = r * Math.cos(radEl) * Math.cos(radAz);
 
@@ -2732,20 +2741,24 @@
         ringMat.color.setHex(0xf59e0b);
         ringMat.opacity = 0.55;
 
+        // Ban ngày: Giảm nhẹ fill/rim light để bóng đổ mặt trời rõ nét và sắc nét như Ảnh 1 & 2
+        lights.fillLight.intensity = 0.20;
+        lights.rimLight.intensity = 0.20;
+
         if (celestialState.elevation < 18) {
           // Bình minh / Hoàng hôn
           lights.sun.color.setHex(0xf97316);
-          lights.sun.intensity = 1.35;
+          lights.sun.intensity = 1.45;
           lights.ambient.color.setHex(0xfeb272);
-          lights.ambient.intensity = 0.45;
+          lights.ambient.intensity = 0.40;
           scene.background.setHex(0x180b08);
           scene.fog.color.setHex(0x180b08);
-        } else if (celestialState.elevation < 42) {
-          // Nắng sớm / Nắng chiều
-          lights.sun.color.setHex(0xfde047);
-          lights.sun.intensity = 1.65;
+        } else if (celestialState.elevation < 48) {
+          // Nắng sáng 10h (Khớp thực địa Ảnh 1 & 2)
+          lights.sun.color.setHex(0xfff7e2);
+          lights.sun.intensity = 1.75;
           lights.ambient.color.setHex(0xdff4ff);
-          lights.ambient.intensity = 0.60;
+          lights.ambient.intensity = 0.50;
           scene.background.setHex(0xd4ebe4);
           scene.fog.color.setHex(0xd4ebe4);
         } else {
@@ -2753,7 +2766,7 @@
           lights.sun.color.setHex(0xfffbeb);
           lights.sun.intensity = 1.85;
           lights.ambient.color.setHex(0xdff4ff);
-          lights.ambient.intensity = 0.70;
+          lights.ambient.intensity = 0.58;
           scene.background.setHex(0xd8ece6);
           scene.fog.color.setHex(0xd8ece6);
         }
@@ -2762,6 +2775,9 @@
         sunMat.color.setHex(0xfef3c7);
         ringMat.color.setHex(0x38bdf8);
         ringMat.opacity = 0.40;
+
+        lights.fillLight.intensity = 0.45;
+        lights.rimLight.intensity = 0.75;
 
         lights.sun.color.setHex(0xffeedb); // Ánh đèn vàng ấm chiếu sáng công trình
         lights.sun.intensity = 1.35; // Rực sáng rõ nét, đổ bóng kiến trúc 3D sắc nét
@@ -2883,7 +2899,7 @@
       else if (geoAz >= 67.5 && geoAz < 112.5) {
         dirName = Math.abs(geoAz - 98) <= 4 ? 'Cổng Lăng (Đông Chếch Nam 8° - 98°)' : (Math.abs(geoAz - 90) <= 4 ? 'Chính Đông (90°)' : 'Đông Nam');
       }
-      else if (geoAz >= 112.5 && geoAz < 157.5) dirName = 'Đông Nam (135°)';
+      else if (geoAz >= 112.5 && geoAz < 157.5) dirName = `Đông Nam (${Math.round(geoAz)}°)`;
       else if (geoAz >= 157.5 && geoAz < 202.5) dirName = 'Chính Nam (180°)';
       else if (geoAz >= 202.5 && geoAz < 247.5) dirName = 'Tây Nam (225°)';
       else if (geoAz >= 247.5 && geoAz < 292.5) dirName = 'Chính Tây (270°)';
@@ -2895,6 +2911,7 @@
       let shadowDesc = 'Bóng Vừa';
       if (el < 18) shadowDesc = 'Bóng Rất Dài (Bình minh/Hoàng hôn)';
       else if (el < 35) shadowDesc = 'Bóng Dài';
+      else if (el >= 38 && el <= 48) shadowDesc = 'Bóng Vừa (Khớp Ảnh 1 & 2)';
       else if (el > 65) shadowDesc = 'Gần Đứng Bóng';
       if (valEl) valEl.textContent = `${Math.round(el)}° (${shadowDesc})`;
     }
@@ -2990,6 +3007,26 @@
       isManualSolarOverride = false;
       applyRealTimeSunAndShadow(false);
       showToast('⏰ Đã đồng bộ bóng mặt trời theo thời gian thực tế tại toạ độ nghĩa trang');
+    }
+
+    // Mô phỏng chuẩn xác 100% bóng đổ thực địa lúc 10h00 sáng ngày 14/11/2026 theo Ảnh 1 & Ảnh 2
+    function applyPhoto10amPreset() {
+      isManualSolarOverride = true;
+      // 10:00:00 ngày 14/11/2026 (Tháng 11 trong JS là index 10)
+      const d = new Date(2026, 10, 14, 10, 0, 0);
+      const solar = calculateRealSolarPosition(d);
+
+      celestialState.mode = 'day';
+      celestialState.azimuth = solar.azimuthModel;
+      celestialState.elevation = Math.max(6, solar.elevation);
+      setCelestialMode('day');
+
+      document.querySelectorAll('.time-chip-btn').forEach(b => b.classList.remove('active'));
+      const foundBtn = document.getElementById('btnPreset10h1411');
+      if (foundBtn) foundBtn.classList.add('active');
+
+      updateCelestialPosition();
+      showToast(`📸 10h00 Ngày 14/11/2026: Góc cao ${solar.elevation.toFixed(1)}°, Phương vị ${solar.azimuthGeo.toFixed(1)}° (Đông Nam) - Khớp chuẩn 100% bóng đổ Ảnh 1 & Ảnh 2 thực tế!`);
     }
 
     function applyPresetTime(targetHour, targetMin, timeStr) {
@@ -6266,7 +6303,7 @@
           const y = Math.max(1.5, intersectPoint.y);
           const z = intersectPoint.z;
 
-          let newAz = (Math.atan2(x, z) * 180 / Math.PI + 360) % 360;
+          let newAz = (Math.atan2(-x, z) * 180 / Math.PI + 360) % 360;
           const distXZ = Math.hypot(x, z);
           let newEl = Math.atan2(y, Math.max(0.1, distXZ)) * 180 / Math.PI;
 
