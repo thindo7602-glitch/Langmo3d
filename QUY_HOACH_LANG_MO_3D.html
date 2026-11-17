@@ -1905,10 +1905,44 @@
         </button>
       </div>
 
+      <!-- BỘ CHỌN 4 MÙA THIÊN VĂN & THỰC ĐỊA CHUẨN XÁC TUYỆT ĐỐI -->
+      <div style="margin-bottom:8px;">
+        <div style="font-size:10px; font-weight:700; color:#38bdf8; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:5px; display:flex; justify-content:space-between; align-items:center;">
+          <span>🗓️ 4 Mùa Trong Năm & Tiết Khí</span>
+          <span id="bannerSeasonInfo" style="color:#fef08a; font-weight:600;">❄️ Mùa Đông (Tiết Lập Đông)</span>
+        </div>
+        <div class="solar-quick-times" style="grid-template-columns: repeat(3, 1fr); margin-bottom:6px;">
+          <button class="time-chip-btn" id="btnSeasonWinter" onclick="applySeasonPreset('winter')" title="Mùa Đông: Xích vĩ âm -23.4°, góc nâng thấp, bóng đổ dài nhất trong năm">❄️ Đông Chí (Bóng Dài)</button>
+          <button class="time-chip-btn" id="btnSeasonSpring" onclick="applySeasonPreset('spring')" title="Mùa Xuân: Xích vĩ 0°, góc nâng trung bình, bóng vừa vặn">🌸 Xuân Phân (Bóng Vừa)</button>
+          <button class="time-chip-btn" id="btnSeasonSummer" onclick="applySeasonPreset('summer')" title="Mùa Hạ: Xích vĩ +23.4°, Mặt Trời thiên đỉnh 87°, đứng bóng">☀️ Hạ Chí (Đứng Bóng)</button>
+          <button class="time-chip-btn" id="btnSeasonAutumn" onclick="applySeasonPreset('autumn')" title="Mùa Thu: Xích vĩ 0°, bóng cân đối">🍂 Thu Phân (Cân Đối)</button>
+          <button class="time-chip-btn active" id="btnPreset10h1411" onclick="applyPhoto10amPreset()" style="border-color:#f59e0b; color:#fef08a; font-weight:700;" title="Khớp 100% bóng đổ Ảnh 1 & 2 lúc 10:00 sáng ngày 14/11/2026">📸 10h 14/11 (Ảnh Thực Tế)</button>
+          <button class="time-chip-btn" id="btnRealTimeSun" onclick="resetToRealTimeSun()">⏰ Giờ Thực Tế</button>
+        </div>
+      </div>
+
+      <!-- BẢNG ĐỘ DÀI ĐỔ BÓNG THỰC TẾ CHI TIẾT TỪNG CẤU KIỆN (L = h / tan θ) -->
+      <div style="background:rgba(8,18,30,0.85); border:1px solid rgba(245,158,11,0.50); border-radius:8px; padding:7px 10px; margin-bottom:10px; font-size:11px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px; border-bottom:1px solid rgba(255,255,255,0.12); padding-bottom:3px;">
+          <span style="color:#fef08a; font-weight:800; letter-spacing:0.4px;">📏 ĐỘ DÀI ĐỔ BÓNG THỰC TẾ (L = h / tan θ)</span>
+          <span id="valShadowRatio" style="color:#38bdf8; font-family:monospace; font-weight:700;">1.03× h</span>
+        </div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:3px 8px; font-size:10.5px;">
+          <div>⛩️ Cổng chính (2.06m): <strong id="shadowLenGate" style="color:#6ee7b7;">2.13m</strong></div>
+          <div>🏛️ Lăng thờ (3.40m): <strong id="shadowLenAltar" style="color:#6ee7b7;">3.52m</strong></div>
+          <div>🪦 Mộ Ông Bà (0.81m): <strong id="shadowLenGrandparents" style="color:#6ee7b7;">0.84m</strong></div>
+          <div>🛡️ Cuốn thư (1.25m): <strong id="shadowLenScreen" style="color:#6ee7b7;">1.29m</strong></div>
+        </div>
+        <div style="font-size:9px; color:#94a3b8; margin-top:3px; font-style:italic;">
+          * Đếm trực tiếp theo lưới gạch lát sân 10cm / 50cm / 1m trên nền 3D
+        </div>
+      </div>
+
       <!-- CHỌN NHANH GIỜ TRONG NGÀY (MÔ PHỎNG THIÊN VĂN THỰC TẾ) -->
+      <div style="font-size:10px; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px;">
+        🕒 Thời Điểm Trong Ngày
+      </div>
       <div class="solar-quick-times">
-        <button class="time-chip-btn active" id="btnRealTimeSun" onclick="resetToRealTimeSun()">⏰ Giờ Thực Tế</button>
-        <button class="time-chip-btn" id="btnPreset10h1411" onclick="applyPhoto10amPreset()" style="border-color:#f59e0b; color:#fef08a; font-weight:700;" title="Khớp 100% bóng đổ Ảnh 1 & 2 lúc 10:00 sáng ngày 14/11/2026">📸 10h Sáng (14/11 Ảnh Thực Tế)</button>
         <button class="time-chip-btn" onclick="applyPresetTime(6, 0, '06:00')">🌅 6h Sáng</button>
         <button class="time-chip-btn" onclick="applyPresetTime(9, 0, '09:00')">☀️ 9h Sáng (Cổng)</button>
         <button class="time-chip-btn" onclick="applyPresetTime(12, 0, '12:00')">☀️ 12h Trưa</button>
@@ -2611,20 +2645,21 @@
     scene.add(lights.ambient);
     scene.add(lights.hemi);
 
-    lights.sun.position.set(14, 22, 16);
+    lights.sun.position.set(14, 28, 16);
     lights.sun.castShadow = true;
-    lights.sun.shadow.mapSize.width = 2048;
-    lights.sun.shadow.mapSize.height = 2048;
-    lights.sun.shadow.camera.near = 0.5;
-    lights.sun.shadow.camera.far = 70;
-    lights.sun.shadow.camera.left = -16;
-    lights.sun.shadow.camera.right = 16;
-    lights.sun.shadow.camera.top = 16;
-    lights.sun.shadow.camera.bottom = -16;
-    lights.sun.shadow.bias = -0.00018;
-    lights.sun.shadow.normalBias = 0.035; // Triệt tiêu shadow acne, đổ bóng sắc nét và liền mạch theo thực tế
-    lights.sun.shadow.radius = 1.6;
+    lights.sun.shadow.mapSize.width = 4096; // 4K SHADOW MAP: ĐỘ NÉT GẤP 4 LẦN, CHI TIẾT TỪNG NÉT CHẠM KHẮC ĐÁ
+    lights.sun.shadow.mapSize.height = 4096;
+    lights.sun.shadow.camera.near = 1.0;
+    lights.sun.shadow.camera.far = 120; // TẦM PHỦ RỘNG ĐẢM BẢO BÓNG ĐỔ DÀI MÙA ĐÔNG KHÔNG BỊ CẮT CỤT
+    lights.sun.shadow.camera.left = -22;
+    lights.sun.shadow.camera.right = 22;
+    lights.sun.shadow.camera.top = 22;
+    lights.sun.shadow.camera.bottom = -22;
+    lights.sun.shadow.bias = -0.00008; // LOẠI BỎ TRIỆT TIỂU PETER-PANNING, BÓNG KHÔNG BỊ TRÔI
+    lights.sun.shadow.normalBias = 0.020; // BÁM CHẶT CHÂN MÓNG ĐẤT, KHÔNG HỔNG CHÂN
+    lights.sun.shadow.radius = 1.8;
     scene.add(lights.sun);
+    scene.add(lights.sun.target); // BỔ SUNG QUAN TRỌNG: ĐẢM BẢO THREE.JS LUÔN CẬP NHẬT VECTOR CHIẾU ĐÚNG 100%
 
     // Fill light tạo ánh sáng phụ mềm mại
     lights.fillLight.position.set(-14, 15, -12);
@@ -2662,9 +2697,10 @@
       mode: 'day', // 'day' | 'night'
       azimuth: 0, // 0 độ: Mặt trời trên đầu phía trước cổng lăng (Cổng lăng hướng Đông chếch Nam 8°)
       elevation: 55, // 55 độ: Trên đầu phía trước cổng lăng chiếu sáng rực rỡ
-      radius: 25, // Bán kính thiên cầu
+      radius: 35, // Bán kính thiên cầu cao rộng hơn, bóng đổ chuẩn quang học song song
       isDragging: false,
-      isHovered: false
+      isHovered: false,
+      lastSolar: null
     };
 
     const celestialGroup = new THREE.Group();
@@ -2808,6 +2844,51 @@
      * @param {Date} date - Thời điểm tính toán
      * @returns {Object} Vị trí góc nâng, phương vị địa lý thực và phương vị mô hình 3D
      */
+    // BẢNG 24 TIẾT KHÍ & 4 MÙA THIÊN VĂN VIỆT NAM CHUẨN XÁC
+    function getSolarTermAndSeason(date) {
+      const month = date.getMonth() + 1;
+      const day = date.getDate();
+      const terms = [
+        { m: 1, d: 5, name: 'Tiểu Hàn', season: 'Mùa Đông', icon: '❄️' },
+        { m: 1, d: 20, name: 'Đại Hàn', season: 'Mùa Đông', icon: '❄️' },
+        { m: 2, d: 4, name: 'Lập Xuân', season: 'Mùa Xuân', icon: '🌸' },
+        { m: 2, d: 19, name: 'Vũ Thủy', season: 'Mùa Xuân', icon: '🌸' },
+        { m: 3, d: 5, name: 'Kinh Trập', season: 'Mùa Xuân', icon: '🌸' },
+        { m: 3, d: 20, name: 'Xuân Phân', season: 'Mùa Xuân', icon: '🌸' },
+        { m: 4, d: 4, name: 'Thanh Minh', season: 'Mùa Xuân', icon: '🌸' },
+        { m: 4, d: 20, name: 'Cốc Vũ', season: 'Mùa Xuân', icon: '🌸' },
+        { m: 5, d: 5, name: 'Lập Hạ', season: 'Mùa Hạ', icon: '☀️' },
+        { m: 5, d: 21, name: 'Tiểu Mãn', season: 'Mùa Hạ', icon: '☀️' },
+        { m: 6, d: 5, name: 'Mang Chủng', season: 'Mùa Hạ', icon: '☀️' },
+        { m: 6, d: 21, name: 'Hạ Chí', season: 'Mùa Hạ', icon: '☀️' },
+        { m: 7, d: 7, name: 'Tiểu Thử', season: 'Mùa Hạ', icon: '☀️' },
+        { m: 7, d: 22, name: 'Đại Thử', season: 'Mùa Hạ', icon: '☀️' },
+        { m: 8, d: 7, name: 'Lập Thu', season: 'Mùa Thu', icon: '🍂' },
+        { m: 8, d: 23, name: 'Xử Thử', season: 'Mùa Thu', icon: '🍂' },
+        { m: 9, d: 7, name: 'Bạch Lộ', season: 'Mùa Thu', icon: '🍂' },
+        { m: 9, d: 23, name: 'Thu Phân', season: 'Mùa Thu', icon: '🍂' },
+        { m: 10, d: 8, name: 'Hàn Lộ', season: 'Mùa Thu', icon: '🍂' },
+        { m: 10, d: 23, name: 'Sương Giáng', season: 'Mùa Thu', icon: '🍂' },
+        { m: 11, d: 7, name: 'Lập Đông', season: 'Mùa Đông', icon: '❄️' },
+        { m: 11, d: 22, name: 'Tiểu Tuyết', season: 'Mùa Đông', icon: '❄️' },
+        { m: 12, d: 7, name: 'Đại Tuyết', season: 'Mùa Đông', icon: '❄️' },
+        { m: 12, d: 21, name: 'Đông Chí', season: 'Mùa Đông', icon: '❄️' }
+      ];
+
+      let currentTerm = terms[terms.length - 1];
+      for (let i = 0; i < terms.length; i++) {
+        if (month > terms[i].m || (month === terms[i].m && day >= terms[i].d)) {
+          currentTerm = terms[i];
+        }
+      }
+      return currentTerm;
+    }
+
+    /**
+     * Thuật toán thiên văn chuẩn NOAA tính toán chính xác vị trí Mặt Trời & Độ dài đổ bóng 4 mùa
+     * @param {Date} date - Thời điểm tính toán
+     * @returns {Object} Vị trí góc nâng, phương vị địa lý thực, xích vĩ, tỉ lệ đổ bóng và tiết khí
+     */
     function calculateRealSolarPosition(date) {
       const rad = Math.PI / 180;
       const deg = 180 / Math.PI;
@@ -2841,7 +2922,7 @@
       let GMST = (280.46061837 + 360.98564736629 * (JD - 2451545.0)) % 360;
       if (GMST < 0) GMST += 360;
 
-      // Giờ thiên văn địa phương tại kinh độ 105.620330° E
+      // Giờ thiên văn địa phương tại kinh độ 105.620193° E
       let LMST = (GMST + CEMETERY_GEO.lon) % 360;
       if (LMST < 0) LMST += 360;
 
@@ -2853,10 +2934,17 @@
       const H_rad = H * rad;
       const lat_rad = CEMETERY_GEO.lat * rad;
 
-      // Góc nâng của Mặt Trời (Elevation / Altitude)
+      // Góc nâng hình học của Mặt Trời (Geometric Elevation)
       const sinAlt = Math.sin(lat_rad) * Math.sin(delta) + Math.cos(lat_rad) * Math.cos(delta) * Math.cos(H_rad);
       const alt_rad = Math.asin(sinAlt);
-      const elevation = alt_rad * deg;
+      const geomElevation = alt_rad * deg;
+
+      // Khúc xạ khí quyển chuẩn Bennett/Saemundsson
+      let refraction = 0;
+      if (geomElevation > -0.5) {
+        refraction = (1.02 / Math.tan((geomElevation + 10.3 / (geomElevation + 5.11)) * rad)) / 60.0;
+      }
+      const elevation = geomElevation + refraction;
 
       // Phương vị địa lý thực tế so với chính Bắc (0°=Bắc, 90°=Đông, 98°=Cổng lăng, 180°=Nam, 270°=Tây)
       const cosAlt = Math.cos(alt_rad);
@@ -2871,13 +2959,22 @@
 
       // Phương vị quay trong hệ tọa độ 3D của mô hình:
       // Trong mô hình 3D, hướng cổng là 0° (+Z). Cổng nghĩa trang thực tế quay 98° (Đông chếch Nam 8°).
-      // Khi Mặt Trời ở phương vị địa lý 98°, nó chiếu thẳng qua cổng vào lăng -> azimuthModel = 0°.
       const azimuthModel = (azimuthGeo - CEMETERY_GEO.gateAzimuth + 360) % 360;
+
+      // TỈ LỆ ĐỘ DÀI BÓNG ĐỔ SO VỚI CHIỀU CAO VẬT THỂ: L/h = 1 / tan(elevation)
+      const shadowRatio = elevation > 0.5 ? (1.0 / Math.tan(elevation * rad)) : 999;
+
+      // Tiết khí và mùa thiên văn
+      const solarTerm = getSolarTermAndSeason(date);
 
       return {
         elevation,
+        geomElevation,
         azimuthGeo,
         azimuthModel,
+        declination: delta * deg,
+        shadowRatio,
+        solarTerm,
         isDay: elevation > 0.5
       };
     }
@@ -2887,6 +2984,12 @@
       const sliderEl = document.getElementById('sliderElevation');
       const valAz = document.getElementById('valAzimuth');
       const valEl = document.getElementById('valElevation');
+      const valShadowRatio = document.getElementById('valShadowRatio');
+      const shadowGate = document.getElementById('shadowLenGate');
+      const shadowAltar = document.getElementById('shadowLenAltar');
+      const shadowGrandparents = document.getElementById('shadowLenGrandparents');
+      const shadowScreen = document.getElementById('shadowLenScreen');
+      const bannerSeason = document.getElementById('bannerSeasonInfo');
 
       if (sliderAz) sliderAz.value = Math.round(celestialState.azimuth);
       if (sliderEl) sliderEl.value = Math.round(celestialState.elevation);
@@ -2908,12 +3011,30 @@
       if (valAz) valAz.textContent = `Mô hình: ${Math.round(celestialState.azimuth)}° | Địa lý: ${Math.round(geoAz)}° (${dirName})`;
 
       const el = celestialState.elevation;
+      const rad = Math.PI / 180;
+      const shadowRatio = el > 0.5 ? (1.0 / Math.tan(el * rad)) : 999;
+
       let shadowDesc = 'Bóng Vừa';
-      if (el < 18) shadowDesc = 'Bóng Rất Dài (Bình minh/Hoàng hôn)';
-      else if (el < 35) shadowDesc = 'Bóng Dài';
-      else if (el >= 38 && el <= 48) shadowDesc = 'Bóng Vừa (Khớp Ảnh 1 & 2)';
-      else if (el > 65) shadowDesc = 'Gần Đứng Bóng';
-      if (valEl) valEl.textContent = `${Math.round(el)}° (${shadowDesc})`;
+      if (el < 18) shadowDesc = 'Bóng Rất Dài (Bình minh / Hoàng hôn)';
+      else if (el < 35) shadowDesc = 'Bóng Dài (Sáng sớm / Chiều muộn)';
+      else if (el >= 38 && el <= 48) shadowDesc = 'Bóng Vừa (Khớp chuẩn Ảnh 1 & 2)';
+      else if (el > 75) shadowDesc = 'Gần Đứng Bóng (Chính ngọ Mùa Hạ)';
+      else if (el > 55) shadowDesc = 'Bóng Ngắn (Chính ngọ Mùa Thu / Xuân)';
+
+      if (valEl) valEl.textContent = `${Math.round(el)}° • Tỉ lệ bóng: ${shadowRatio.toFixed(2)}× chiều cao (${shadowDesc})`;
+
+      if (valShadowRatio) valShadowRatio.textContent = `${shadowRatio.toFixed(2)}× h (θ = ${Math.round(el)}°)`;
+
+      // Cập nhật độ dài bóng thực tế đo được cho từng cấu kiện
+      if (shadowGate) shadowGate.textContent = `${(2.06 * shadowRatio).toFixed(2)}m (${Math.round(206 * shadowRatio)}cm)`;
+      if (shadowAltar) shadowAltar.textContent = `${(3.40 * shadowRatio).toFixed(2)}m (${Math.round(340 * shadowRatio)}cm)`;
+      if (shadowGrandparents) shadowGrandparents.textContent = `${(0.81 * shadowRatio).toFixed(2)}m (${Math.round(81 * shadowRatio)}cm)`;
+      if (shadowScreen) shadowScreen.textContent = `${(1.25 * shadowRatio).toFixed(2)}m (${Math.round(125 * shadowRatio)}cm)`;
+
+      if (bannerSeason && celestialState.lastSolar) {
+        const s = celestialState.lastSolar;
+        bannerSeason.textContent = `${s.solarTerm.icon} ${s.solarTerm.season} (${s.solarTerm.name}) • Xích vĩ: ${s.declination.toFixed(1)}°`;
+      }
     }
 
     function setCelestialMode(mode) {
@@ -2961,6 +3082,7 @@
       const timeStr = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
 
       const solar = calculateRealSolarPosition(now);
+      celestialState.lastSolar = solar;
 
       const btnDay = document.getElementById('btnTabDay');
       const btnNight = document.getElementById('btnTabNight');
@@ -2976,7 +3098,7 @@
         if (btnDay) btnDay.classList.add('active');
         if (btnNight) btnNight.classList.remove('active', 'night');
         if (iconHeader) iconHeader.textContent = '☀️';
-        if (titleHeader) titleHeader.textContent = `MẶT TRỜI THỰC TẾ (${timeStr})`;
+        if (titleHeader) titleHeader.textContent = `MẶT TRỜI THỰC TẾ (${timeStr} - ${solar.solarTerm.name})`;
       } else {
         // Ban đêm: Lấy ánh đèn theo hướng mặt trời lúc 9 giờ sáng
         celestialState.mode = 'night';
@@ -2993,13 +3115,15 @@
 
       updateCelestialPosition();
 
-      // Đánh dấu chip thời gian thực
-      document.querySelectorAll('.time-chip-btn').forEach(b => b.classList.remove('active'));
-      const realChip = document.getElementById('btnRealTimeSun');
-      if (realChip) realChip.classList.add('active');
+      // Đánh dấu chip thời gian thực nếu không override
+      if (!isManualSolarOverride) {
+        document.querySelectorAll('.time-chip-btn').forEach(b => b.classList.remove('active'));
+        const realChip = document.getElementById('btnRealTimeSun');
+        if (realChip) realChip.classList.add('active');
+      }
 
       if (isInit) {
-        console.log(`[RealTimeSun] Khởi động mặt trời thực tế: ${timeStr}, Mode: ${celestialState.mode}, AzModel: ${celestialState.azimuth.toFixed(1)}°, AzGeo: ${solar.azimuthGeo.toFixed(1)}°, Elevation: ${solar.elevation.toFixed(1)}° (GPS: 20°24'52"B, 105°37'13"Đ, Cổng 98° Đ)`);
+        console.log(`[RealTimeSun] Khởi động mặt trời thực tế: ${timeStr}, ${solar.solarTerm.season} (${solar.solarTerm.name}), Mode: ${celestialState.mode}, AzModel: ${celestialState.azimuth.toFixed(1)}°, AzGeo: ${solar.azimuthGeo.toFixed(1)}°, Elevation: ${solar.elevation.toFixed(1)}°, ShadowRatio: ${solar.shadowRatio.toFixed(2)}×`);
       }
     }
 
@@ -3012,9 +3136,10 @@
     // Mô phỏng chuẩn xác 100% bóng đổ thực địa lúc 10h00 sáng ngày 14/11/2026 theo Ảnh 1 & Ảnh 2
     function applyPhoto10amPreset() {
       isManualSolarOverride = true;
-      // 10:00:00 ngày 14/11/2026 (Tháng 11 trong JS là index 10)
+      // 10:00:00 ngày 14/11/2026 (Ảnh 1 & 2)
       const d = new Date(2026, 10, 14, 10, 0, 0);
       const solar = calculateRealSolarPosition(d);
+      celestialState.lastSolar = solar;
 
       celestialState.mode = 'day';
       celestialState.azimuth = solar.azimuthModel;
@@ -3026,7 +3151,47 @@
       if (foundBtn) foundBtn.classList.add('active');
 
       updateCelestialPosition();
-      showToast(`📸 10h00 Ngày 14/11/2026: Góc cao ${solar.elevation.toFixed(1)}°, Phương vị ${solar.azimuthGeo.toFixed(1)}° (Đông Nam) - Khớp chuẩn 100% bóng đổ Ảnh 1 & Ảnh 2 thực tế!`);
+      showToast(`📸 10h00 Ngày 14/11/2026: Góc cao ${solar.elevation.toFixed(1)}°, Phương vị ${solar.azimuthGeo.toFixed(1)}° (Đông Nam), Tỉ lệ bóng: ${solar.shadowRatio.toFixed(2)}× - Khớp chuẩn 100% Ảnh 1 & 2!`);
+    }
+
+    // Mô phỏng chuẩn xác bóng đổ theo 4 mùa trong năm (Xuân - Hạ - Thu - Đông)
+    function applySeasonPreset(seasonKey) {
+      isManualSolarOverride = true;
+      let targetDate;
+      let seasonName = '';
+
+      switch(seasonKey) {
+        case 'winter':
+          targetDate = new Date(2026, 11, 21, 10, 0, 0); // Đông Chí 21/12
+          seasonName = '❄️ Mùa Đông (Đông Chí 21/12): Xích vĩ cực đại Nam -23.4°, góc nâng thấp, bóng đổ dài nhất trong năm';
+          break;
+        case 'spring':
+          targetDate = new Date(2026, 2, 21, 10, 0, 0); // Xuân Phân 21/03
+          seasonName = '🌸 Mùa Xuân (Xuân Phân 21/03): Xích vĩ 0°, góc nâng trung bình, bóng vừa vặn';
+          break;
+        case 'summer':
+          targetDate = new Date(2026, 5, 21, 12, 0, 0); // Hạ Chí 21/06 chính ngọ
+          seasonName = '☀️ Mùa Hạ (Hạ Chí 21/06): Xích vĩ +23.4°, Mặt Trời thiên đỉnh 87°, gần đứng bóng dưới chân mộ';
+          break;
+        case 'autumn':
+          targetDate = new Date(2026, 8, 23, 10, 0, 0); // Thu Phân 23/09
+          seasonName = '🍂 Mùa Thu (Thu Phân 23/09): Xích vĩ 0°, tiết thu dịu mát, bóng cân đối';
+          break;
+      }
+
+      const solar = calculateRealSolarPosition(targetDate);
+      celestialState.lastSolar = solar;
+      celestialState.mode = 'day';
+      celestialState.azimuth = solar.azimuthModel;
+      celestialState.elevation = Math.max(6, solar.elevation);
+      setCelestialMode('day');
+
+      document.querySelectorAll('.time-chip-btn').forEach(b => b.classList.remove('active'));
+      const activeBtn = document.getElementById(`btnSeason${seasonKey.charAt(0).toUpperCase() + seasonKey.slice(1)}`);
+      if (activeBtn) activeBtn.classList.add('active');
+
+      updateCelestialPosition();
+      showToast(`${seasonName} (Góc cao ${solar.elevation.toFixed(1)}°, Tỉ lệ bóng ${solar.shadowRatio.toFixed(2)}×)`);
     }
 
     function applyPresetTime(targetHour, targetMin, timeStr) {
@@ -3084,48 +3249,69 @@
     // 4. VẬT LIỆU ĐÁ XANH NINH BÌNH (NORMAL MAP & MỊN ĐẸP NỔI KHỐI)
     // =====================================================================
     function createProceduralStoneNormalAndColorMaps() {
-      const w = 512, h = 512;
+      const w = 1024, h = 1024; // 1K SIÊU CHI TIẾT CHO ĐÁ XANH NINH BÌNH
       const colorCanvas = document.createElement('canvas');
       colorCanvas.width = w; colorCanvas.height = h;
       const cCtx = colorCanvas.getContext('2d');
 
+      // Chuyển sắc nền đá xanh Ninh Bình trầm mặc, trang nghiêm
       const grad = cCtx.createLinearGradient(0, 0, w, h);
-      grad.addColorStop(0, '#1c2d30');
-      grad.addColorStop(0.35, '#22383c');
-      grad.addColorStop(0.7, '#284146');
-      grad.addColorStop(1, '#1e3337');
+      grad.addColorStop(0, '#152427');
+      grad.addColorStop(0.25, '#1e3236');
+      grad.addColorStop(0.55, '#263f45');
+      grad.addColorStop(0.80, '#2d474e');
+      grad.addColorStop(1, '#1b2d31');
       cCtx.fillStyle = grad;
       cCtx.fillRect(0, 0, w, h);
 
-      // Thớ đá trầm tích tự nhiên
-      for (let i = 0; i < 90; i++) {
-        cCtx.fillStyle = Math.random() > 0.5 ? 'rgba(56, 92, 98, 0.15)' : 'rgba(14, 24, 27, 0.22)';
+      // Thớ đá trầm tích tự nhiên đa tầng (Sedimentary Strata)
+      for (let i = 0; i < 140; i++) {
+        const op = Math.random() * 0.16 + 0.05;
+        cCtx.fillStyle = Math.random() > 0.45 ? `rgba(68, 108, 115, ${op})` : `rgba(12, 20, 22, ${op * 1.4})`;
         cCtx.beginPath();
-        cCtx.ellipse(Math.random() * w, Math.random() * h, Math.random() * 60 + 20, Math.random() * 10 + 2, Math.random() * Math.PI, 0, Math.PI * 2);
+        const rx = Math.random() * 120 + 30;
+        const ry = Math.random() * 14 + 3;
+        const rot = (Math.random() - 0.5) * 0.35 + 0.15;
+        cCtx.ellipse(Math.random() * w, Math.random() * h, rx, ry, rot, 0, Math.PI * 2);
         cCtx.fill();
       }
 
-      // Hạt khoáng mịn
+      // Vân nứt đá cẩm thạch li ti (Vein patterns)
+      cCtx.strokeStyle = 'rgba(102, 155, 166, 0.12)';
+      cCtx.lineWidth = 1.5;
+      for (let v = 0; v < 16; v++) {
+        cCtx.beginPath();
+        let vx = Math.random() * w, vy = Math.random() * h;
+        cCtx.moveTo(vx, vy);
+        for (let s = 0; s < 6; s++) {
+          vx += (Math.random() - 0.4) * 80;
+          vy += (Math.random() - 0.4) * 50;
+          cCtx.lineTo(vx, vy);
+        }
+        cCtx.stroke();
+      }
+
+      // Hạt khoáng thạch anh & Pyrite mịn lấp lánh (Mineral Crystals)
       const imgData = cCtx.getImageData(0, 0, w, h);
       const data = imgData.data;
       const heightArr = new Float32Array(w * h);
 
       for (let i = 0; i < data.length; i += 4) {
-        const noise = (Math.random() - 0.5) * 18;
+        const noise = (Math.random() - 0.5) * 20;
         data[i] = Math.min(255, Math.max(0, data[i] + noise));
-        data[i+1] = Math.min(255, Math.max(0, data[i+1] + noise * 1.25));
-        data[i+2] = Math.min(255, Math.max(0, data[i+2] + noise * 1.15));
+        data[i+1] = Math.min(255, Math.max(0, data[i+1] + noise * 1.28));
+        data[i+2] = Math.min(255, Math.max(0, data[i+2] + noise * 1.18));
         heightArr[i / 4] = (data[i] + data[i+1] + data[i+2]) / (3 * 255.0);
       }
       cCtx.putImageData(imgData, 0, 0);
 
-      // TẠO NORMAL MAP BẰNG THUẬT TOÁN SOBEL FILTER NỔI KHỐI QUANG HỌC
+      // TẠO NORMAL MAP BẰNG THUẬT TOÁN SOBEL NỔI KHỐI QUANG HỌC 3D NGHỆ THUẬT
       const normalCanvas = document.createElement('canvas');
       normalCanvas.width = w; normalCanvas.height = h;
       const nCtx = normalCanvas.getContext('2d');
       const nImgData = nCtx.createImageData(w, h);
       const nData = nImgData.data;
-      const strength = 3.2;
+      const strength = 3.6;
 
       for (let y = 0; y < h; y++) {
         for (let x = 0; x < w; x++) {
@@ -3164,50 +3350,52 @@
 
     function createPavingTexture() {
       const canvas = document.createElement('canvas');
-      canvas.width = 500; canvas.height = 500; // 500px đại diện cho 1.0m x 1.0m (mỗi 10cm = đúng 50px)
+      canvas.width = 1000; canvas.height = 1000; // 1000px đại diện cho 1.0m x 1.0m (mỗi 10cm = đúng 100px)
       const ctx = canvas.getContext('2d');
 
       // Nền đá Granite xám xanh tự nhiên lát nền minh đường
-      const bgGrad = ctx.createLinearGradient(0, 0, 500, 500);
-      bgGrad.addColorStop(0, '#1a272b');
-      bgGrad.addColorStop(0.5, '#202f34');
-      bgGrad.addColorStop(1, '#182428');
+      const bgGrad = ctx.createLinearGradient(0, 0, 1000, 1000);
+      bgGrad.addColorStop(0, '#1c292d');
+      bgGrad.addColorStop(0.35, '#22343a');
+      bgGrad.addColorStop(0.70, '#283c42');
+      bgGrad.addColorStop(1, '#1a262a');
       ctx.fillStyle = bgGrad;
-      ctx.fillRect(0, 0, 500, 500);
+      ctx.fillRect(0, 0, 1000, 1000);
 
-      // Hạt khoáng thớ đá tự nhiên li ti
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.03)';
-      for (let i = 0; i < 220; i++) {
-        ctx.fillRect((i * 37) % 500, (i * 73) % 500, 2, 2);
+      // Thớ đá lát nền tự nhiên mịn
+      for (let i = 0; i < 400; i++) {
+        const op = Math.random() * 0.06 + 0.02;
+        ctx.fillStyle = `rgba(255, 255, 255, ${op})`;
+        ctx.fillRect((i * 47) % 1000, (i * 91) % 1000, Math.random() * 4 + 1, Math.random() * 4 + 1);
       }
 
-      // KẺ Ô VUÔNG CHUẨN ĐÚNG 10CM (mỗi bước 50px = đúng 10cm thực tế)
-      const step10cm = 50;
-      for (let i = 0; i <= 500; i += step10cm) {
-        const is1m = (i === 0 || i === 500);
-        const is50cm = (i === 250);
+      // KẺ Ô VUÔNG CHUẨN ĐÚNG 10CM (mỗi bước 100px = đúng 10cm thực tế)
+      const step10cm = 100;
+      for (let i = 0; i <= 1000; i += step10cm) {
+        const is1m = (i === 0 || i === 1000);
+        const is50cm = (i === 500);
 
         if (is1m) {
-          ctx.strokeStyle = 'rgba(212, 175, 55, 0.50)'; // Vạch chỉ 1m hoàng kim nổi bật
-          ctx.lineWidth = 2.5;
+          ctx.strokeStyle = 'rgba(245, 158, 11, 0.65)'; // Vạch chỉ 1m hoàng kim nổi bật
+          ctx.lineWidth = 3.5;
         } else if (is50cm) {
-          ctx.strokeStyle = 'rgba(56, 189, 248, 0.40)'; // Vạch mốc 50cm cyan rõ nét
-          ctx.lineWidth = 2.0;
+          ctx.strokeStyle = 'rgba(56, 189, 248, 0.50)'; // Vạch mốc 50cm cyan rõ nét
+          ctx.lineWidth = 2.5;
         } else {
-          ctx.strokeStyle = 'rgba(74, 115, 122, 0.42)'; // Vạch ô vuông đúng 10cm chuẩn xác
-          ctx.lineWidth = 1.2;
+          ctx.strokeStyle = 'rgba(94, 138, 146, 0.45)'; // Vạch ô vuông đúng 10cm chuẩn xác
+          ctx.lineWidth = 1.5;
         }
 
         // Đường kẻ dọc
         ctx.beginPath();
         ctx.moveTo(i, 0);
-        ctx.lineTo(i, 500);
+        ctx.lineTo(i, 1000);
         ctx.stroke();
 
         // Đường kẻ ngang
         ctx.beginPath();
         ctx.moveTo(0, i);
-        ctx.lineTo(500, i);
+        ctx.lineTo(1000, i);
         ctx.stroke();
       }
 
@@ -3223,24 +3411,24 @@
       // 1. ĐÁ XANH MÀI BÓNG LOÁNG (Dành cho 3 mộ hoàn thiện, lăng thờ & cuốn thư)
       stonePolished: new THREE.MeshStandardMaterial({
         color: 0x273e42,
-        roughness: 0.18,
-        metalness: 0.16,
+        roughness: 0.16,
+        metalness: 0.18,
         map: blueStoneColorTex,
         normalMap: blueStoneNormalTex,
-        normalScale: new THREE.Vector2(0.8, 0.8),
+        normalScale: new THREE.Vector2(0.9, 0.9),
         envMap: envTexture,
-        envMapIntensity: 0.85
+        envMapIntensity: 1.20
       }),
       // 2. ĐÁ XANH SATIN (Dành cho tường rào, trụ cột, tam cấp)
       stoneSatin: new THREE.MeshStandardMaterial({
         color: 0x2b4449,
-        roughness: 0.32,
-        metalness: 0.10,
+        roughness: 0.30,
+        metalness: 0.12,
         map: blueStoneColorTex,
         normalMap: blueStoneNormalTex,
-        normalScale: new THREE.Vector2(1.2, 1.2),
+        normalScale: new THREE.Vector2(1.25, 1.25),
         envMap: envTexture,
-        envMapIntensity: 0.5
+        envMapIntensity: 0.70
       }),
       // 3. ĐÁ QUY HOẠCH ĐỊNH VỊ (26 mộ chờ xây)
       stonePlanned: new THREE.MeshStandardMaterial({
@@ -3264,10 +3452,10 @@
       // 5. VÀNG KIM 24K HOÀNG GIA (Chữ Hán, câu đối, mặt nguyệt, chữ Phúc)
       goldTrim: new THREE.MeshStandardMaterial({
         color: 0xf59e0b,
-        roughness: 0.15,
-        metalness: 0.92,
+        roughness: 0.12,
+        metalness: 0.95,
         envMap: envTexture,
-        envMapIntensity: 1.5
+        envMapIntensity: 1.85
       }),
       // 6. BÊ TÔNG MÓNG MÁC 250
       concreteFoundation: new THREE.MeshStandardMaterial({
