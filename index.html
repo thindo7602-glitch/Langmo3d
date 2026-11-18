@@ -7182,6 +7182,28 @@
     // 6. HỆ THỐNG NGHỆ THUẬT THỊ GIÁC ĐỈNH CAO & MÔ PHỎNG KHOA HỌC 4K
     // =====================================================================
 
+    
+    let currentSimulatedDate = new Date();
+    function getSimulationDate() {
+      return currentSimulatedDate || new Date();
+    }
+    function updateSunPosition(d) {
+      if (!d) d = new Date();
+      currentSimulatedDate = d;
+      const solar = calculateRealSolarPosition(d);
+      celestialState.lastSolar = solar;
+      if (solar.isDay) {
+        celestialState.mode = 'day';
+        celestialState.azimuth = solar.azimuthModel;
+        celestialState.elevation = Math.max(2, solar.elevation);
+      } else {
+        celestialState.mode = 'night';
+        celestialState.azimuth = solar.azimuthModel;
+        celestialState.elevation = Math.max(6, 12);
+      }
+      updateCelestialPosition();
+    }
+
     const artStudioState = {
       smokeActive: true,
       dustActive: true,
@@ -7636,10 +7658,8 @@
       const originX = 0;
       const originZ = -5.045; // Tọa độ chân lăng thờ
 
-      const date = getSimulationDate();
-      const solar = calculateSolarPosition(date, CEMETERY_GEO.lat, CEMETERY_GEO.lon, CEMETERY_GEO.gateAzimuth);
-      const elev = solar.elevation;
-      const az3D = solar.azimuth3D;
+      const elev = celestialState.elevation;
+      const az3D = celestialState.azimuth;
 
       if (elev <= 1.0) {
         shadowTapeLine.visible = false;
