@@ -2982,7 +2982,7 @@
     scene.background = new THREE.Color(0xbfe3f7); // NỀN TRỜI XANH NHẠT THANH KHIẾT
     scene.fog = new THREE.FogExp2(0xbfe3f7, 0.0035);
 
-    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 150);
+    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.4, 500);
     camera.position.set(0, 10.2, 14.2);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance', preserveDrawingBuffer: true });
@@ -3029,6 +3029,7 @@
       luopan3D: new THREE.Group()
     };
     Object.values(layerGroups).forEach(group => scene.add(group));
+    let skyDome = null; // Biến vòm trời toàn cục để đồng bộ tọa độ theo camera
 
     // =====================================================================
     // 3. HỆ THỐNG ÁNH SÁNG & PHẢN CHIẾU VÒM TRỜI (ENVIRONMENT LIGHTING)
@@ -3882,7 +3883,7 @@
         color: 0x3d8248, // Màu cỏ xanh tươi tự nhiên, giàu sinh khí ấm áp
         roughness: 0.82,
         metalness: 0.03,
-        side: THREE.DoubleSide
+        side: THREE.FrontSide
       }),
       sacredAxis: new THREE.MeshBasicMaterial({
         color: 0xfbbf24,
@@ -4657,35 +4658,46 @@
       apronMesh.receiveShadow = true;
       layerGroups.landscape.add(apronMesh);
 
-      // 4. THẢM CỎ KHUÔN VIÊN XANH MÁT RỘNG LỚN (160m x 160m)
-      const grassGeo = new THREE.PlaneGeometry(160, 160);
-      const grassMesh = new THREE.Mesh(grassGeo, materials.grass);
-      grassMesh.rotation.x = -Math.PI / 2;
-      grassMesh.position.set(0, -0.155, 0);
-      grassMesh.receiveShadow = true;
-      layerGroups.landscape.add(grassMesh);
-
-      // 5. BỆ ĐỊA TẦNG ĐẤT NỀN CÔNG TRÌNH (LOẠI BỎ TRIỆT ĐỂ KHOẢNG TRỐNG ĐEN XÌ BÊN DƯỚI)
-      const earthGeo = new THREE.BoxGeometry(160, 4.0, 160);
+      // 4 & 5. KHỐI ĐỊA TẦNG CẢNH QUAN & THẢM CỎ TỔ HỢP (SOLID LANDSCAPE & PODIUM)
+      // Sử dụng 1 khối Box duy nhất với Multi-Material: Mặt trên là thảm cỏ xanh mướt (+Y),
+      // 4 mặt xung quanh và đáy là tầng đất phù sa nâu trầm ấm (-Y, ±X, ±Z).
+      // Loại bỏ triệt để 100% hiện tượng 2 mặt phẳng đè nhau (Z-fighting) gây giật vỡ hình nền!
       const earthMat = new THREE.MeshStandardMaterial({
         color: 0x5a4336, // Màu đất phù sa màu mỡ trầm ấm tự nhiên
         roughness: 0.92,
         metalness: 0.02
       });
-      const earthMesh = new THREE.Mesh(earthGeo, earthMat);
-      earthMesh.position.set(0, -0.155 - 2.0, 0);
-      earthMesh.receiveShadow = true;
-      layerGroups.landscape.add(earthMesh);
+
+      const terrainMaterials = [
+        earthMat,           // +X (Mặt Đông)
+        earthMat,           // -X (Mặt Tây)
+        materials.grass,    // +Y (Mặt trên: Thảm cỏ xanh mát tự nhiên)
+        earthMat,           // -Y (Mặt đáy)
+        earthMat,           // +Z (Mặt Nam)
+        earthMat            // -Z (Mặt Bắc)
+      ];
+
+      const terrainHeight = 12.0;
+      const terrainGeo = new THREE.BoxGeometry(200, terrainHeight, 200);
+      const terrainMesh = new THREE.Mesh(terrainGeo, terrainMaterials);
+      // Mặt trên của thảm cỏ đặt tại y = -0.160m (thấp hơn mép dưới của vỉa đá dạo -0.155m đúng 5mm, đảm bảo không xung đột z-buffer)
+      terrainMesh.position.set(0, -0.160 - (terrainHeight / 2), 0);
+      terrainMesh.receiveShadow = true;
+      layerGroups.landscape.add(terrainMesh);
 
       // 6. VÒM TRỜI XANH NHẠT QUANG CẢNH 360 ĐỘ (SCENIC SKY DOME)
-      const skyGeo = new THREE.SphereGeometry(130, 32, 24);
+      // Bán kính R=280m, luôn nằm an toàn trong camera.far=500m, triệt tiêu 100% clipping & giật vỡ
+      const skyGeo = new THREE.SphereGeometry(280, 48, 32);
       const skyTex = createProceduralSkyDomeTexture();
       const skyMat = new THREE.MeshBasicMaterial({
         map: skyTex,
         side: THREE.BackSide,
-        depthWrite: false
+        depthWrite: false,
+        depthTest: false,
+        fog: false
       });
-      const skyDome = new THREE.Mesh(skyGeo, skyMat);
+      skyDome = new THREE.Mesh(skyGeo, skyMat);
+      skyDome.renderOrder = -1000;
       skyDome.position.set(0, 0, 0);
       layerGroups.landscape.add(skyDome);
     }
@@ -4700,7 +4712,7 @@
         scene.add(layerGroups.grid10cm);
       }
 
-      const yEl = 0.0025; // Cao hơn mặt nền đá 2.5mm để chống hiện tượng z-fighting
+      const yEl = 0.004; // Cao hơn mặt nền đá 4mm và dùng depthWrite: false để chống triệt để z-fighting
 
       const minorPoints = [];
       const majorPoints = [];
@@ -4729,7 +4741,8 @@
         const minorMat = new THREE.LineBasicMaterial({
           color: 0x38bdf8,
           transparent: true,
-          opacity: 0.28
+          opacity: 0.28,
+          depthWrite: false
         });
         const minorLines = new THREE.LineSegments(minorGeo, minorMat);
         layerGroups.grid10cm.add(minorLines);
@@ -4741,7 +4754,8 @@
         const majorMat = new THREE.LineBasicMaterial({
           color: 0x38bdf8,
           transparent: true,
-          opacity: 0.60
+          opacity: 0.60,
+          depthWrite: false
         });
         const majorLines = new THREE.LineSegments(majorGeo, majorMat);
         layerGroups.grid10cm.add(majorLines);
@@ -7960,6 +7974,11 @@
       // Cập nhật mô phỏng bóng đổ & timelapse thời gian thực (Đã bỏ hạt & khói để tối ưu 60 FPS mượt mà)
       updateDynamicShadowTape();
       updateSolarTimelapse(delta);
+
+      // Cập nhật vị trí vòm trời 360 độ luôn đồng tâm với camera theo trục ngang (chống triệt để clipping và giật vỡ hình)
+      if (skyDome) {
+        skyDome.position.set(camera.position.x, 0, camera.position.z);
+      }
 
       renderer.render(scene, camera);
     }
