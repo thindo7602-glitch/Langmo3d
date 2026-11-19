@@ -17,7 +17,7 @@
 
   <style>
     :root {
-      --bg-dark: #020710;
+      --bg-dark: #bfe3f7;
       --bg-panel: rgba(8, 15, 28, 0.92);
       --bg-panel-header: rgba(12, 22, 40, 0.96);
       --border-cyan: rgba(34, 211, 238, 0.35);
@@ -58,6 +58,7 @@
       top: 0;
       left: 0;
       z-index: 1;
+      background: #bfe3f7;
     }
 
     /* FLOATING BRAND PILL (TỐI GIẢN, SIÊU SANG TRỌNG, KHÔNG CHE CHẮN GÓC NHÌN) */
@@ -2978,8 +2979,8 @@
     // =====================================================================
     const container = document.getElementById('webgl-canvas-container');
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0xd8ece6);
-    scene.fog = new THREE.FogExp2(0xd8ece6, 0.008);
+    scene.background = new THREE.Color(0xbfe3f7); // NỀN TRỜI XANH NHẠT THANH KHIẾT
+    scene.fog = new THREE.FogExp2(0xbfe3f7, 0.0035);
 
     const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 150);
     camera.position.set(0, 10.2, 14.2);
@@ -3181,29 +3182,29 @@
         lights.rimLight.intensity = 0.20;
 
         if (celestialState.elevation < 18) {
-          // Bình minh / Hoàng hôn
+          // Sáng sớm / Bình minh / Hoàng hôn: Ánh nắng ấm, trời xanh nhạt dịu mát
           lights.sun.color.setHex(0xf97316);
           lights.sun.intensity = 1.45;
-          lights.ambient.color.setHex(0xfeb272);
-          lights.ambient.intensity = 0.40;
-          scene.background.setHex(0x180b08);
-          scene.fog.color.setHex(0x180b08);
+          lights.ambient.color.setHex(0xe0f2fe);
+          lights.ambient.intensity = 0.55;
+          scene.background.setHex(0xbfe3f7); // Trời xanh nhạt thanh khiết
+          scene.fog.color.setHex(0xbfe3f7);
         } else if (celestialState.elevation < 48) {
           // Nắng sáng 10h (Khớp thực địa Ảnh 1 & 2)
           lights.sun.color.setHex(0xfff7e2);
           lights.sun.intensity = 1.75;
-          lights.ambient.color.setHex(0xdff4ff);
-          lights.ambient.intensity = 0.50;
-          scene.background.setHex(0xd4ebe4);
-          scene.fog.color.setHex(0xd4ebe4);
+          lights.ambient.color.setHex(0xe0f2fe);
+          lights.ambient.intensity = 0.60;
+          scene.background.setHex(0xbfe3f7); // Trời xanh nhạt thanh khiết
+          scene.fog.color.setHex(0xbfe3f7);
         } else {
           // Nắng chính ngọ
           lights.sun.color.setHex(0xfffbeb);
           lights.sun.intensity = 1.85;
-          lights.ambient.color.setHex(0xdff4ff);
-          lights.ambient.intensity = 0.58;
-          scene.background.setHex(0xd8ece6);
-          scene.fog.color.setHex(0xd8ece6);
+          lights.ambient.color.setHex(0xe0f2fe);
+          lights.ambient.intensity = 0.65;
+          scene.background.setHex(0xcbe8f7); // Trời xanh nhạt ngời sáng
+          scene.fog.color.setHex(0xcbe8f7);
         }
       } else {
         // Ban đêm: Ánh đèn chiếu sáng kiến trúc theo hướng mặt trời lúc 9 giờ sáng
@@ -3218,8 +3219,8 @@
         lights.sun.intensity = 1.35; // Rực sáng rõ nét, đổ bóng kiến trúc 3D sắc nét
         lights.ambient.color.setHex(0x1a2e33); // Ánh sáng môi trường đêm xanh xám trang nghiêm
         lights.ambient.intensity = 0.38;
-        scene.background.setHex(0x0a141a); // Nền trời đêm huyền ảo sâu thẳm
-        scene.fog.color.setHex(0x0a141a);
+        scene.background.setHex(0x0f172a); // Nền trời đêm sapphire huyền ảo
+        scene.fog.color.setHex(0x0f172a);
       }
 
       // Cập nhật các giá trị hiển thị trên UI HUD
@@ -3878,9 +3879,10 @@
         map: createPavingTexture()
       }),
       grass: new THREE.MeshStandardMaterial({
-        color: 0x14532d,
-        roughness: 0.85,
-        metalness: 0.02
+        color: 0x3d8248, // Màu cỏ xanh tươi tự nhiên, giàu sinh khí ấm áp
+        roughness: 0.82,
+        metalness: 0.03,
+        side: THREE.DoubleSide
       }),
       sacredAxis: new THREE.MeshBasicMaterial({
         color: 0xfbbf24,
@@ -4606,20 +4608,38 @@
       });
     })();
 
+    function createProceduralSkyDomeTexture() {
+      const canvas = document.createElement('canvas');
+      canvas.width = 512;
+      canvas.height = 512;
+      const ctx = canvas.getContext('2d');
+      const grad = ctx.createLinearGradient(0, 0, 0, 512);
+
+      // Đỉnh trời xanh nhạt thanh khiết, ngời sáng
+      grad.addColorStop(0.00, '#60b5ea'); // Xanh da trời dịu êm
+      grad.addColorStop(0.30, '#9cd5f6'); // Xanh nhạt sáng sủa
+      grad.addColorStop(0.48, '#cdecfb'); // Xanh nhạt chân trời
+      grad.addColorStop(0.52, '#eaf5fc'); // Chân trời trắng lam sương mờ dịu mắt
+      grad.addColorStop(0.56, '#6b9861'); // Dải cỏ thảo nguyên xa xa
+      grad.addColorStop(0.70, '#4a6e43'); // Nền đất cỏ đồng quê tự nhiên
+      grad.addColorStop(1.00, '#364832'); // Dưới lòng đất ấm áp, sạch đẹp, không đen
+
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, 512, 512);
+
+      const tex = new THREE.CanvasTexture(canvas);
+      return tex;
+    }
+
     function buildGroundAndLandscape() {
+      // 1. NỀN SÂN ĐÁ NỘI BỘ LĂNG MỘ (7.35m x 11.00m)
       const groundGeo = new THREE.BoxGeometry(7.35, 0.15, 11.00);
       const groundMesh = new THREE.Mesh(groundGeo, materials.pavingGround);
       groundMesh.position.set(0, -0.075, 0);
       groundMesh.receiveShadow = true;
       layerGroups.siteGround.add(groundMesh);
 
-      const grassGeo = new THREE.PlaneGeometry(35, 40);
-      const grassMesh = new THREE.Mesh(grassGeo, materials.grass);
-      grassMesh.rotation.x = -Math.PI / 2;
-      grassMesh.position.set(0, -0.155, 0);
-      grassMesh.receiveShadow = true;
-      layerGroups.landscape.add(grassMesh);
-
+      // 2. DẢI BẬC TAM CẤP CỔNG VÀO
       const step1 = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.08, 0.6), materials.stoneSatin);
       step1.position.set(0, -0.04, 5.5 + 0.3);
       step1.receiveShadow = true;
@@ -4629,6 +4649,45 @@
       step2.position.set(0, -0.11, 5.5 + 0.6);
       step2.receiveShadow = true;
       layerGroups.landscape.add(step2);
+
+      // 3. ĐƯỜNG DẠO ĐÁ BAO QUANH LĂNG MỘ (PERIMETER PAVED APRON)
+      const apronGeo = new THREE.BoxGeometry(9.75, 0.08, 13.40);
+      const apronMesh = new THREE.Mesh(apronGeo, materials.stoneSatin);
+      apronMesh.position.set(0, -0.115, 0);
+      apronMesh.receiveShadow = true;
+      layerGroups.landscape.add(apronMesh);
+
+      // 4. THẢM CỎ KHUÔN VIÊN XANH MÁT RỘNG LỚN (160m x 160m)
+      const grassGeo = new THREE.PlaneGeometry(160, 160);
+      const grassMesh = new THREE.Mesh(grassGeo, materials.grass);
+      grassMesh.rotation.x = -Math.PI / 2;
+      grassMesh.position.set(0, -0.155, 0);
+      grassMesh.receiveShadow = true;
+      layerGroups.landscape.add(grassMesh);
+
+      // 5. BỆ ĐỊA TẦNG ĐẤT NỀN CÔNG TRÌNH (LOẠI BỎ TRIỆT ĐỂ KHOẢNG TRỐNG ĐEN XÌ BÊN DƯỚI)
+      const earthGeo = new THREE.BoxGeometry(160, 4.0, 160);
+      const earthMat = new THREE.MeshStandardMaterial({
+        color: 0x5a4336, // Màu đất phù sa màu mỡ trầm ấm tự nhiên
+        roughness: 0.92,
+        metalness: 0.02
+      });
+      const earthMesh = new THREE.Mesh(earthGeo, earthMat);
+      earthMesh.position.set(0, -0.155 - 2.0, 0);
+      earthMesh.receiveShadow = true;
+      layerGroups.landscape.add(earthMesh);
+
+      // 6. VÒM TRỜI XANH NHẠT QUANG CẢNH 360 ĐỘ (SCENIC SKY DOME)
+      const skyGeo = new THREE.SphereGeometry(130, 32, 24);
+      const skyTex = createProceduralSkyDomeTexture();
+      const skyMat = new THREE.MeshBasicMaterial({
+        map: skyTex,
+        side: THREE.BackSide,
+        depthWrite: false
+      });
+      const skyDome = new THREE.Mesh(skyGeo, skyMat);
+      skyDome.position.set(0, 0, 0);
+      layerGroups.landscape.add(skyDome);
     }
 
     // =====================================================================
@@ -6740,8 +6799,8 @@
 
       switch(mode) {
         case 'day':
-          scene.background = new THREE.Color(0x020710);
-          scene.fog.color = new THREE.Color(0x020710);
+          scene.background = new THREE.Color(0xbfe3f7);
+          scene.fog.color = new THREE.Color(0xbfe3f7);
           lights.sun.color.setHex(0xfff7e6);
           lights.sun.intensity = 1.65;
           lights.ambient.intensity = 0.65;
