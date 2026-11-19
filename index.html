@@ -2250,52 +2250,16 @@
     <div class="studio-header">
       <div class="studio-header-title">
         <span class="studio-title-main"><span>🎨</span> STUDIO NGHỆ THUẬT THỊ GIÁC 4K</span>
-        <span class="studio-title-sub">Khí quyển linh thiêng • Đom đóm • Ngàn sao • Timelapse 24H • Flycam điện ảnh</span>
+        <span class="studio-title-sub">Đồ họa 3D siêu nhẹ 60 FPS • Timelapse 24H • Flycam điện ảnh • La bàn Bát Trạch 3D</span>
       </div>
       <button class="solar-toggle-btn" onclick="toggleArtStudioPanel()" title="Đóng bảng Studio">✕</button>
     </div>
 
-    <!-- BENTO 1: KHÍ QUYỂN & HIỆU ỨNG HẠT TÂM LINH -->
+    <!-- BENTO 1: HIỆU ỨNG BỀ MẶT & ĐỒ HỌA CAO CẤP (TỐI ƯU HÓA 60 FPS) -->
     <div class="studio-bento-card">
       <div class="studio-card-title">
-        <span>✨ Khí Quyển & Hiệu Ứng Hạt Tâm Linh</span>
-        <span style="font-size:9.5px; color:#94a3b8; text-transform:none;">Thời gian thực</span>
-      </div>
-      <div class="studio-switch-row">
-        <div class="studio-switch-label">
-          <span>💨</span> <span>Khói Trầm Hương Lăng Thờ & Mộ Tổ</span>
-        </div>
-        <label class="switch-ui">
-          <input type="checkbox" id="switchSmoke" checked onchange="toggleStudioFeature('smoke')">
-          <span class="switch-slider"></span>
-        </label>
-      </div>
-      <div class="studio-switch-row">
-        <div class="studio-switch-label">
-          <span>✨</span> <span>Bụi Vàng Quang Học (Tia Nắng Lung Linh)</span>
-        </div>
-        <label class="switch-ui">
-          <input type="checkbox" id="switchDust" checked onchange="toggleStudioFeature('dust')">
-          <span class="switch-slider"></span>
-        </label>
-      </div>
-      <div class="studio-switch-row">
-        <div class="studio-switch-label">
-          <span>🪲</span> <span>Đom Đóm Phát Sáng Huyền Ảo (Ban Đêm)</span>
-        </div>
-        <label class="switch-ui">
-          <input type="checkbox" id="switchFireflies" checked onchange="toggleStudioFeature('fireflies')">
-          <span class="switch-slider"></span>
-        </label>
-      </div>
-      <div class="studio-switch-row">
-        <div class="studio-switch-label">
-          <span>🌌</span> <span>Vòm Trời Ngàn Sao Tinh Tú Lấp Lánh</span>
-        </div>
-        <label class="switch-ui">
-          <input type="checkbox" id="switchStars" checked onchange="toggleStudioFeature('stars')">
-          <span class="switch-slider"></span>
-        </label>
+        <span>✨ Hiệu Ứng Bề Mặt & Đồ Họa Cao Cấp</span>
+        <span style="font-size:9.5px; color:#4ade80; text-transform:none;">Tối ưu 60 FPS</span>
       </div>
       <div class="studio-switch-row">
         <div class="studio-switch-label">
@@ -2303,6 +2267,24 @@
         </div>
         <label class="switch-ui">
           <input type="checkbox" id="switchWetStone" onchange="toggleWetStoneGloss()">
+          <span class="switch-slider"></span>
+        </label>
+      </div>
+      <div class="studio-switch-row">
+        <div class="studio-switch-label">
+          <span>📏</span> <span>Thước Đo Vector Bóng Đổ 3D Mặt Đất</span>
+        </div>
+        <label class="switch-ui">
+          <input type="checkbox" id="switchShadowTape" checked onchange="toggleStudioFeature('shadowTape')">
+          <span class="switch-slider"></span>
+        </label>
+      </div>
+      <div class="studio-switch-row">
+        <div class="studio-switch-label">
+          <span>🧭</span> <span>La Bàn Bát Trạch & 24 Sơn Hướng 3D</span>
+        </div>
+        <label class="switch-ui">
+          <input type="checkbox" id="switchLuopanStudio" onchange="toggleLuopan3D()">
           <span class="switch-slider"></span>
         </label>
       </div>
@@ -2361,31 +2343,7 @@
       </div>
     </div>
 
-    <!-- BENTO 4: CÔNG CỤ KHOA HỌC & PHONG THỦY 3D -->
-    <div class="studio-bento-card">
-      <div class="studio-card-title">
-        <span>📐 Công Cụ Khoa Học & Phong Thủy 3D</span>
-        <span style="font-size:9.5px; color:#94a3b8; text-transform:none;">Chính xác</span>
-      </div>
-      <div class="studio-switch-row">
-        <div class="studio-switch-label">
-          <span>📏</span> <span>Thước Đo Vector Bóng Đổ 3D Mặt Đất</span>
-        </div>
-        <label class="switch-ui">
-          <input type="checkbox" id="switchShadowTape" checked onchange="toggleStudioFeature('shadowTape')">
-          <span class="switch-slider"></span>
-        </label>
-      </div>
-      <div class="studio-switch-row">
-        <div class="studio-switch-label">
-          <span>🧭</span> <span>La Bàn Bát Trạch & 24 Sơn Hướng 3D</span>
-        </div>
-        <label class="switch-ui">
-          <input type="checkbox" id="switchLuopanStudio" onchange="toggleLuopan3D()">
-          <span class="switch-slider"></span>
-        </label>
-      </div>
-    </div>
+
 
     <!-- BENTO 5: CHUYẾN BAY FLYCAM ĐIỆN ẢNH 5 CHẶNG -->
     <div class="studio-bento-card" style="margin-bottom:0; background:linear-gradient(135deg, rgba(217, 119, 6, 0.15), rgba(3, 105, 161, 0.15)); border-color:rgba(245, 158, 11, 0.35);">
@@ -3028,7 +2986,7 @@
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance', preserveDrawingBuffer: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5)); // TỐI ƯU HÓA 60 FPS: Giảm tải GPU fill-rate
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -3066,10 +3024,6 @@
       landscape: new THREE.Group(),
       interactiveHighlight: new THREE.Group(),
       interactiveDimensions: new THREE.Group(), // LỚP THƯỚC ĐO 3D LIỀN KỀ THỜI GIAN THỰC
-      incenseSmoke: new THREE.Group(),
-      dustMotes: new THREE.Group(),
-      fireflies: new THREE.Group(),
-      nightStars: new THREE.Group(),
       shadowTape: new THREE.Group(),
       luopan3D: new THREE.Group()
     };
@@ -3092,14 +3046,14 @@
 
     lights.sun.position.set(14, 28, 16);
     lights.sun.castShadow = true;
-    lights.sun.shadow.mapSize.width = 4096; // 4K SHADOW MAP: ĐỘ NÉT GẤP 4 LẦN, CHI TIẾT TỪNG NÉT CHẠM KHẮC ĐÁ
-    lights.sun.shadow.mapSize.height = 4096;
+    lights.sun.shadow.mapSize.width = 2048; // TỐI ƯU HÓA 60 FPS: 2048x2048 sắc nét, giảm 75% tải GPU depth pass
+    lights.sun.shadow.mapSize.height = 2048;
     lights.sun.shadow.camera.near = 1.0;
-    lights.sun.shadow.camera.far = 120; // TẦM PHỦ RỘNG ĐẢM BẢO BÓNG ĐỔ DÀI MÙA ĐÔNG KHÔNG BỊ CẮT CỤT
-    lights.sun.shadow.camera.left = -22;
-    lights.sun.shadow.camera.right = 22;
-    lights.sun.shadow.camera.top = 22;
-    lights.sun.shadow.camera.bottom = -22;
+    lights.sun.shadow.camera.far = 95;
+    lights.sun.shadow.camera.left = -18;
+    lights.sun.shadow.camera.right = 18;
+    lights.sun.shadow.camera.top = 18;
+    lights.sun.shadow.camera.bottom = -18;
     lights.sun.shadow.bias = -0.00008; // LOẠI BỎ TRIỆT TIỂU PETER-PANNING, BÓNG KHÔNG BỊ TRÔI
     lights.sun.shadow.normalBias = 0.020; // BÁM CHẶT CHÂN MÓNG ĐẤT, KHÔNG HỔNG CHÂN
     lights.sun.shadow.radius = 1.8;
@@ -3977,11 +3931,7 @@
       // 2. Bỏ vầng sáng ở trung tâm mộ khi khởi động (ẩn trục Thần Đạo & Sân Lễ)
       layerGroups.sacred.visible = false;
 
-      // 3. Khởi tạo các hệ thống hạt khí quyển & mô phỏng nghệ thuật 4K
-      initIncenseSmoke();
-      initDustMotes();
-      initFireflies();
-      initNightStars();
+      // 3. Khởi tạo công cụ đo bóng đổ & la bàn 3D (Tối ưu hóa siêu nhẹ)
       initDynamicShadowTape();
       initLuopan3D();
     }
@@ -7205,10 +7155,6 @@
     }
 
     const artStudioState = {
-      smokeActive: true,
-      dustActive: true,
-      firefliesActive: true,
-      starsActive: true,
       wetStoneActive: false,
       shadowTapeActive: true,
       luopanActive: false,
@@ -7219,383 +7165,6 @@
       droneTourActive: false
     };
 
-    // ---------------------------------------------------------------------
-    // 6.1 TẠO TEXTURE PROCEDURAL CHO CÁC HẠT KHÍ QUYỂN (CANVAS 2D)
-    // ---------------------------------------------------------------------
-
-    function createSmokeParticleTexture() {
-      const canvas = document.createElement('canvas');
-      canvas.width = 64;
-      canvas.height = 64;
-      const ctx = canvas.getContext('2d');
-      const grad = ctx.createRadialGradient(32, 32, 0, 32, 32, 30);
-      grad.addColorStop(0, 'rgba(245, 248, 252, 0.85)');
-      grad.addColorStop(0.3, 'rgba(220, 230, 240, 0.50)');
-      grad.addColorStop(0.7, 'rgba(195, 210, 225, 0.18)');
-      grad.addColorStop(1.0, 'rgba(180, 195, 210, 0.0)');
-      ctx.fillStyle = grad;
-      ctx.fillRect(0, 0, 64, 64);
-      return new THREE.CanvasTexture(canvas);
-    }
-
-    function createDustParticleTexture() {
-      const canvas = document.createElement('canvas');
-      canvas.width = 32;
-      canvas.height = 32;
-      const ctx = canvas.getContext('2d');
-      const grad = ctx.createRadialGradient(16, 16, 0, 16, 16, 15);
-      grad.addColorStop(0, 'rgba(255, 250, 220, 1.0)');
-      grad.addColorStop(0.35, 'rgba(251, 191, 36, 0.65)');
-      grad.addColorStop(0.75, 'rgba(245, 158, 11, 0.20)');
-      grad.addColorStop(1.0, 'rgba(245, 158, 11, 0.0)');
-      ctx.fillStyle = grad;
-      ctx.fillRect(0, 0, 32, 32);
-      return new THREE.CanvasTexture(canvas);
-    }
-
-    function createFireflyParticleTexture() {
-      const canvas = document.createElement('canvas');
-      canvas.width = 32;
-      canvas.height = 32;
-      const ctx = canvas.getContext('2d');
-      const grad = ctx.createRadialGradient(16, 16, 0, 16, 16, 15);
-      grad.addColorStop(0, 'rgba(220, 255, 150, 1.0)');
-      grad.addColorStop(0.35, 'rgba(132, 204, 22, 0.75)');
-      grad.addColorStop(0.75, 'rgba(74, 222, 128, 0.25)');
-      grad.addColorStop(1.0, 'rgba(34, 197, 94, 0.0)');
-      ctx.fillStyle = grad;
-      ctx.fillRect(0, 0, 32, 32);
-      return new THREE.CanvasTexture(canvas);
-    }
-
-    // ---------------------------------------------------------------------
-    // 6.2 KHÓI TRẦM HƯƠNG LINH THIÊNG (INCENSE SMOKE SIMULATION)
-    // ---------------------------------------------------------------------
-    let smokePoints = null;
-    let smokeGeo = null;
-    let smokeMat = null;
-    const SMOKE_COUNT = 150;
-    const smokeData = [];
-
-    // Tọa độ 3 bát hương chính: 1 Lăng Thờ Cụ Tổ, 2 Mộ Ông & Mộ Bà
-    const INCENSE_EMITTERS = [
-      new THREE.Vector3(0, 1.05, -5.045),     // Lăng thờ chính
-      new THREE.Vector3(-0.94, 0.88, -3.00),   // Mộ Bà
-      new THREE.Vector3(0.05, 0.88, -3.00)     // Mộ Ông
-    ];
-
-    function initIncenseSmoke() {
-      if (!layerGroups.incenseSmoke) return;
-      while(layerGroups.incenseSmoke.children.length > 0) {
-        layerGroups.incenseSmoke.remove(layerGroups.incenseSmoke.children[0]);
-      }
-
-      smokeData.length = 0;
-      const positions = new Float32Array(SMOKE_COUNT * 3);
-
-      for (let i = 0; i < SMOKE_COUNT; i++) {
-        const emitterIdx = i % INCENSE_EMITTERS.length;
-        const emitter = INCENSE_EMITTERS[emitterIdx];
-        const life = Math.random(); // Khởi tạo ngẫu nhiên vòng đời ban đầu
-        const maxLife = 3.5 + Math.random() * 2.5; // Sống từ 3.5s đến 6.0s
-        const speed = 0.25 + Math.random() * 0.20; // Bay lên 0.25 - 0.45 m/s
-
-        smokeData.push({
-          emitterIdx: emitterIdx,
-          life: life,
-          maxLife: maxLife,
-          speed: speed,
-          curlFreq: 1.5 + Math.random() * 1.5,
-          curlPhase: Math.random() * Math.PI * 2,
-          curlAmp: 0.12 + Math.random() * 0.18
-        });
-
-        const curLifeSec = life * maxLife;
-        positions[i * 3] = emitter.x + Math.sin(curLifeSec * 1.8) * 0.05;
-        positions[i * 3 + 1] = emitter.y + curLifeSec * speed;
-        positions[i * 3 + 2] = emitter.z + Math.cos(curLifeSec * 1.5) * 0.05;
-      }
-
-      smokeGeo = new THREE.BufferGeometry();
-      smokeGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-
-      smokeMat = new THREE.PointsMaterial({
-        size: 0.38,
-        map: createSmokeParticleTexture(),
-        transparent: true,
-        opacity: 0.65,
-        depthWrite: false,
-        blending: THREE.NormalBlending,
-        sizeAttenuation: true
-      });
-
-      smokePoints = new THREE.Points(smokeGeo, smokeMat);
-      layerGroups.incenseSmoke.add(smokePoints);
-      layerGroups.incenseSmoke.visible = artStudioState.smokeActive;
-    }
-
-    function updateIncenseSmoke(delta, elapsedTime) {
-      if (!smokePoints || !smokeGeo || !artStudioState.smokeActive) return;
-      const pos = smokeGeo.attributes.position.array;
-
-      for (let i = 0; i < SMOKE_COUNT; i++) {
-        const d = smokeData[i];
-        d.life += delta / d.maxLife;
-
-        if (d.life >= 1.0) {
-          d.life = 0;
-          d.maxLife = 3.5 + Math.random() * 2.5;
-          d.speed = 0.25 + Math.random() * 0.20;
-          d.curlPhase = Math.random() * Math.PI * 2;
-        }
-
-        const emitter = INCENSE_EMITTERS[d.emitterIdx];
-        const curSec = d.life * d.maxLife;
-        const driftProgress = d.life;
-
-        // Xoáy lượn mềm mại theo hình sin mô phỏng dòng khí đối lưu tự nhiên
-        const curlX = Math.sin(elapsedTime * d.curlFreq + d.curlPhase) * (d.curlAmp * (0.2 + driftProgress * 0.8));
-        const curlZ = Math.cos(elapsedTime * (d.curlFreq * 0.8) + d.curlPhase) * (d.curlAmp * (0.2 + driftProgress * 0.8));
-
-        pos[i * 3] = emitter.x + curlX;
-        pos[i * 3 + 1] = emitter.y + curSec * d.speed;
-        pos[i * 3 + 2] = emitter.z + curlZ;
-      }
-
-      smokeGeo.attributes.position.needsUpdate = true;
-    }
-
-    // ---------------------------------------------------------------------
-    // 6.3 BỤI VÀNG QUANG HỌC LUNG LINH (VOLUMETRIC SUN DUST MOTES)
-    // ---------------------------------------------------------------------
-    let dustPoints = null;
-    let dustGeo = null;
-    let dustMat = null;
-    const DUST_COUNT = 380;
-    const dustBasePositions = [];
-    const dustPhases = [];
-
-    function initDustMotes() {
-      if (!layerGroups.dustMotes) return;
-      while(layerGroups.dustMotes.children.length > 0) {
-        layerGroups.dustMotes.remove(layerGroups.dustMotes.children[0]);
-      }
-
-      dustBasePositions.length = 0;
-      dustPhases.length = 0;
-      const positions = new Float32Array(DUST_COUNT * 3);
-
-      for (let i = 0; i < DUST_COUNT; i++) {
-        // Phân bổ đều trong không gian lăng mộ 7.35m x 11.0m, cao 0.2m -> 5.0m
-        const bx = (Math.random() - 0.5) * 8.5;
-        const by = 0.25 + Math.random() * 4.8;
-        const bz = (Math.random() - 0.5) * 12.0;
-
-        dustBasePositions.push(bx, by, bz);
-        dustPhases.push(Math.random() * Math.PI * 2);
-
-        positions[i * 3] = bx;
-        positions[i * 3 + 1] = by;
-        positions[i * 3 + 2] = bz;
-      }
-
-      dustGeo = new THREE.BufferGeometry();
-      dustGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-
-      dustMat = new THREE.PointsMaterial({
-        size: 0.14,
-        map: createDustParticleTexture(),
-        transparent: true,
-        opacity: 0.70,
-        depthWrite: false,
-        blending: THREE.AdditiveBlending,
-        sizeAttenuation: true
-      });
-
-      dustPoints = new THREE.Points(dustGeo, dustMat);
-      layerGroups.dustMotes.add(dustPoints);
-      layerGroups.dustMotes.visible = artStudioState.dustActive;
-    }
-
-    function updateDustMotes(elapsedTime, sunElevationDeg) {
-      if (!dustPoints || !dustGeo || !artStudioState.dustActive) return;
-      const pos = dustGeo.attributes.position.array;
-
-      for (let i = 0; i < DUST_COUNT; i++) {
-        const bx = dustBasePositions[i * 3];
-        const by = dustBasePositions[i * 3 + 1];
-        const bz = dustBasePositions[i * 3 + 2];
-        const phase = dustPhases[i];
-
-        // Dao động Brown nhẹ nhàng lơ lửng trong không khí
-        pos[i * 3] = bx + Math.sin(elapsedTime * 0.45 + phase) * 0.35;
-        pos[i * 3 + 1] = by + Math.cos(elapsedTime * 0.35 + phase * 1.3) * 0.25;
-        pos[i * 3 + 2] = bz + Math.sin(elapsedTime * 0.55 + phase * 0.7) * 0.35;
-      }
-      dustGeo.attributes.position.needsUpdate = true;
-
-      // Độ rực rỡ của bụi vàng phụ thuộc trực tiếp vào góc cao mặt trời
-      if (dustMat) {
-        if (sunElevationDeg > 0) {
-          const intensity = Math.min(0.85, 0.20 + (sunElevationDeg / 60) * 0.65);
-          dustMat.opacity = intensity;
-        } else {
-          dustMat.opacity = 0.08; // Lắng dịu ban đêm
-        }
-      }
-    }
-
-    // ---------------------------------------------------------------------
-    // 6.4 ĐOM ĐÓM PHÁT SÁNG HUYỀN ẢO BAN ĐÊM (GLOWING FIREFLIES)
-    // ---------------------------------------------------------------------
-    let firefliesPoints = null;
-    let firefliesGeo = null;
-    let firefliesMat = null;
-    const FIREFLY_COUNT = 85;
-    const fireflyData = [];
-
-    function initFireflies() {
-      if (!layerGroups.fireflies) return;
-      while(layerGroups.fireflies.children.length > 0) {
-        layerGroups.fireflies.remove(layerGroups.fireflies.children[0]);
-      }
-
-      fireflyData.length = 0;
-      const positions = new Float32Array(FIREFLY_COUNT * 3);
-
-      for (let i = 0; i < FIREFLY_COUNT; i++) {
-        const cx = (Math.random() - 0.5) * 7.0;
-        const cy = 0.35 + Math.random() * 2.2;
-        const cz = (Math.random() - 0.5) * 10.0;
-
-        fireflyData.push({
-          cx: cx, cy: cy, cz: cz,
-          radius: 0.4 + Math.random() * 0.8,
-          speed: 0.3 + Math.random() * 0.5,
-          blinkSpeed: 1.8 + Math.random() * 2.5,
-          phase: Math.random() * Math.PI * 2
-        });
-
-        positions[i * 3] = cx;
-        positions[i * 3 + 1] = cy;
-        positions[i * 3 + 2] = cz;
-      }
-
-      firefliesGeo = new THREE.BufferGeometry();
-      firefliesGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-
-      firefliesMat = new THREE.PointsMaterial({
-        size: 0.22,
-        map: createFireflyParticleTexture(),
-        transparent: true,
-        opacity: 0.85,
-        depthWrite: false,
-        blending: THREE.AdditiveBlending,
-        sizeAttenuation: true
-      });
-
-      firefliesPoints = new THREE.Points(firefliesGeo, firefliesMat);
-      layerGroups.fireflies.add(firefliesPoints);
-      layerGroups.fireflies.visible = artStudioState.firefliesActive;
-    }
-
-    function updateFireflies(elapsedTime, sunElevationDeg) {
-      if (!firefliesPoints || !firefliesGeo || !artStudioState.firefliesActive) return;
-      const pos = firefliesGeo.attributes.position.array;
-
-      for (let i = 0; i < FIREFLY_COUNT; i++) {
-        const d = fireflyData[i];
-        // Bay theo quỹ đạo Lissajous uốn lượn quanh các mộ
-        pos[i * 3] = d.cx + Math.sin(elapsedTime * d.speed + d.phase) * d.radius;
-        pos[i * 3 + 1] = d.cy + Math.sin(elapsedTime * (d.speed * 1.4) + d.phase) * 0.35;
-        pos[i * 3 + 2] = d.cz + Math.cos(elapsedTime * (d.speed * 0.8) + d.phase) * d.radius;
-      }
-      firefliesGeo.attributes.position.needsUpdate = true;
-
-      // Đom đóm phát sáng nhấp nháy sinh học & chỉ rực rỡ vào hoàng hôn / ban đêm
-      if (firefliesMat) {
-        const pulse = Math.pow(Math.max(0, Math.sin(elapsedTime * 2.2)), 2) * 0.35 + 0.65;
-        if (sunElevationDeg <= 5 || artStudioState.cinematicMode === 'moonlit') {
-          firefliesMat.opacity = 0.90 * pulse;
-          firefliesPoints.visible = true;
-        } else {
-          // Ban ngày tự ẩn đi
-          firefliesMat.opacity = 0;
-          firefliesPoints.visible = false;
-        }
-      }
-    }
-
-    // ---------------------------------------------------------------------
-    // 6.5 BẦU TRỜ NGÀN SAO LẤP LÁNH (TWINKLING NIGHT STARS DOME)
-    // ---------------------------------------------------------------------
-    let starsPoints = null;
-    let starsMat = null;
-    const STAR_COUNT = 1200;
-
-    function initNightStars() {
-      if (!layerGroups.nightStars) return;
-      while(layerGroups.nightStars.children.length > 0) {
-        layerGroups.nightStars.remove(layerGroups.nightStars.children[0]);
-      }
-
-      const positions = new Float32Array(STAR_COUNT * 3);
-      const colors = new Float32Array(STAR_COUNT * 3);
-      const radius = 68.0;
-
-      for (let i = 0; i < STAR_COUNT; i++) {
-        const theta = Math.random() * Math.PI * 2;
-        const phi = Math.acos(Math.random()) * 0.52; // Nửa bán cầu trên (từ chân trời lên đỉnh)
-
-        positions[i * 3] = radius * Math.sin(phi) * Math.cos(theta);
-        positions[i * 3 + 1] = radius * Math.cos(phi) + 2.0;
-        positions[i * 3 + 2] = radius * Math.sin(phi) * Math.sin(theta);
-
-        // Màu sao: Trắng xanh ngọc, xanh băng hoặc vàng ánh kim
-        const randColor = Math.random();
-        if (randColor < 0.65) {
-          colors[i * 3] = 0.95; colors[i * 3 + 1] = 0.98; colors[i * 3 + 2] = 1.0;
-        } else if (randColor < 0.85) {
-          colors[i * 3] = 0.70; colors[i * 3 + 1] = 0.88; colors[i * 3 + 2] = 1.0;
-        } else {
-          colors[i * 3] = 1.0;  colors[i * 3 + 1] = 0.92; colors[i * 3 + 2] = 0.72;
-        }
-      }
-
-      const geo = new THREE.BufferGeometry();
-      geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-      geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-
-      starsMat = new THREE.PointsMaterial({
-        size: 1.15,
-        vertexColors: true,
-        transparent: true,
-        opacity: 0.0, // Mặc định ban ngày ẩn
-        depthWrite: false,
-        sizeAttenuation: false
-      });
-
-      starsPoints = new THREE.Points(geo, starsMat);
-      layerGroups.nightStars.add(starsPoints);
-      layerGroups.nightStars.visible = artStudioState.starsActive;
-    }
-
-    function updateNightStars(elapsedTime, sunElevationDeg) {
-      if (!starsPoints || !starsMat || !artStudioState.starsActive) return;
-
-      if (sunElevationDeg < 0 || artStudioState.cinematicMode === 'moonlit') {
-        const nightDepth = Math.min(1.0, Math.abs(sunElevationDeg) / 12.0);
-        const twinkle = 0.85 + Math.sin(elapsedTime * 3.5) * 0.15;
-        starsMat.opacity = (artStudioState.cinematicMode === 'moonlit' ? 0.95 : nightDepth * 0.90) * twinkle;
-        starsPoints.visible = true;
-      } else {
-        starsMat.opacity = 0;
-        starsPoints.visible = false;
-      }
-    }
-
-    // ---------------------------------------------------------------------
-    // 6.6 THƯỚC ĐO VECTOR BÓNG ĐỔ 3D TRỰC QUAN (DYNAMIC SHADOW VECTOR TAPE)
     // ---------------------------------------------------------------------
     let shadowTapeLine = null;
     let shadowTipSprite = null;
@@ -7650,16 +7219,25 @@
       layerGroups.shadowTape.visible = artStudioState.shadowTapeActive;
     }
 
-    function updateDynamicShadowTape() {
+    let lastShadowTapeValues = { elev: -999, az: -999 };
+
+    function updateDynamicShadowTape(force = false) {
       if (!layerGroups.shadowTape || !layerGroups.shadowTape.visible || !shadowTapeLine) return;
+
+      const elev = celestialState.elevation;
+      const az3D = celestialState.azimuth;
+
+      // TỐI ƯU HÓA CAO CẤP: Bỏ qua nếu góc mặt trời không đổi (Tránh re-draw canvas & texture re-upload mỗi frame)
+      if (!force && Math.abs(elev - lastShadowTapeValues.elev) < 0.08 && Math.abs(az3D - lastShadowTapeValues.az) < 0.08) {
+        return;
+      }
+      lastShadowTapeValues.elev = elev;
+      lastShadowTapeValues.az = az3D;
 
       // Căn cứ bóng đổ của Lăng Thờ Cụ Tổ (Cao 3.40m, đỉnh chóp)
       const hLangTho = 3.40;
       const originX = 0;
       const originZ = -5.045; // Tọa độ chân lăng thờ
-
-      const elev = celestialState.elevation;
-      const az3D = celestialState.azimuth;
 
       if (elev <= 1.0) {
         shadowTapeLine.visible = false;
@@ -8277,25 +7855,10 @@
     }
 
     function toggleStudioFeature(featureKey) {
-      if (featureKey === 'smoke') {
-        artStudioState.smokeActive = !artStudioState.smokeActive;
-        if (layerGroups.incenseSmoke) layerGroups.incenseSmoke.visible = artStudioState.smokeActive;
-        showToast(artStudioState.smokeActive ? '💨 Đã Bật Làn Khói Trầm Hương' : '💨 Đã Tắt Khói Trầm Hương');
-      } else if (featureKey === 'dust') {
-        artStudioState.dustActive = !artStudioState.dustActive;
-        if (layerGroups.dustMotes) layerGroups.dustMotes.visible = artStudioState.dustActive;
-        showToast(artStudioState.dustActive ? '✨ Đã Bật Bụi Vàng Quang Học' : '✨ Đã Tắt Bụi Vàng Quang Học');
-      } else if (featureKey === 'fireflies') {
-        artStudioState.firefliesActive = !artStudioState.firefliesActive;
-        if (layerGroups.fireflies) layerGroups.fireflies.visible = artStudioState.firefliesActive;
-        showToast(artStudioState.firefliesActive ? '🪲 Đã Bật Đom Đóm Phát Sáng Ban Đêm' : '🪲 Đã Tắt Đom Đóm');
-      } else if (featureKey === 'stars') {
-        artStudioState.starsActive = !artStudioState.starsActive;
-        if (layerGroups.nightStars) layerGroups.nightStars.visible = artStudioState.starsActive;
-        showToast(artStudioState.starsActive ? '🌌 Đã Bật Vòm Trời Ngàn Sao' : '🌌 Đã Tắt Vòm Trời Ngàn Sao');
-      } else if (featureKey === 'shadowTape') {
+      if (featureKey === 'shadowTape') {
         artStudioState.shadowTapeActive = !artStudioState.shadowTapeActive;
         if (layerGroups.shadowTape) layerGroups.shadowTape.visible = artStudioState.shadowTapeActive;
+        if (artStudioState.shadowTapeActive) updateDynamicShadowTape(true);
         showToast(artStudioState.shadowTapeActive ? '📐 Đã Bật Thước Đo Vector Bóng Đổ 3D' : '📐 Đã Tắt Thước Đo Vector Bóng Đổ');
       }
     }
@@ -8335,13 +7898,7 @@
       // Cập nhật la bàn phong thủy góc trên cùng bên phải theo hướng nhìn camera
       updateCompassRoseWidget();
 
-      // Cập nhật các hiệu ứng nghệ thuật thị giác & khí quyển tâm linh thời gian thực
-      const elapsedTime = clock.getElapsedTime();
-      const curSunElevation = celestialState.elevation || 45;
-      updateIncenseSmoke(delta, elapsedTime);
-      updateDustMotes(elapsedTime, curSunElevation);
-      updateFireflies(elapsedTime, curSunElevation);
-      updateNightStars(elapsedTime, curSunElevation);
+      // Cập nhật mô phỏng bóng đổ & timelapse thời gian thực (Đã bỏ hạt & khói để tối ưu 60 FPS mượt mà)
       updateDynamicShadowTape();
       updateSolarTimelapse(delta);
 
